@@ -17,11 +17,11 @@ def build_matrix(con):
 
 	#Files
 		#file_main.py  (1 function)
-		#dir1/file1.py (2 functions)
+		#dir1/file1.py (2 FUNCTIONS)
 		#	 /file2.py (1 function)
 		#dir2/file3.py (2function)
 
-	#imports
+	#IMPORTS
 		#dir1/file2 => import file1
 		#file_main => import dir1.file1
 		#			  import dir1.file2
@@ -34,52 +34,52 @@ def build_matrix(con):
 				}
 
 	#List of functions
-	matrix = ['file_main.main','dir1.file1.f1','dir1.file1.f2','dir1.file2.f3','dir2.file3.f4','dir2.file3.f5']
+	function_list = ['file_main.main','dir1.file1.f1','dir1.file1.f2','dir1.file2.f3','dir2.file3.f4','dir2.file3.f5']
 
-	#Tables, created in matrix builder, created here for testing purposes
+	#Tables, created in function_list builder, created here for testing purposes
 	#con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
 	cursor = con.cursor()
 	cursor.executescript('''
-	DROP TABLE IF EXISTS functions;
-	DROP TABLE IF EXISTS modules;
+	DROP TABLE IF EXISTS FUNCTIONS;
+	DROP TABLE IF EXISTS MODULES;
 
-	CREATE TABLE functions (
-	orig_name TEXT,
-	final_name TEXT,
-	ud INTEGER,
-	PRIMARY KEY (orig_name)
+	CREATE TABLE FUNCTIONS (
+	ORIG_NAME TEXT,
+	FINAL_NAME TEXT,
+	UD INTEGER,
+	PRIMARY KEY (ORIG_NAME)
 	);
 
-	CREATE TABLE modules (
-	orig_name TEXT,
-	imports TEXT,
-	final_imports TEXT,
-	PRIMARY KEY (orig_name)
+	CREATE TABLE MODULES (
+	ORIG_NAME TEXT,
+	IMPORTS TEXT,
+	FINAL_IMPORTS TEXT,
+	PRIMARY KEY (ORIG_NAME)
 	)
 	''')
 	logging.info('Database connected and tables created')
 
 	#We fill the table as it should be TODO make this with executescript()
-	cursor.execute("INSERT INTO functions(orig_name) VALUES ('file_main.main')")
-	cursor.execute("INSERT INTO functions(orig_name) VALUES ('dir1.file1.f1')")
-	cursor.execute("INSERT INTO functions(orig_name) VALUES ('dir1.file1.f2')")
-	cursor.execute("INSERT INTO functions(orig_name) VALUES ('dir1.file2.f3')")
-	cursor.execute("INSERT INTO functions(orig_name) VALUES ('dir2.file3.f4')")
-	cursor.execute("INSERT INTO functions(orig_name) VALUES ('dir2.file3.f5')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('file_main.main')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.f1')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.f2')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file2.f3')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.f4')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.f5')")
 
-	logging.info('orig names inserted in table "functions"')
+	logging.info('orig names inserted in table "FUNCTIONS"')
 
 	#Check Results
-	cursor.execute("SELECT * FROM functions")
+	cursor.execute("SELECT * FROM FUNCTIONS")
 	logging.info('lets check the table')
 	for i in cursor:
 	    logging.info('"ORIG_NAME= ", %s',i[0])
 
-	#Starts with matrix filler
+	#Starts with function_list filler
 	#logging.info("Lets do flatter")
-	#flatter.flatter(cursor,matrix)
+	#flatter.flatter(cursor,function_list)
 	#logging.info("Flatter done, exit")
 
 	#con.close()
 
-	return (files_dict,matrix)
+	return (files_dict,function_list)

@@ -1,1 +1,0 @@
-#gets in every function and get functions calls.

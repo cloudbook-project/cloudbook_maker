@@ -1,0 +1,93 @@
+#flats packages and subpackages, creates new modules and changes invocations
+import sqlite3 
+import logging
+
+
+def flatten_program(con, matrix, files_path):
+	#check database and insert ud number DUMB ASIGNATION
+	#TODO: Detect ud0 for better assignation
+	#step1: assign ud's to functions
+	cursor = con.cursor()
+	logging.info('FLATTER::inserts ud number')
+	for i in range(len(matrix)):
+		cursor.execute("UPDATE functions set ud = "+str(i)+" WHERE orig_name = '"+matrix[i]+"'")
+		# function main is the first position of array matrix and therefore UD-0 is assigned to main
+	#step2: check modules and translate imports x to import udx
+	modules = []
+	for i in matrix:
+		j = i.rfind('.')
+		module = i[:j]
+		if module not in modules:
+			modules.append(module)
+	print modules
+
+	#translate import
+	modules_dict = {}
+	for i in  modules:
+		filename = files_path +"/" + i.replace(".","/")+".py"
+		print filename
+		modules_dict[filename]=[]
+		with open(filename, 'r') as f:
+			for line in f:
+				aux = line.split(' ')
+				if aux[0]=='import':
+					line = line.replace('\n','')
+					modules_dict[filename].append(line)
+	print modules_dict
+	#select ud from functions where f(orig_name) == filename(without .py)
+	ud_modules={}
+	print("=====================================")
+	for i in modules_dict:
+		ud_modules[i]=[]
+		for j in modules_dict[i]:
+			#j = import xxxx
+			module = j.split(" ")[1]#this is the imported module
+			print "Estamos importando: ",module, "en el modulo: ", i
+			found = False
+			cursor.execute("SELECT orig_name,ud from functions")
+			for k in cursor:
+				index = k[0].rfind('.')
+				asoc_module = k[0][:index]
+				#module package is i
+				cosa=i.replace(files_path,"")
+				cosa=cosa.replace(".py","")
+				cosa=cosa.replace("/",".")
+				cosa = cosa[1:(len(cosa)+1)]
+				print "Cosa= ",cosa
+				module_package = cosa[:cosa.rfind('.')]
+				print "module_package= ",module_package
+				relative_index= asoc_module.find(module_package)
+				if relative_index != -1:
+					relative_index+=len(module_package)+1
+					print "relative index= ", relative_index
+					asoc_module_relative = asoc_module[relative_index:]
+				else:
+					asoc_module_relative = ""
+				print "absolute= ", asoc_module
+				print "relative= ", asoc_module_relative
+				if asoc_module == module or asoc_module_relative==module:
+					ud_modules[i].append("import ud-" + str(k[1]))
+					found=True
+			if not found:
+				ud_modules[i].append(j)
+	print ud_modules
+
+
+
+
+
+	showTables(cursor)
+
+def showTables(cursor):
+	#Check Results
+	cursor.execute("SELECT * FROM functions")
+	logging.info('FLATTER::lets check the table')
+	for i in cursor:
+	    logging.info('"FLATTER::ORIG_NAME= ", %s',i[0])
+	    logging.info('"FLATTER::FINAL_NAME= ", %s',i[1])
+	    logging.info('"FLATTER::UD= ", %s',i[2])
+
+
+
+	
+

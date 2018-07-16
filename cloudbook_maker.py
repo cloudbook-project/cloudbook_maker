@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sqlite3
 from graph_analyzer import graph_analyzer
+from splitter import splitter
 
 
 def showTables(con):
@@ -20,8 +21,18 @@ def showTables(con):
 	    print ("IMPORTS =",i[1])
 	    print ("FINAL IMPORT =",i[2],"\n")
 
+
+def remove_output_directory():
+	pass
+
+
+def copy_input_directory():
+	pass
+
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
 
-graph_analyzer.graph_builder(con)
+matrix = graph_analyzer.graph_builder(con, "../example_program")
+
+#splitter.split_program(con,matrix,2,'../example_program/splitter_output')
 
 showTables(con)

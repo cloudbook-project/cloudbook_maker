@@ -11,7 +11,7 @@ def flatten_program(con, function_list, files_path):
 	cursor = con.cursor()
 	logging.info('FLATTER::inserts ud number')
 	for i in range(len(function_list)):
-		cursor.execute("UPDATE functions set ud = "+str(i)+" WHERE orig_name = '"+function_list[i]+"'")
+		cursor.execute("UPDATE functions set DU = "+str(i)+" WHERE orig_name = '"+function_list[i]+"'")
 		# function main is the first position of array function_list and therefore UD-0 is assigned to main
 	#step2: check modules and translate imports x to import udx
 	modules = []
@@ -45,7 +45,7 @@ def flatten_program(con, function_list, files_path):
 			module = j.split(" ")[1]#this is the imported module
 			#print "Estamos importando: ",module, "en el modulo: ", i
 			found = False
-			cursor.execute("SELECT orig_name,ud from functions")
+			cursor.execute("SELECT orig_name,du from functions")
 			for k in cursor:
 				index = k[0].rfind('.')
 				asoc_module = k[0][:index]
@@ -67,7 +67,7 @@ def flatten_program(con, function_list, files_path):
 				#print "absolute= ", asoc_module
 				#print "relative= ", asoc_module_relative
 				if asoc_module == module or asoc_module_relative==module:
-					ud_modules[i].append("import ud-" + str(k[1]))
+					ud_modules[i].append("import DU-" + str(k[1]))
 					found=True
 			if not found:
 				ud_modules[i].append(j)
@@ -92,7 +92,7 @@ def showTables(cursor):
 	for i in cursor:
 	    logging.info('"FLATTER::ORIG_NAME= ", %s',i[0])
 	    logging.info('"FLATTER::FINAL_NAME= ", %s',i[1])
-	    logging.info('"FLATTER::UD= ", %s',i[2])
+	    logging.info('"FLATTER::DU= ", %s',i[2])
 	
 
 

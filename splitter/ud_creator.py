@@ -22,15 +22,15 @@ def create_ud(con,i,input_path,output_path):
 		#enter in file, copy the function text,
 		#process the function name translating invocations with final invocations
 		#and include it into the ud file
+	pass
 
 def translate_invocation(con,orig_module,orig_function_name,invoked_function,i,ud_itf_dict):
 	'''orig function invokes invoked function
-	si la funcion invocada no esta en i, la traducción incluira el itf, 
-	Ej: ud45_itf.f
+	si la funcion invocada no esta en i, la traduccion incluira el itf, 
+		Ej: ud45_itf.f
 	guardamos en un diccionario las itfs creadas para poder generar luego Uds_itf
 	no repetmos funciones que ya esten en alguna entrada del diccionario
 	ej: {ud-xx_itf:[f1,f2],...}
 	'''
-
 	pass
 

@@ -2,9 +2,9 @@
 
 def create_dus(con,matrix,input_path,output_path):
 	#primero entramos en la tabla de fucniones, y para las funcinoes colapsadas, les actualizamos el ud
-	ud_itf_dict={}
+#ud_itf_dict={}
 	for i in range(1,len(matrix[0])-1):
-		create_du(con,i,input_path,output_path,ud_itf_dict)
+		create_du(con,i,input_path,output_path) #,ud_itf_dict)
 	'''por ultimo creamos las UD_itf'''
 	#create_uds_itf(ud_itf_dict)
 

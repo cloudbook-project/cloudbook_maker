@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sqlite3
 from graph_analyzer import graph_analyzer
-#from splitter import splitter
+from splitter import splitter
 
 
 def showTables(con):
@@ -33,6 +33,9 @@ con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete
 
 matrix = graph_analyzer.graph_builder(con, "../example_program_001")
 
-#splitter.split_program(con,matrix,2,'../example_program/splitter_output')
+splitter.split_program(con,matrix,2,"../example_program_001",'../splitter_output')
 
-showTables(con)
+
+		
+		
+#showTables(con)

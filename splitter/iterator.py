@@ -25,10 +25,10 @@ def iterate(con,matrix,desired_num_du):
 		when the number of DU is equal to number of desired DUs, then the process stops'''
 
 	#first step is to clean matrix. remove functions if they are not invoked
-	matrix=clean_matrix(matrix)
+	#matrix=clean_matrix(matrix)
 		
 	#iteration 0. Num DUs is the number of functions
-	print_matrix(matrix)
+	#print_matrix(matrix)
 	num_du= len(matrix[0])-1
 	while(num_du>desired_num_du):
 		
@@ -38,32 +38,36 @@ def iterate(con,matrix,desired_num_du):
 		#----------------------------------------------------------------------------
 		num_cols=len(matrix[0])
 		num_rows=len(matrix)
-		print "\n num_cols = ",num_cols, " num_rows = ",num_rows, "\n"
+		#print "\n num_cols = ",num_cols, " num_rows = ",num_rows, "\n"
 		max_invocations=0
 		f1_row=0
 		f1_col=0
 		f2_row=0
 		f2_col=0
+		len_collapsable=2 #initially nothing is collapsed
 
 		for i in range(1,num_rows):
 			for j in range(1,num_cols):
 				# self-invocation is not relevant
-				if (i!=j) and (matrix[i][j] > max_invocations):
+				if (i!=j) and (matrix[i][j] >= max_invocations):
+					if (matrix[i][j] == max_invocations):
+						if (len(matrix[0][j])>len_collapsable):
+							continue
 					max_invocations=matrix[i][j]
-					
 					f2_col=i # f2 invocation column is the row
 					f1_col=j # f1 invocation column is the column
 					f1_row=f1_col
 					f2_row=f2_col
+					len_collapsable =len(matrix[0][j])
 					
-		print  " max matrix value found =",max_invocations, "at row=",f2_row, " col =", f1_col, "\n"
+		#print  " max matrix value found =",max_invocations, "at row=",f2_row, " col =", f1_col, "\n"
+
 
 		if (f2_row==0 and f1_col==0):
-			print "not possible to collapse more"
+			#print "not possible to collapse more"
 			return matrix
 
-
-		print "collapsing functions..."
+		#print "collapsing functions..."
 
 		#collapse functions matrix[0][f1_col] and matrix[0][f1_row]
 		#----------------------------------------------------------------------------
@@ -120,8 +124,8 @@ def iterate(con,matrix,desired_num_du):
 		matrix=matrix_new2
 		num_du= len(matrix)-1
 
-		print "matrix:"
-		print_matrix(matrix_new2)
+		#print "matrix:"
+		#print_matrix(matrix_new2)
 		
 
 	return matrix
@@ -135,55 +139,3 @@ def print_matrix(matrix):
 	for i in range(0,num_rows):
 		print (matrix[i])
 
-def clean_matrix(matrix):
-	
-	clean=False
-	while (clean==False):
-		num_cols=len(matrix[0])
-		num_rows=len(matrix)
-		row_to_clean=-1
-		print ("cleaning matrix... rows=",num_rows)
-		print_matrix(matrix)
-
-		for i in range(1,num_rows):
-			sum=0
-			for j in range(1,num_cols):
-				sum+=matrix[i][j]
-
-			if (sum==0):
-				row_to_clean=i
-
-		print ("row to clean: ",row_to_clean)
-
-		if row_to_clean==-1 or row_to_clean==1: # main is row 1
-			clean=True
-
-		else:
-			matrix =remove_row(matrix, row_to_clean)
-			row_to_clean=-1
-			
-		
-
-	return matrix
-
-def remove_row(matrix, row_to_clean):
-	print "cleaning row ", row_to_clean
-	num_cols=len(matrix[0])
-	num_rows=len(matrix)
-	matrix_new2= [[None] * (num_cols-1) for i in range(num_rows-1)]
-	row2=0
-	col2=0
-	for i in range(0,num_rows):
-		if (i==row_to_clean):
-			continue
-		for j in range(0,num_cols):
-			if (j==row_to_clean):
-				continue
-			matrix_new2[row2][col2]=matrix[i][j]
-			col2+=1
-		row2+=1
-		col2=0
-
-	matrix=matrix_new2
-	#print_matrix(matrix)
-	return matrix

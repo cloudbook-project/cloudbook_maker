@@ -67,7 +67,7 @@ def flatten_program(con, function_list, files_path):
 				#print "absolute= ", asoc_module
 				#print "relative= ", asoc_module_relative
 				if asoc_module == module or asoc_module_relative==module:
-					ud_modules[i].append("import DU-" + str(k[1]))
+					ud_modules[i].append("import du_" + str(k[1]))
 					found=True
 			if not found:
 				ud_modules[i].append(j)

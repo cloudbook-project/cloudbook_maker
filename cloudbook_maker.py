@@ -38,4 +38,4 @@ splitter.split_program(con,matrix,2,"../example_program_001",'../splitter_output
 
 		
 		
-#showTables(con)
+showTables(con)

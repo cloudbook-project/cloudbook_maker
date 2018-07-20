@@ -2511,3 +2511,49 @@ INFO:root:"ORIG_NAME= ", dir1.file2.f3
 INFO:root:"ORIG_NAME= ", dir2.file3.f4
 INFO:root:"ORIG_NAME= ", dir2.file3.f5
 INFO:root:FLATTER::inserts ud number
+INFO:root:
+This is the logfile for files_scanner.py
+
+INFO:root:
+This is the logfile for files_injector.py
+
+INFO:root:
+This is the logfile for function_scanner.py
+
+INFO:root:
+This is the logfile for matrix_filler.py
+
+INFO:root:
+This is the logfile for files_scanner.py
+
+INFO:root:
+This is the logfile for files_injector.py
+
+INFO:root:
+This is the logfile for function_scanner.py
+
+INFO:root:
+This is the logfile for matrix_filler.py
+
+INFO:root:
+This is the logfile for files_scanner.py
+
+INFO:root:
+This is the logfile for files_injector.py
+
+INFO:root:
+This is the logfile for function_scanner.py
+
+INFO:root:
+This is the logfile for matrix_filler.py
+
+INFO:root:Database connected and tables created
+INFO:root:orig names inserted in table "FUNCTIONS"
+INFO:root:lets check the table
+INFO:root:"ORIG_NAME= ", file_main.main
+INFO:root:"ORIG_NAME= ", dir1.file1.f1
+INFO:root:"ORIG_NAME= ", dir1.file1.f2
+INFO:root:"ORIG_NAME= ", dir1.file2.f3
+INFO:root:"ORIG_NAME= ", dir2.file3.f4
+INFO:root:"ORIG_NAME= ", dir2.file3.f5
+INFO:root:FLATTER::inserts ud number

@@ -19,7 +19,7 @@ def create_du(con,function_list,input_path,output_path):
 	#for each function name in function_list:
 		#enter in original file, copy the function text,
 		#analizar el texto y buscar la primera funcion de la tabla de funciones, en caso de encontrarla
-		#se traduce, despues se hace lo mismo con la segunda fun de la tabla de funciones, y así hasta el final
+		#se traduce, despues se hace lo mismo con la segunda fun de la tabla de funciones, y asi hasta el final
 		#El proceso de traduccion consiste en(se puede hacer en translate invocation):
 			#ver translate_invocation()
 		#after translation of invocations of function text, include it into the du file

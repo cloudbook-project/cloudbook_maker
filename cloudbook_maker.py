@@ -31,9 +31,9 @@ def copy_input_directory():
 
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
 
-matrix = graph_analyzer.graph_builder(con, "../example_program_001")
+matrix = graph_analyzer.graph_builder(con, "../example_program_001/input")
 
-splitter.split_program(con,matrix,2,"../example_program_001",'../splitter_output')
+splitter.split_program(con,matrix,2,"../example_program_001/input",'../example_program_001/output')
 
 
 		

@@ -35,7 +35,4 @@ matrix = graph_analyzer.graph_builder(con, "../example_program_001/input")
 
 splitter.split_program(con,matrix,2,"../example_program_001/input",'../example_program_001/output')
 
-
-		
-		
-showTables(con)
+#showTables(con)

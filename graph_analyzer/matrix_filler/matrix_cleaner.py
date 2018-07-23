@@ -24,7 +24,7 @@ def clean_matrix(con,matrix):
 			clean=True
 
 		else:
-			remove_function(con, matrix[i][0]) # must be done before update matrix
+			remove_function_and_DU(con, matrix[i][0]) # must be done before update matrix
 			matrix =remove_row(matrix, row_to_clean)
 			row_to_clean=-1
 			
@@ -60,17 +60,40 @@ def print_matrix(matrix):
 	for i in range(0,num_rows):
 		print (matrix[i])
 
-def remove_function(con,function_name):
+def remove_function_and_DU(con,function_name):
+
+	#lets proceed with table FUNCTIONS
+	#----------------------------------
 	cursor = con.cursor()
-	print "antes:"
-	cursor.execute("SELECT ORIG_NAME FROM FUNCTIONS")
+	#print "antes:"
+	cursor.execute("SELECT ORIG_NAME,DU FROM FUNCTIONS")
 	for i in cursor:
-	    print i[0]
+	    #print i[0]
+	    if function_name==i[0]:
+	    	du_delete=i[1]
+	    	#print "funcion encontrada!", str(du_delete)
+	    	remove_du(con, du_delete)
+
 	cursor.execute("delete from FUNCTIONS where ORIG_NAME ='"+function_name+"'")
-	print "despues:"
+	#print "despues:"
 
 	cursor.execute("SELECT ORIG_NAME FROM FUNCTIONS")
-	for i in cursor:
-	    print i[0]
+	#for i in cursor:
+	#    print i[0]
 	
 
+def remove_du(con, du):
+	cursor=con.cursor()
+	cursor.execute("SELECT ORIG_NAME,FINAL_IMPORTS from MODULES")
+	imports_list=[]
+	imports_list2=[]
+	for row in cursor:
+		#print "before:-->", row[1]
+		
+		#print "buscando...."+'"import du_'+str(du)+'",'
+		imports_list=row[1].replace("import du_"+str(du),"")
+		imports_list2=imports_list.replace(', ""', "")
+		#print "after:-->", imports_list2
+		cursor2=con.cursor()
+		#print "UPDATE MODULES SET FINAL_IMPORTS ='"+ imports_list2+ "' WHERE ORIG_NAME='"+row[0]+"'"
+		cursor2.execute("UPDATE MODULES SET FINAL_IMPORTS ='"+ imports_list2+ "' WHERE ORIG_NAME='"+row[0]+"'")

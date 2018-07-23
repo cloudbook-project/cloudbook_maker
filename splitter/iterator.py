@@ -1,5 +1,7 @@
 #iterates over the functions matrix
 import collapser
+import json
+
 
 def iterate_fake(con,matrix,num_deployable_units):
 	num_cols=6
@@ -83,6 +85,11 @@ def iterate(con,matrix,desired_num_du):
 				matrix_new[i][j]=matrix[i][j]
 		
 
+		#update DU identifier
+		#---------------------
+
+		update_DU(con, matrix_new[0][f2_col],matrix_new[0][f1_col])
+
 		#collapse titles
 		#-----------------
 		#new function is a list of two functions
@@ -139,3 +146,50 @@ def print_matrix(matrix):
 	for i in range(0,num_rows):
 		print (matrix[i])
 
+
+def update_DU(con, f2_list, f1_list):
+	
+	#lets proceed with functions table
+	#----------------------------------
+	list2=[[]]
+	list1=[[]]
+
+	
+
+	if isinstance(f2_list, str):
+		list2[0]=f2_list
+	else:
+		list2=f2_list
+	if isinstance(f1_list, str):
+		list1[0]=f1_list
+	else:
+		list1=f1_list
+	
+	cursor = con.cursor()
+	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME='"+list1[0]+"'")
+
+	#for row in cursor:
+	#	du=row[0]
+	du=cursor.fetchone()[0]
+
+	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME='"+list2[0]+"'")
+	du_old=cursor.fetchone()[0]
+
+	for i in list2:
+		cursor.execute("UPDATE FUNCTIONS set DU="+str(du)+" where ORIG_NAME='"+i+"'")
+	
+	#now proceed with modules table
+	#--------------------------------
+	cursor.execute("SELECT ORIG_NAME,FINAL_IMPORTS from MODULES")
+	imports_list=[]
+	for row in cursor:
+		#print "before:-->", row[1]
+		
+		imports_list=row[1].replace("import du_"+str(du_old),"import du_"+str(du) )
+		#print "after:-->", imports_list
+		cursor2=con.cursor()
+		#print "UPDATE MODULES SET FINAL_IMPORTS ='"+ imports_list+ "' WHERE ORIG_NAME='"+row[0]+"'"
+		cursor2.execute("UPDATE MODULES SET FINAL_IMPORTS ='"+ imports_list+ "' WHERE ORIG_NAME='"+row[0]+"'")
+		
+
+	

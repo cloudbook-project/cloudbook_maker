@@ -1,5 +1,5 @@
 
-def clean_matrix(matrix):
+def clean_matrix(con,matrix):
 	
 	clean=False
 	while (clean==False):
@@ -24,6 +24,7 @@ def clean_matrix(matrix):
 			clean=True
 
 		else:
+			remove_function(con, matrix[i][0]) # must be done before update matrix
 			matrix =remove_row(matrix, row_to_clean)
 			row_to_clean=-1
 			
@@ -58,3 +59,18 @@ def print_matrix(matrix):
 	num_rows=len(matrix)
 	for i in range(0,num_rows):
 		print (matrix[i])
+
+def remove_function(con,function_name):
+	cursor = con.cursor()
+	print "antes:"
+	cursor.execute("SELECT ORIG_NAME FROM FUNCTIONS")
+	for i in cursor:
+	    print i[0]
+	cursor.execute("delete from FUNCTIONS where ORIG_NAME ='"+function_name+"'")
+	print "despues:"
+
+	cursor.execute("SELECT ORIG_NAME FROM FUNCTIONS")
+	for i in cursor:
+	    print i[0]
+	
+

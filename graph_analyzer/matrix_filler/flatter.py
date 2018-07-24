@@ -11,7 +11,7 @@ def flatten_program(con, function_list, files_path):
 	cursor = con.cursor()
 	logging.info('FLATTER::inserts ud number')
 	for i in range(len(function_list)):
-		cursor.execute("UPDATE functions set DU = "+str(i)+" WHERE orig_name = '"+function_list[i]+"'")
+		cursor.execute("UPDATE functions set DU = "+ str(i) + ", FINAL_NAME = 'f"+str(i)+"' WHERE orig_name = '"+function_list[i]+"'")
 		# function main is the first position of array function_list and therefore UD-0 is assigned to main
 	#step2: check modules and translate imports x to import udx
 	modules = []

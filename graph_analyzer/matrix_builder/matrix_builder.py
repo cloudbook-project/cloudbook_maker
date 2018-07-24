@@ -34,8 +34,8 @@ def build_matrix(con):
 				}
 
 	#List of functions
-	#function_list = ['file_main.main','dir1.file1.f1','dir1.file1.f2','dir1.file2.f3','dir2.file3.f4','dir2.file3.f5']
-	function_list = ['file_main.main','dir1.file1.f1','dir1.file2.f2','dir2.file3.f3','dir2.file3.f4','dir2.file3.f5']
+	#function_list = ['file_main.main','dir1.file1.fa','dir1.file1.fb','dir1.file2.fc','dir2.file3.fd','dir2.file3.fe']
+	function_list = ['file_main.main','dir1.file1.fa','dir1.file2.fb','dir2.file3.fc','dir2.file3.fd','dir2.file3.fe']
 
 	#Tables, created in function_list builder, created here for testing purposes
 	#con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
@@ -62,13 +62,13 @@ def build_matrix(con):
 
 	#We fill the table as it should be TODO make this with executescript()
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('file_main.main')")
-	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.f1')")
-	#cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.f2')")
-	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file2.f2')")
-	#cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file2.f3')")
-	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.f3')")
-	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.f4')")
-	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.f5')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.fa')")
+	#cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.fb')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file2.fb')")
+	#cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file2.fc')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fc')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fd')")
+	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fe')")
 
 	logging.info('orig names inserted in table "FUNCTIONS"')
 

@@ -2,9 +2,13 @@ import iterator
 import du_creator
 
 def split_program(con,matrix,desired_num_deployable_units,input_path,output_path):
+	print (">>>ENTER in split_program()...")
 	matrix = iterator.iterate(con,matrix,desired_num_deployable_units)
+
+	print ("\nTHE COLLAPSED FINAL MATRIX IS:")
 	print_matrix(matrix)
 	du_creator.create_dus(con,matrix,input_path,output_path)
+	print (">>>EXIT from split_program...")
 
 def print_matrix(matrix):
 	num_cols=len(matrix[0])

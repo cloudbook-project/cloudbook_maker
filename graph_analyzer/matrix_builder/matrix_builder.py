@@ -28,14 +28,22 @@ def build_matrix(con):
 		#			  import dir2.file3
 
 	#Dictionary (clean whithout __init__.py)
+
+
 	files_dict = {'./': ['file_main.py'],
 				'./dir1':['file1.py','file2.py'],
 				'./dir2':['file3.py']
 				}
 
+	files_dict=file_scanner.file_scanner2() # NOT FAKE!!!!
+	print ("el escaneo de files es :")
+	print files_dict
 	#List of functions
 	#function_list = ['file_main.main','dir1.file1.fa','dir1.file1.fb','dir1.file2.fc','dir2.file3.fd','dir2.file3.fe']
 	function_list = ['file_main.main','dir1.file1.fa','dir1.file2.fb','dir2.file3.fc','dir2.file3.fd','dir2.file3.fe']
+
+	function_list=function_scanner.get_functions(files_dict)
+
 
 	#Tables, created in function_list builder, created here for testing purposes
 	#con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
@@ -61,17 +69,17 @@ def build_matrix(con):
 	logging.info('Database connected and tables created')
 
 	#We fill the table as it should be TODO make this with executescript()
+	for i in function_list:
+		cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('"+i+"')")
+	'''
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('file_main.main')")
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.fa')")
-	#cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file1.fb')")
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file2.fb')")
-	#cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir1.file2.fc')")
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fc')")
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fd')")
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fe')")
-
+	'''
 	logging.info('orig names inserted in table "FUNCTIONS"')
-
 	#Check Results
 	cursor.execute("SELECT * FROM FUNCTIONS")
 	logging.info('lets check the table')

@@ -18,6 +18,7 @@ def iterate_fake(con,matrix,num_deployable_units):
 
 
 def iterate(con,matrix,desired_num_du):
+	print (">>>ENTER in iterate()...")
 	''' this function receives the matrix as input and the number of desired DUs.
 		The desired number of DUs will be (normally) the number of available machines.
 		Therefore the final number of DUs must be equal or bigger than number of desired DUs.
@@ -134,7 +135,7 @@ def iterate(con,matrix,desired_num_du):
 		#print "matrix:"
 		#print_matrix(matrix_new2)
 		
-
+	print (">>>EXIT from iterate()...")
 	return matrix
 
 	#return iterate_fake(con,matrix,desired_num_du)

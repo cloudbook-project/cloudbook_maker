@@ -27,6 +27,7 @@ def remove_output_directory():
 
 
 def copy_input_directory():
+	#copy and remove comments
 	pass
 
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 

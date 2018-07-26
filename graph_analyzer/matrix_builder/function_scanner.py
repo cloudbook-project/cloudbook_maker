@@ -29,8 +29,14 @@ def get_functions(files_dict):
 					func_name=dir2+"."+f.replace(".py","")+"."+line.replace("def ","")
 					func_name=func_name.replace("():","")
 					func_name=func_name.replace("\n","")
+					if func_name[0]=='.':
+						func_name = func_name[1:len(func_name)]
 					print func_name
-					func_list.append(func_name)
+					if func_name.find('.main')!=-1 :
+						#func_list = ['func_name']+func_list
+						func_list.insert(0,func_name)
+					else:
+						func_list.append(func_name)
 				line=fo.readline()	
 			 
 			fo.close()

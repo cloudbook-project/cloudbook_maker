@@ -8,14 +8,14 @@ def create_dus(con,matrix,input_path,output_path):
 
 
 def create_du(con,function_list,input_path,output_path):
-	print "============== create du ==============="
+	print "\t============== create du ==============="
 	#look in functions table for the first funtion name that matches with function_list[0]
 	#this row UD will be the name of this deployable unit and it will contains all function from function_list
-	print "Function list:", function_list
+	print "\tFunction list:", function_list
 	cursor = con.cursor()
 	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
 	du_name = "du_"+str(cursor.fetchone()[0])
-	print "Va a ser la du: ", du_name
+	print "\tVa a ser la du: ", du_name
 
 	#para cada elemento j, de function_list: 
 		#extraer su nombre de modulo original
@@ -24,11 +24,11 @@ def create_du(con,function_list,input_path,output_path):
 	final_imports = []
 	for i in function_list:
 		module_name = i[:i.rfind('.')] #extraer su nombre de modulo original
-		print "module_name de",i,"es",module_name 
+		print "\t\tmodule_name de",i,"es",module_name 
 		cursor.execute("SELECT FINAL_IMPORTS from MODULES where ORIG_NAME=="+"'"+module_name+"'")
 		#translate unicode to list of strings
 		for n in cursor.fetchone():
-			print "\t Imports en la bbdd:",n
+			#print "\tImports en la bbdd:",n
 			try:
 				sub_list = ast.literal_eval(n)
 				final_imports.extend(sub_list)
@@ -38,16 +38,17 @@ def create_du(con,function_list,input_path,output_path):
 	#remove auto_import
 	final_imports_aux = []
 	for i,elem in enumerate(final_imports):
-		print "elem= ",elem
+		#print "\telem= ",elem
 		if elem.find("du_") != -1:
-			print "import en la poscion ",i, ":", elem, "imports", final_imports
+			#print "\timport du en la poscion ",i, ":", elem
 			#final_imports.remove(elem)
-			#print final_imports
+			#print f\tinal_imports
+			pass
 		else:
 			final_imports_aux.append(elem)
 
 	final_imports = final_imports_aux
-	print "Final Imports: ", final_imports		
+	print "\t\tFinal Imports: ", final_imports, "\n"		
 
 
 	#create ud file and open it for write
@@ -73,33 +74,62 @@ def create_du(con,function_list,input_path,output_path):
 		name = name[1:len(name)]
 		cursor.execute("SELECT FINAL_NAME from FUNCTIONS where ORIG_NAME = '"+i+"'")
 		final_name = cursor.fetchone()[0]
-		print "\t",module, name
-		print input_path
+		#print "\tmodule, name: ",module, name
+		#print "\tinput path: ",input_path
 		input_file = input_path+"/"+module.replace('.','/')+".py"
 		fi = open(input_file,'r')
 		isfun=False
 		for i,line in enumerate(fi,1):
+			translated_fun = False
 			tabs = 0
 			tabs += line.count('\t')
 			linea = line.split()
 			fun_name = "def " + name
 			if (fun_name in line) and (tabs==0):
+				print "\t\tHemos encontrado la funcion: ", name, " que sera ", final_name
 				fo.write(line.replace(name, final_name))
 				isfun = True
 			if (fun_name not in line) and (isfun):
-				#fo.write(line)
-				#print line#################################Translate aqui
-				if "()" in line:#TO DO: cambiar esto, y buscar todas las funciones de la tabla functions
-					#print "aqui hay funcion", line
-					invoked_fun = ""
-					invoked_fun=line[:line.rfind("(")]
-					invoked_fun=invoked_fun.replace("\t","")
-					#print "invokedfun",invoked_fun
-					#llamar a traduccion
-					print "hay que traducir:"+line+ " en modulo, fun name, invokedfun: "+module,fun_name,invoked_fun
-					translate_invocation(con,module,fun_name,invoked_fun,function_list,fo,du_name,line,tabs)#falta numero tabulaciones
-				else:
-					fo.write(line)
+				print "\t\tMiramos dentro de la funcion"
+				#Hay que ver si dentro de la funcion, se llama a alguna otra funcion de la tabla functions
+				#hago una query de los orignames y los guardo en una lista
+				cursor.execute("SELECT ORIG_NAME from FUNCTIONS")
+				row = cursor.fetchall()
+				orig_list = [] #list of orignames
+				for j in row:
+					orig_fun_name = j[0]
+					trunc = orig_fun_name.rfind(".")+1
+					orig_fun_name = orig_fun_name[trunc:len(orig_fun_name)]
+					orig_list.append((j[0].encode('ascii'),orig_fun_name.encode('ascii')))#tuplas(nombreorig,solofun)
+				print "\t\t\tBuscamos estas: ", orig_list
+				#miro si la fun (segunda parte de la tupla) esta en line
+				for j in orig_list:
+					if j[1] in line:#nombre solo fun
+						print "\t\t\tEncuentro esta: ", j[1], " aqui", i, ": ", line
+						#supongo q la linea es solo la invocacion
+						#reconocer la invocacion en la linea
+						aux_line = line
+						invocation_index = 0#to do, usarlo para escribir bien la linea, solo traducir la invocacion
+						aux_line = aux_line.split()
+						print "\t\t\tEsta escrita asi", aux_line
+						for i,elem in enumerate(aux_line):
+							if j[1] in elem:
+								aux_line = aux_line[i]
+								invocation_index = i
+
+						invocation_fun = aux_line
+						invocation_fun = invocation_fun[:invocation_fun.rfind("(")]
+						print "\t\t\tLa invocacion que buscamos es", invocation_fun, " y en FUNCTIONS es ", j[0]
+						if j[0] == invocation_fun:
+							print "\t\t\tEsta bien escrita"
+							complete_name = invocation_fun
+						else:
+							complete_name = module[:module.rfind('.')+1]+invocation_fun
+							print "\t\t\tCompletamos nombre y queda: ", complete_name
+						translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs)
+						translated_fun = True
+				if translated_fun==False:
+						fo.write(line)
 
 			if (fun_name not in line) and (tabs==0):
 				#Hara falta traducir aqui
@@ -107,7 +137,7 @@ def create_du(con,function_list,input_path,output_path):
 	fi.close()
 	if (du_name == "du_0"):
 		fo.write('''if __name__ == '__main__':
-	main()
+	f0()
 			''')
 	fo.close()
 
@@ -118,14 +148,9 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			#else invoke("du_xx.f(...)"), la du_xx la sacamos de la tabla de funciones
 	c = con.cursor()
 	newline = ""
-	#invoked_function = "dir1.file1.f1"
-	#TO DO
-	#step 1
-	#translate invoked_funtion into complete original name, in order to seacrh it into functions table
-	#step 2
-	#pillar final name de ese orig name, que va a ser el invoked_function
 
-	c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME like '%"+invoked_function+"%'")
+	#c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME like '%"+invoked_function+"%'")
+	c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+invoked_function+"'")
 	row = c.fetchone()
 	invoked_du = row[0]
 	invoked_function = row[1]
@@ -134,7 +159,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 		newline = invoked_function+"()"
 	else:
 		#invoked_function = invoked_function[invoked_function.rfind("."):len(invoked_function)]
-		newline = "invoke('du_"+str(invoked_du)+"."+invoked_function+"()')"
+		newline = "invoke('du_"+str(invoked_du)+"' , '"+invoked_function+"()')"
 	for i in range(tabs):
 		newline = "\t"+newline
 	file_descriptor.write(newline)

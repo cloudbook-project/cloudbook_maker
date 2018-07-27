@@ -153,6 +153,12 @@ def create_du(con,function_list,input_path,output_path):
 				isfun = False
 	fi.close()
 	if (du_name == "du_0"):
+		fo.write('''def invoke(a,b):
+			exec("import " + a)
+			exec(a+"."+b)
+			''')
+	fo.write("\n")
+	if (du_name == "du_0"):
 		fo.write('''if __name__ == '__main__':
 	f0()
 			''')

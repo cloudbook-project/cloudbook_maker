@@ -134,6 +134,7 @@ def create_du(con,function_list,input_path,output_path):
 						new_line = ""
 						for k,elem in enumerate(aux_line2):
 							new_line = new_line + " " + aux_line2[k]
+						new_line = new_line.replace(" ","")
 						#print "LINEA: ",aux_line2
 						#for k,elem in enumerate(aux_line2):
 						#	if k < invocation_index:

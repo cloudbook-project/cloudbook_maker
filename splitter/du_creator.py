@@ -129,12 +129,17 @@ def create_du(con,function_list,input_path,output_path):
 						new_line = translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs)
 						#escribimos la newline dentro de su linea probar poniendo una linea completa
 						aux_line2 = line.split()
-						print "LINEA: ",aux_line2
+						aux_line2[invocation_index] = new_line
+						#new_line = str(aux_line2)
+						new_line = ""
 						for k,elem in enumerate(aux_line2):
-							if k < invocation_index:
-								new_line = elem + " " + new_line
-							if k > invocation_index:
-								new_line = new_line + " " + elem
+							new_line = new_line + " " + aux_line2[k]
+						#print "LINEA: ",aux_line2
+						#for k,elem in enumerate(aux_line2):
+						#	if k < invocation_index:
+						#		new_line = elem + " " + new_line
+						#	if k > invocation_index:
+						#		new_line = new_line + " " + elem
 						for i in range(tabs):
 							new_line = "\t"+new_line
 						fo.write(new_line)

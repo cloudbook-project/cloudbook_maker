@@ -1,7 +1,11 @@
 from __future__ import print_function
-import sqlite3
 from graph_analyzer import graph_analyzer
 from splitter import splitter
+import sqlite3
+import logging
+
+logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
+logging.info('\nThis is the logfile for the cloudbook maker\n')
 
 
 def showTables(con):

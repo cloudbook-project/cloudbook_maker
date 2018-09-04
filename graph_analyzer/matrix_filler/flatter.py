@@ -9,7 +9,7 @@ def flatten_program(con, function_list, files_path):
 	#TODO: Detect ud0 for better assignation
 	#step1: assign ud's to functions
 	cursor = con.cursor()
-	logging.info('FLATTER::inserts ud number')
+	#logging.info('FLATTER::inserts ud number')
 	for i in range(len(function_list)):
 		cursor.execute("UPDATE functions set DU = "+ str(i) + ", FINAL_NAME = 'f"+str(i)+"' WHERE orig_name = '"+function_list[i]+"'")
 		# function main is the first position of array function_list and therefore UD-0 is assigned to main
@@ -81,18 +81,7 @@ def flatten_program(con, function_list, files_path):
 		module_name = module_name[1:(len(module_name)+1)]
 		cursor.execute("INSERT INTO MODULES(ORIG_NAME,IMPORTS,FINAL_IMPORTS) VALUES ('"+module_name+"','"+json.dumps(modules_dict[i])+"','"+json.dumps(ud_modules[i])+"')")
 
-	#showTables(cursor)
-
-
-
-def showTables(cursor):
-	#Check Results
-	cursor.execute("SELECT * FROM functions")
-	logging.info('FLATTER::lets check the table')
-	for i in cursor:
-	    logging.info('"FLATTER::ORIG_NAME= ", %s',i[0])
-	    logging.info('"FLATTER::FINAL_NAME= ", %s',i[1])
-	    logging.info('"FLATTER::DU= ", %s',i[2])
+	#d(cursor)
 	
 
 

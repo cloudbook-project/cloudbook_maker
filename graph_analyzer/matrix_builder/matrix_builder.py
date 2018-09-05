@@ -5,13 +5,6 @@ import function_scanner
 import sqlite3 #for testing purposes
 import logging
 
-logging.basicConfig(format='%(asctime)s %(message)s',
-                datefmt='%m/%d/%Y %I:%M:%S %p',
-                filename='matrix_filler.log',
-                filemode='w',
-                level=logging.DEBUG)
-logging.info('\nThis is the logfile for matrix_filler.py\n')
-
 def build_matrix(con):
 	#input data (for testing purposes)
 
@@ -66,7 +59,7 @@ def build_matrix(con):
 	PRIMARY KEY (ORIG_NAME)
 	)
 	''')
-	logging.info('Database connected and tables created')
+	#logging.info('Database connected and tables created')
 
 	#We fill the table as it should be TODO make this with executescript()
 	for i in function_list:
@@ -79,12 +72,12 @@ def build_matrix(con):
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fd')")
 	cursor.execute("INSERT INTO FUNCTIONS(ORIG_NAME) VALUES ('dir2.file3.fe')")
 	'''
-	logging.info('orig names inserted in table "FUNCTIONS"')
+	#logging.info('orig names inserted in table "FUNCTIONS"')
 	#Check Results
 	cursor.execute("SELECT * FROM FUNCTIONS")
-	logging.info('lets check the table')
-	for i in cursor:
-	    logging.info('"ORIG_NAME= ", %s',i[0])
+	#logging.info('lets check the table')
+	#for i in cursor:
+	    #logging.info('"ORIG_NAME= ", %s',i[0])
 
 	#Starts with function_list filler
 	#logging.info("Lets do flatter")

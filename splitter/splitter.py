@@ -3,6 +3,7 @@ import du_creator
 
 def split_program(con,matrix,desired_num_deployable_units,input_path,output_path):
 	print (">>>ENTER in split_program()...")
+	print_matrix(matrix)
 	matrix = iterator.iterate(con,matrix,desired_num_deployable_units)
 
 	print ("\nTHE COLLAPSED FINAL MATRIX IS:")

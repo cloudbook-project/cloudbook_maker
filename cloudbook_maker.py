@@ -1,7 +1,11 @@
 from __future__ import print_function
-import sqlite3
 from graph_analyzer import graph_analyzer
 from splitter import splitter
+import sqlite3
+import logging
+
+logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
+logging.info('\nThis is the logfile for the cloudbook maker\n')
 
 
 def showTables(con):
@@ -36,4 +40,4 @@ matrix = graph_analyzer.graph_builder(con, "../example_program_001/input")
 
 splitter.split_program(con,matrix,2,"../example_program_001/input",'../example_program_001/output')
 
-#showTables(con)
+showTables(con)

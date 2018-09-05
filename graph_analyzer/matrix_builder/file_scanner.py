@@ -1,8 +1,6 @@
 import os
 import logging
 
-logging.basicConfig(filename='file_scanner.log',level=logging.DEBUG)
-logging.info('\nThis is the logfile for files_scanner.py\n')
 
 def file_scanner():
 	'''This function generates a dictionary of directories and files

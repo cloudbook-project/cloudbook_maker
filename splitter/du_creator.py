@@ -67,6 +67,8 @@ def create_du(con,function_list,input_path,output_path):
 		fo.write(i)
 		fo.write("\n")
 	fo.write("\n")
+	fo.write("invoker=None\n\n")
+
 	for i in function_list:
 		aux_ind = i.rfind('.')
 		module = i[:i.rfind('.')]
@@ -151,18 +153,22 @@ def create_du(con,function_list,input_path,output_path):
 						translated_fun = True
 				if translated_fun==False:
 						fo.write(line)
-
 			if (fun_name not in line) and (tabs==0):
 				#Hara falta traducir aqui
 				isfun = False
+		
+		
+				
+		fo.write("\n\treturn 'cloudbook: done' \n\n")					
+
 	fi.close()
 	if (du_name == "du_0"):
-		fo.write('''def invoke(a,b):
-			exec("import " + a)
-			exec(a+"."+b)
-			''')
-	fo.write("\n")
-	if (du_name == "du_0"):
+		fo.write('''def main():
+	f0()
+	return "cloudbook: done"
+
+''')
+
 		fo.write('''if __name__ == '__main__':
 	f0()
 			''')
@@ -186,7 +192,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 		newline = invoked_function+"()"
 	else:
 		#invoked_function = invoked_function[invoked_function.rfind("."):len(invoked_function)]
-		newline = "invoke('du_"+str(invoked_du)+"' , '"+invoked_function+"()')"
+		#newline = "invoke('du_"+str(invoked_du)+"' , '"+invoked_function+"()')"
+		newline = "invoker('du_"+str(invoked_du)+"."+invoked_function+"()')"
 	#for i in range(tabs):
 		#newline = "\t"+newline
 	#file_descriptor.write(newline)

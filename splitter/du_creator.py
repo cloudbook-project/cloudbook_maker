@@ -87,6 +87,9 @@ def create_du(con,function_list,input_path,output_path):
 			tabs += line.count('\t')
 			linea = line.split()
 			fun_name = "def " + name
+			###Translate prints
+
+			###Three kinds of fun in file
 			if (fun_name in line) and (tabs==0):
 				print "\t\tHemos encontrado la funcion: ", name, " que sera ", final_name
 				fo.write(line.replace(name, final_name))
@@ -163,6 +166,10 @@ def create_du(con,function_list,input_path,output_path):
 
 	fi.close()
 	if (du_name == "du_0"):
+		fo.write('''def cloudbook_print(element):
+	print element
+	
+''')
 		fo.write('''def main():
 	f0()
 	return "cloudbook: done"
@@ -199,4 +206,3 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	#file_descriptor.write(newline)
 	#file_descriptor.write("\n")
 	return newline
-

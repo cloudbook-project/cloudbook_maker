@@ -95,7 +95,8 @@ def create_du(con,function_list,input_path,output_path):
 				line_aux = line.split("@",1)
 				print line_aux[1]
 				arg_aux = '"'+line_aux[1].rstrip()
-				arg_aux = "eval("+arg_aux+")"
+				#arg_aux = "eval("+arg_aux+")"
+				arg_aux = arg_aux
 				print "Argumento Llamada", arg_aux
 				
 				for i in range(tabs):
@@ -103,12 +104,12 @@ def create_du(con,function_list,input_path,output_path):
 					newvar = "\t"+newvar
 				if du_name == "du_0":
 					newvar = newvar + "cloudbook_txt = " + arg_aux + "\n"
-					newprint = newprint + 'cloudbook_print(cloudbook_txt)'
+					newprint = newprint + 'cloudbook_print(\"\'\"+'+"cloudbook_txt+"+"\"\'\""+")"
 					line = newvar+ "\n" + newprint+"\n"
 				else:
 					#arg_aux = "'"+arg_aux+"'"
 					newvar = newvar + "cloudbook_txt = " + arg_aux + "\n" 
-					newprint = newprint + 'invoker("du_0.cloudbook_print('+'"+cloudbook_txt+"'+')")'
+					newprint = newprint + 'invoker("du_0.cloudbook_print(\'\"+'+"cloudbook_txt+\"\')\""+")"
 					line = newvar+ "\n" + newprint+"\n"
 			###Three kinds of fun in file
 			if (fun_name in line) and (tabs==0):

@@ -3,6 +3,7 @@ from graph_analyzer import graph_analyzer
 from splitter import splitter
 import sqlite3
 import logging
+import json
 
 logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
 logging.info('\nThis is the logfile for the cloudbook maker\n')
@@ -34,10 +35,19 @@ def copy_input_directory():
 	#copy and remove comments
 	pass
 
+def load_dictionary(filename):
+	with open(filename, 'r') as file:
+		aux = json.load(file)
+	return aux
+
+config_dict = load_dictionary("./config_maker.json")
+input_dir = config_dict["input_folder"]
+output_dir = config_dict["output_folder"]
+
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
 
-matrix = graph_analyzer.graph_builder(con, "../example_program_001/input")
+matrix = graph_analyzer.graph_builder(con, input_dir)
 
-splitter.split_program(con,matrix,2,"../example_program_001/input",'../example_program_001/output')
+splitter.split_program(con,matrix,2,input_dir,output_dir)
 
 showTables(con)

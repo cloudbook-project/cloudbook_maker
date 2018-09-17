@@ -88,7 +88,22 @@ def create_du(con,function_list,input_path,output_path):
 			linea = line.split()
 			fun_name = "def " + name
 			###Translate prints
-
+			newprint = ""
+			if "print " + '"@' in line:
+				print "AQUI PRINT"
+				line_aux = line.split("@",1)
+				print line_aux[1]
+				arg_aux = eval('"'+line_aux[1])
+				
+				for i in range(tabs):
+					newprint = "\t"+newprint
+				if du_name == "du_0":
+					newprint = newprint + 'cloudbook_print("'+arg_aux+'")'
+					line = newprint+"\n"
+				else:
+					arg_aux = "'"+arg_aux+"'"
+					newprint = newprint + 'invoker("du_0.cloudbook_print('+arg_aux+')")'
+					line =newprint+"\n"
 			###Three kinds of fun in file
 			if (fun_name in line) and (tabs==0):
 				print "\t\tHemos encontrado la funcion: ", name, " que sera ", final_name

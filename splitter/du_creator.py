@@ -168,6 +168,7 @@ def create_du(con,function_list,input_path,output_path):
 	if (du_name == "du_0"):
 		fo.write('''def cloudbook_print(element):
 	print element
+	return "cloudbook: done"
 	
 ''')
 		fo.write('''def main():

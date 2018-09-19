@@ -55,27 +55,19 @@ con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete
 
 matrix = graph_analyzer.graph_builder(con, input_dir)
 
-final_matrix = splitter.split_program(con,matrix,2,input_dir,output_dir)
+du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
 
-#generate du_list.json
-#print_matrix(final_matrix)
-print(final_matrix[0])
-'''{
-"du_0":{"cost":0, "size":100},
-"du_1":{"cost":1, "size":130}
-}'''
-cursor = con.cursor()
-du_list={}
-for i in range(1,len(final_matrix[0])):
-	function_list=final_matrix[0][i]
-	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
-	du_name = "du_"+str(cursor.fetchone()[0])
-	du_list[du_name]={}
-	du_list[du_name]["cost"]=randint(1,100)
-	du_list[du_name]["size"]=randint(1,100)
-print(du_list)
+du_dict={}
+for i in range(len(du_list)):
+	#function_list=final_matrix[0][i]
+	#cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
+	du_name = du_list[i]
+	du_dict[du_name]={}
+	du_dict[du_name]["cost"]=randint(1,100)
+	du_dict[du_name]["size"]=randint(1,100)
+print(du_dict)
 
-json_str = json.dumps(du_list)
+json_str = json.dumps(du_dict)
 fo = open("./du_list.json", 'w')
 fo.write(json_str)
 fo.close()

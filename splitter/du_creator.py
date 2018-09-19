@@ -3,8 +3,10 @@ import ast #for translating unicode strings
 
 def create_dus(con,matrix,input_path,output_path):
 	print "dus: ",range(1,len(matrix[0]))
+	du_list =[]
 	for i in range(1,len(matrix[0])):
-		create_du(con,matrix[0][i],input_path,output_path)
+		du_list.append(create_du(con,matrix[0][i],input_path,output_path))
+	return du_list
 
 
 def create_du(con,function_list,input_path,output_path):
@@ -203,6 +205,7 @@ def create_du(con,function_list,input_path,output_path):
 	f0()
 			''')
 	fo.close()
+	return du_name
 
 
 def translate_invocation(con,orig_module,orig_function_name,invoked_function,function_list,file_descriptor,du_name,line,tabs):

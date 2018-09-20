@@ -1,5 +1,6 @@
 #gets in every function and get functions calls.
 
+
 def create_matrix(function_list):
 	num_cols = len(function_list)+1
 	num_rows = num_cols
@@ -15,11 +16,62 @@ def create_matrix(function_list):
 			matrix[i][j]=0
 	return matrix
 
-def function_parser(function_list):
+def function_parser(con,input_path,function_list):
 	#create empty matrix
 	matrix = create_matrix(function_list)
+	matrix_test = create_matrix(function_list)
 	#fake filled of matrix for testing purposes
+	print "=====================PARSER===================="
+	#get number of functions
+	print "Hay ",len(function_list),"funciones"
+	fun_number = 0 #for accessing later the matrix
+	for num,i in enumerate(function_list):
+		print i
+		function_name = i[i.rfind('.')+1:]
+		print "Nombre de funcion",function_name,"con indice",num
+		#convert name function to path
+		module = i[:i.rfind('.')]
+		function_path = input_path+"/"+module.replace('.','/')+".py"
+		print "Nombre de fichero",function_path
+		#for every function open the file and work with it
+		with open(function_path,'r') as fi:
+			isfun = False
+			isloop = False
+			loop_st = "" #loop statements
+			looptabs = 0	#number of tabs to recognize the current loop
+			tabs = 0
+			for j,line in enumerate(fi,1):
+				tabs += line.count('\t')
+				if ("def "+ function_name) in line:
+					print "Encontrada funcion en linea",j
+					#tabs_fun = tabs
+					isfun = True
+					continue
+				if (isfun):
+					if ("def ") in line:
+						isfun=False
+					else:
+						print "linea: ",line.replace("\t","")
+						if (isloop) and (tabs != looptabs+1):#check if the loop es terminated
+							isloop = False
+							loop_st = ""
+						if "for " in line:#since this line it will be considered that we are inside the loop
+							looptabs += tabs+1
+							isloop = True
+							loop_st = line
+						#this line belongs to the function look for other function call
+						#evaluation is a tuple of (value,index of function_invoked)
+						evaluation = evaluate_line(function_name,line,function_list,isloop,loop_st) #checks if function name call another function
+						if evaluation[0] is not 0:
+							print "En el indice ",num+1,",",evaluation[1]+1," Voy a poner: ", evaluation[0]
+							#matrix_test[num+1][evaluation[1]+1] = evaluation[0]
+							matrix_test[evaluation[1]+1][num+1] = evaluation[0]
+	fun_number+=1
+	#showTables(con)
 	fill_fake(matrix)
+	print_matrix(matrix_test)
+	print "======Matrix comparation========"
+	print_matrix(matrix)
 	return matrix
 
 def fill_fake(matrix):
@@ -29,3 +81,52 @@ def fill_fake(matrix):
 	#print "\n"
 	#for i in range(len(matrix[0])):
 		#print matrix[i]
+
+def evaluate_line(fname,line,flist,isloop,loop_st): #dont get repeated function names
+	print "\tEntering in evaluate line"
+	print "\t isloop=",isloop
+	value = 0
+	fun_number=0
+	for num,i in enumerate(flist):
+		looked_function = i[i.rfind('.')+1:]
+		if looked_function in line:
+			print "\t Funcion encontrada:",looked_function,"con indice,",num
+			if (isloop == True):
+				print "\t ojo, es un bucle for"
+				#indexes for evaluation
+				left = loop_st.find("in") +2
+				right = len(loop_st)-2
+				print "\tEvaluo: ",loop_st[left:right]
+				value = len(eval(loop_st[left:right]))
+			#elif "while " in line:
+			#	pass
+			else:
+				print "\t le asignare un uno"
+				value = 1
+			#fun_number += 1
+			fun_number = num
+	print "\ttupla: ",value,fun_number
+	return (value,fun_number)
+
+def showTables(con):
+	#Check Results
+	cursor = con.cursor()
+	cursor.execute("SELECT * FROM functions")
+	print ('\nlets check the table FUNCTIONS\n')
+	for i in cursor:
+	    print ("ORIG_NAME =",i[0])
+	    print ("FINAL_NAME =",i[1])
+	    print ("UD =",i[2],"\n")
+	print("=============================\n")
+	cursor.execute("SELECT * FROM MODULES")
+	print ('lets check the table MODULES\n')
+	for i in cursor:
+	    print ("ORIG_NAME =",i[0])
+	    print ("IMPORTS =",i[1])
+	    print ("FINAL IMPORT =",i[2],"\n")
+
+def print_matrix(matrix):
+	num_cols=len(matrix[0])
+	num_rows=len(matrix)
+	for i in range(0,num_rows):
+		print (matrix[i])

@@ -72,7 +72,7 @@ def function_parser(con,input_path,function_list):
 	print_matrix(matrix_test)
 	print "======Matrix comparation========"
 	print_matrix(matrix)
-	return matrix
+	return matrix_test
 
 def fill_fake(matrix):
 	matrix[2][1] = 1 #main calls f1

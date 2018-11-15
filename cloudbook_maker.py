@@ -11,7 +11,7 @@ logging.info('\nThis is the logfile for the cloudbook maker\n')
 
 
 def showTables(con):
-	#Check Results
+	'''This function is used for get information of the sqlite tables involved'''
 	cursor = con.cursor()
 	cursor.execute("SELECT * FROM functions")
 	print ('\nlets check the table FUNCTIONS\n')
@@ -28,35 +28,28 @@ def showTables(con):
 	    print ("FINAL IMPORT =",i[2],"\n")
 
 
-def remove_output_directory():
-	pass
-
-
-def copy_input_directory():
-	#copy and remove comments
-	pass
-
 def load_dictionary(filename):
+	'''This function is used for getting the info coming from de config file'''
 	with open(filename, 'r') as file:
 		aux = json.load(file)
 	return aux
 
-def print_matrix(matrix):
-	num_cols=len(matrix[0])
-	num_rows=len(matrix)
-	for i in range(0,num_rows):
-		print (matrix[i])
+input_dict = load_dictionary("./config_maker.json")
+input_dir = input_dict["input_folder"]
+output_dir = input_dict["output_folder"]
 
-config_dict = load_dictionary("./config_maker.json")
-input_dir = config_dict["input_folder"]
-output_dir = config_dict["output_folder"]
+config_dict = {}
+config_dict["input_dir"] = input_dir
+config_dict["output_dir"] = output_dir
 
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
+config_dict["con"] = con
 
-matrix = graph_analyzer.graph_builder(con, input_dir)
+matrix = graph_analyzer.graph_builder(config_dict)
 
 du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
 
+#Creation of du_dict with du info
 du_dict={}
 for i in range(len(du_list)):
 	#function_list=final_matrix[0][i]

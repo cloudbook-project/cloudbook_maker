@@ -1,4 +1,12 @@
 {
 	"input_folder":"../example_program_001/input",
-	"output_folder":"../cloudbook_agent/du_files"
+	"output_folder":"../cloudbook_agent/du_files",
+	"circle_info":{
+		"NAME":"local",
+		"CIRCLE_ID": "local_id",
+		"DESCRIPTION": "to run examples",
+		"NUM_ATTACHED_AGENTS": "78",
+		"DISTRIBUTED_FS": "drive.google.com/drive/folders/...",
+		"STATUS": "IDLE"
+	}
 }

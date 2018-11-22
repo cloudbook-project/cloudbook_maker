@@ -6,7 +6,7 @@ import sqlite3
 import logging
 
 #print matrix_builder.build_matrix(con)
-logging.info('\nEnter in graph analyzer\n')
+#logging.info('\nEnter in graph analyzer\n')
 def graph_builder(config_dict):
 	print(config_dict)
 	sqlite_con = config_dict["con"]

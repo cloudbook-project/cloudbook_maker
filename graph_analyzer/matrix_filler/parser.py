@@ -1,5 +1,5 @@
 #gets in every function and get functions calls.
-
+import cloudbook_parser
 
 def create_matrix(function_list):
 	num_cols = len(function_list)+1
@@ -17,24 +17,56 @@ def create_matrix(function_list):
 	return matrix
 
 def function_parser(con,input_path,function_list):
+	matrix = create_matrix(function_list)
+	print "=====================PARSER===================="
+	print input_path
+	print "Hay ",len(function_list),"funciones: ",function_list
+	print "Sacamos los ficheros que tenemos que buscar"
+	function_path_list=[]
+	token_list = {} #dictionary files: tokens
+	#get files of the functions and the token for each file
+	for i in function_list:
+		function_name = i[i.rfind('.')+1:]
+		module = i[:i.rfind('.')]
+		function_path = input_path+"/"+module.replace('.','/')+".py"
+		print "funcion: "+function_name+" modulo: "+module+ " path: "+function_path
+		if function_path not in function_path_list:
+			function_path_list.append(function_path)
+			#get tokens of file
+			#token_list+=cloudbook_parser.tokenize(function_path)
+			token_list[module] = cloudbook_parser.tokenize(function_path)
+	print "ficheros a buscar",function_path_list
+	print "tokens encontrados", token_list
+	#print_matrix(cloudbook_parser.function_parser(token_list,function_list))
+	matrix = cloudbook_parser.function_parser(token_list,function_list)
+	return matrix
+
+
+
+def function_parser_old(con,input_path,function_list):
 	#create empty matrix
 	matrix = create_matrix(function_list)
 	matrix_test = create_matrix(function_list)
+	token_list = []
 	#fake filled of matrix for testing purposes
 	print "=====================PARSER===================="
+	print input_path
 	#get number of functions
-	print "Hay ",len(function_list),"funciones"
+	print "Hay ",len(function_list),"funciones: ",function_list
 	fun_number = 0 #for accessing later the matrix
 	for num,i in enumerate(function_list):
-		print i
+		print "La funcion ",num," es ",i
 		function_name = i[i.rfind('.')+1:]
 		print "Nombre de funcion",function_name,"con indice",num
 		#convert name function to path
 		module = i[:i.rfind('.')]
+		print "module",module
 		function_path = input_path+"/"+module.replace('.','/')+".py"
 		print "Nombre de fichero",function_path
+		token_list+=cloudbook_parser.tokenize(function_path)
+		#cloudbook_parser.function_parser(function_path)
 		#for every function open the file and work with it
-		with open(function_path,'r') as fi:
+		'''with open(function_path,'r') as fi:
 			isfun = False
 			isloop = False
 			loop_st = "" #loop statements
@@ -72,7 +104,8 @@ def function_parser(con,input_path,function_list):
 	print_matrix(matrix_test)
 	print "======Matrix comparation========"
 	print_matrix(matrix)
-	return matrix_test
+	return matrix_test'''
+	return cloudbook_parser.function_parser(token_list)
 
 def fill_fake(matrix):
 	matrix[2][1] = 1 #main calls f1

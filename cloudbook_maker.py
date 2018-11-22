@@ -38,7 +38,11 @@ input_dict = load_dictionary("./config_maker.json")
 input_dir = input_dict["input_folder"]
 output_dir = input_dict["output_folder"]
 
-config_dict = {}
+config_dict = {"input_dir": None,
+			"output_dir": None,
+			"con":None,
+			"matrix": None}
+
 config_dict["input_dir"] = input_dir
 config_dict["output_dir"] = output_dir
 

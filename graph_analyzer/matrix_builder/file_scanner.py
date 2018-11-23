@@ -32,7 +32,7 @@ def file_scanner():
 	for root, dirs, files in os.walk(directory):
 		
 	
-		print files
+		print(files)
 		files1 = [f for f in files if not f[0] == '.'] #ignore hidden files
 
 
@@ -81,4 +81,4 @@ def file_scanner2():
 	return dict_files
 
 if __name__ == "__main__":
-	print file_scanner2()
+	print (file_scanner2())

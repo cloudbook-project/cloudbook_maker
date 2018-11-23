@@ -23,7 +23,7 @@ def get_functions(files_dict):
 			parser.function_scanner(tokens,dir2,f,function_names)
 			print(function_names)
 
-	print function_names
+	print(function_names)
 	return function_names
 
 	print (">>>EXIT from get_functions()...")

@@ -13,10 +13,10 @@ def graph_builder(config_dict):
 	input_path = config_dict["input_dir"]
 	#print (">>>ENTER in graph_builder()...")
 	logging.info('Graph Builder: Lets build the matrix')
-	matrix_info = matrix_builder.build_matrix(sqlite_con)
-	matrix_data = matrix_filler.fill_matrix(sqlite_con,matrix_info, input_path)
+	config_dict["matrix_info"] = matrix_builder.build_matrix(config_dict)
+	config_dict["matrix_data"] = matrix_filler.fill_matrix(config_dict)
 	#print (">>>EXIT from graph_builder()...")
-	return matrix_data
+	return config_dict["matrix_data"]
 
 	
 

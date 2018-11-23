@@ -41,7 +41,9 @@ output_dir = input_dict["output_folder"]
 config_dict = {"input_dir": None,
 			"output_dir": None,
 			"con":None,
-			"matrix": None}
+			"matrix_info": None,#matrix information at every step, all matrix elements can be resumed in one
+			"matrix_data": None,
+			"matrix_filed": None}
 
 config_dict["input_dir"] = input_dir
 config_dict["output_dir"] = output_dir

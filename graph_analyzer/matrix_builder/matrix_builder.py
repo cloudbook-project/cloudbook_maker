@@ -5,7 +5,7 @@ import function_scanner
 import sqlite3 #for testing purposes
 import logging
 
-def build_matrix(con):
+def build_matrix(config_dict):
 	#input data (for testing purposes)
 
 	#Files
@@ -40,6 +40,7 @@ def build_matrix(con):
 
 	#Tables, created in function_list builder, created here for testing purposes
 	#con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
+	con = config_dict["con"]
 	cursor = con.cursor()
 	cursor.executescript('''
 	DROP TABLE IF EXISTS FUNCTIONS;

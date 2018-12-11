@@ -16,12 +16,15 @@ def create_matrix(function_list):
 			matrix[i][j]=0
 	return matrix
 
-def function_parser(con,input_path,function_list):
+def function_parser(config_dict):
+	con = config_dict["con"]
+	function_list = config_dict["matrix_info"][1]
+	input_path = config_dict["input_dir"]
 	matrix = create_matrix(function_list)
-	print "=====================PARSER===================="
-	print input_path
-	print "Hay ",len(function_list),"funciones: ",function_list
-	print "Sacamos los ficheros que tenemos que buscar"
+	print("=====================PARSER====================")
+	print(input_path)
+	print("Hay ",len(function_list),"funciones: ",function_list)
+	print("Sacamos los ficheros que tenemos que buscar")
 	function_path_list=[]
 	token_list = {} #dictionary files: tokens
 	#get files of the functions and the token for each file
@@ -29,14 +32,14 @@ def function_parser(con,input_path,function_list):
 		function_name = i[i.rfind('.')+1:]
 		module = i[:i.rfind('.')]
 		function_path = input_path+"/"+module.replace('.','/')+".py"
-		print "funcion: "+function_name+" modulo: "+module+ " path: "+function_path
+		print("funcion: "+function_name+" modulo: "+module+ " path: "+function_path)
 		if function_path not in function_path_list:
 			function_path_list.append(function_path)
 			#get tokens of file
 			#token_list+=cloudbook_parser.tokenize(function_path)
 			token_list[module] = cloudbook_parser.tokenize(function_path)
-	print "ficheros a buscar",function_path_list
-	print "tokens encontrados", token_list
+	print("ficheros a buscar",function_path_list)
+	print("tokens encontrados", token_list)
 	#print_matrix(cloudbook_parser.function_parser(token_list,function_list))
 	matrix = cloudbook_parser.function_parser(token_list,function_list)
 	return matrix
@@ -49,20 +52,20 @@ def function_parser_old(con,input_path,function_list):
 	matrix_test = create_matrix(function_list)
 	token_list = []
 	#fake filled of matrix for testing purposes
-	print "=====================PARSER===================="
-	print input_path
+	print("=====================PARSER====================")
+	print(input_path)
 	#get number of functions
-	print "Hay ",len(function_list),"funciones: ",function_list
+	print("Hay ",len(function_list),"funciones: ",function_list)
 	fun_number = 0 #for accessing later the matrix
 	for num,i in enumerate(function_list):
-		print "La funcion ",num," es ",i
+		print("La funcion ",num," es ",i)
 		function_name = i[i.rfind('.')+1:]
-		print "Nombre de funcion",function_name,"con indice",num
+		print("Nombre de funcion",function_name,"con indice",num)
 		#convert name function to path
 		module = i[:i.rfind('.')]
-		print "module",module
+		print("module",module)
 		function_path = input_path+"/"+module.replace('.','/')+".py"
-		print "Nombre de fichero",function_path
+		print("Nombre de fichero",function_path)
 		token_list+=cloudbook_parser.tokenize(function_path)
 		#cloudbook_parser.function_parser(function_path)
 		#for every function open the file and work with it
@@ -116,29 +119,29 @@ def fill_fake(matrix):
 		#print matrix[i]
 
 def evaluate_line(fname,line,flist,isloop,loop_st): #dont get repeated function names
-	print "\tEntering in evaluate line"
-	print "\t isloop=",isloop
+	print("\tEntering in evaluate line")
+	print("\t isloop=",isloop)
 	value = 0
 	fun_number=0
 	for num,i in enumerate(flist):
 		looked_function = i[i.rfind('.')+1:]
 		if looked_function in line:
-			print "\t Funcion encontrada:",looked_function,"con indice,",num
+			print("\t Funcion encontrada:",looked_function,"con indice,",num)
 			if (isloop == True):
-				print "\t ojo, es un bucle for"
+				print("\t ojo, es un bucle for")
 				#indexes for evaluation
 				left = loop_st.find("in") +2
 				right = len(loop_st)-2
-				print "\tEvaluo: ",loop_st[left:right]
+				print("\tEvaluo: ",loop_st[left:right])
 				value = len(eval(loop_st[left:right]))
 			#elif "while " in line:
 			#	pass
 			else:
-				print "\t le asignare un uno"
+				print("\t le asignare un uno")
 				value = 1
 			#fun_number += 1
 			fun_number = num
-	print "\ttupla: ",value,fun_number
+	print("\ttupla: ",value,fun_number)
 	return (value,fun_number)
 
 def showTables(con):

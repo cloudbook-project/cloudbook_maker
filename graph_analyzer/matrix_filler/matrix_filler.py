@@ -10,7 +10,7 @@ def fill_matrix(config_dict):
 	con = config_dict["con"]
 	matrix_info = config_dict["matrix_info"]
 	input_path = config_dict["input_dir"]
-	flatter.flatten_program(con,matrix_info[1],input_path)
-	matrix_filled = parser.function_parser(con,input_path,matrix_info[1])
-	matrix_filled = matrix_cleaner.clean_matrix(con,matrix_filled)
-	return matrix_filled
+	flatter.flatten_program(config_dict)
+	config_dict["matrix_filled"] = parser.function_parser(config_dict)
+	config_dict["matrix_filled"] = matrix_cleaner.clean_matrix(config_dict)
+	return config_dict["matrix_filled"]

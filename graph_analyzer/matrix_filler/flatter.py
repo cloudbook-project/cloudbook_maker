@@ -4,7 +4,10 @@ import logging
 import json
 
 
-def flatten_program(con, function_list, files_path):
+def flatten_program(config_dict):
+	con = config_dict["con"]
+	function_list = config_dict["matrix_info"][1]
+	files_path = config_dict["input_dir"]
 	#check database and insert ud number DUMB ASIGNATION
 	#TODO: Detect ud0 for better assignation
 	#step1: assign ud's to functions

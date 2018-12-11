@@ -1,6 +1,7 @@
 
-def clean_matrix(con,matrix):
-	
+def clean_matrix(config_dict):
+	con = config_dict["con"]
+	matrix = config_dict["matrix_filled"]
 	clean=False
 	while (clean==False):
 		num_cols=len(matrix[0])

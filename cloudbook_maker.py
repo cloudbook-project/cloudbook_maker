@@ -37,22 +37,29 @@ def load_dictionary(filename):
 input_dict = load_dictionary("./config_maker.json")
 input_dir = input_dict["input_folder"]
 output_dir = input_dict["output_folder"]
+desired_num_dus = input_dict["circle_info"]["NUM_ATTACHED_AGENTS"]
 
 config_dict = {"input_dir": None,
 			"output_dir": None,
 			"con":None,
 			"matrix_info": None,#matrix information at every step, all matrix elements can be resumed in one
-			"matrix_data": None,
-			"matrix_filed": None}
+			#matrix_info[0]:dirs and files dict, matrix_info[1]: function list
+			"matrix_data": None, #matrix filled
+			"matrix_filled": None,
+			"num_dus": None} #matrix filled for internal operations (fill a clean)
 
 config_dict["input_dir"] = input_dir
 config_dict["output_dir"] = output_dir
+config_dict["num_dus"] = desired_num_dus
 
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
 config_dict["con"] = con
 
-matrix = graph_analyzer.graph_builder(config_dict)
+#matrix = graph_analyzer.graph_builder(config_dict)
+config_dict["matrix_data"] = graph_analyzer.graph_builder(config_dict)
+matrix = config_dict["matrix_data"]
 
+#du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
 du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
 
 #Creation of du_dict with du info

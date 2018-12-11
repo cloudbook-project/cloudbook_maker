@@ -1,5 +1,4 @@
 import file_scanner
-import file_injector
 import function_scanner
 
 import sqlite3 #for testing purposes

@@ -1,7 +1,7 @@
 import os
 import logging
 import file_scanner
-import scanner_parser as parser
+import cloudbook_parser as parser
 
 function_names = []
 

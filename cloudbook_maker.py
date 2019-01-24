@@ -45,8 +45,8 @@ config_dict = {"input_dir": None,
 			"matrix_info": None,#matrix information at every step, all matrix elements can be resumed in one
 			#matrix_info[0]:dirs and files dict, matrix_info[1]: function list
 			"matrix_data": None, #matrix filled
-			"matrix_filled": None,
-			"num_dus": None} #matrix filled for internal operations (fill a clean)
+			"matrix_filled": None, #matrix filled for internal operations (fill and clean)
+			"num_dus": None} 
 
 config_dict["input_dir"] = input_dir
 config_dict["output_dir"] = output_dir

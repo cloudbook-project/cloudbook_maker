@@ -34,6 +34,10 @@ def load_dictionary(filename):
 		aux = json.load(file)
 	return aux
 
+
+
+# This is the main function
+# -------------------------
 input_dict = load_dictionary("./config_maker.json")
 input_dir = input_dict["input_folder"]
 output_dir = input_dict["output_folder"]
@@ -60,7 +64,11 @@ config_dict["matrix_data"] = graph_analyzer.graph_builder(config_dict)
 matrix = config_dict["matrix_data"]
 
 #du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
-du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
+#du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
+
+du_list = splitter.split_program(config_dict) #con,matrix,2,input_dir,output_dir)
+
+
 
 #Creation of du_dict with du info
 du_dict={}

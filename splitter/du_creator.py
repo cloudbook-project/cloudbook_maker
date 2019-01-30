@@ -2,6 +2,13 @@
 import ast #for translating unicode strings
 
 def create_dus(con,matrix,input_path,output_path):
+#def create_dus(config_dict):
+
+	#con=config_dict["con"]
+	#matrix=config_dict["matrix_data"]
+	#input_path=config_dict["input_dir"]
+	#output_path=config_dict["output_dir"]
+	
 	print "dus: ",range(1,len(matrix[0]))
 	du_list =[]
 	for i in range(1,len(matrix[0])):

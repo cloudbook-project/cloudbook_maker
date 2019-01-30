@@ -18,7 +18,8 @@ def iterate_fake(con,matrix,num_deployable_units):
 	return matrix2
 
 
-def iterate(con,matrix,desired_num_du):
+#def iterate(con,matrix,desired_num_du):
+def iterate(config_dict):
 	print (">>>ENTER in iterate()...")
 	''' this function receives the matrix as input and the number of desired DUs.
 		The desired number of DUs will be (normally) the number of available machines.
@@ -33,6 +34,11 @@ def iterate(con,matrix,desired_num_du):
 		
 	#iteration 0. Num DUs is the number of functions
 	#print_matrix(matrix)
+	con=config_dict["con"]
+	matrix=config_dict["matrix_data"]
+	desired_num_du=config_dict["num_dus"]
+
+
 	num_du= len(matrix[0])-1
 
 	len_collapsable=2 #initially nothing is collapsed. At this point 2 funcs are collapsable

@@ -4,7 +4,7 @@ import du_creator
 #def split_program(con,matrix,desired_num_deployable_units,input_path,output_path):
 def split_program(config_dict):
 	#con=config_dict["con"]
-	#matrix=config_dict["matrix_data"]
+	matrix=config_dict["matrix_data"]
 	#input_path=config_dict["input_dir"]
 	#output_path=config_dict["output_dir"]
 	#desired_num_deployable_units=config_dict["num_dus"]

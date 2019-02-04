@@ -25,10 +25,27 @@ def collapse(matrix, f1_row,f2_row,con):
 
 	update_DU(con, matrix_new[0][f2_col],matrix_new[0][f1_col])
 
-	#collapse titles
-	#-----------------
-	#new function is a list of two functions
-	matrix_new[0][f1_col] = [matrix_new[0][f1_col],matrix_new[0][f2_col]]
+	# collapse titles
+	# -----------------
+	# new function is a list of two functions ( f1 and f2 may be lists of functions)
+	# we must create a new list composed of all items from list f1 and all intems from list f2
+	# if f1 is a list, we extract items, else we simply add f1. The same for f2
+	composite_list=[]
+	if  isinstance(matrix_new[0][f1_col],list):
+		for item in matrix_new[0][f1_col]:
+			composite_list.append(item)
+	else:
+		composite_list.append(matrix_new[0][f1_col])
+
+	if  isinstance(matrix_new[0][f2_col],list):
+		for item in matrix_new[0][f2_col]:
+			composite_list.append(item)
+	else:
+		composite_list.append(matrix_new[0][f2_col])
+
+
+	#matrix_new[0][f1_col] = [matrix_new[0][f1_col],matrix_new[0][f2_col]]
+	matrix_new[0][f1_col] = composite_list
 	
 	matrix_new[f1_row][0] = matrix_new[0][f1_col] 
 

@@ -1,5 +1,5 @@
 #gets in every function and get functions calls.
-import cloudbook_parser
+import cloudbook_parser2 as cloudbook_parser
 
 def create_matrix(function_list):
 	num_cols = len(function_list)+1
@@ -37,10 +37,12 @@ def function_parser(config_dict):
 			function_path_list.append(function_path)
 			#get tokens of file
 			#token_list+=cloudbook_parser.tokenize(function_path)
-			token_list[module] = cloudbook_parser.tokenize(function_path)
+			token_list[module] = cloudbook_parser.tokenize(module,function_path,function_list)
+	for i in token_list:
+		for j in token_list[i]:
+			print(i,j)
 	print("ficheros a buscar",function_path_list)
-	print("tokens encontrados", token_list)
-	#print_matrix(cloudbook_parser.function_parser(token_list,function_list))
+	#print("tokens encontrados", token_list)
 	matrix = cloudbook_parser.function_parser(token_list,function_list)
 	return matrix
 

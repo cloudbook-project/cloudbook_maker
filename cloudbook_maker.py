@@ -27,6 +27,11 @@ def showTables(con):
 	    print ("IMPORTS =",i[1])
 	    print ("FINAL IMPORT =",i[2],"\n")
 
+def print_matrix(matrix):
+	num_cols=len(matrix[0])
+	num_rows=len(matrix)
+	for i in range(0,num_rows):
+		print (matrix[i])
 
 def load_dictionary(filename):
 	'''This function is used for getting the info coming from de config file'''
@@ -34,10 +39,6 @@ def load_dictionary(filename):
 		aux = json.load(file)
 	return aux
 
-
-
-# This is the main function
-# -------------------------
 input_dict = load_dictionary("./config_maker.json")
 input_dir = input_dict["input_folder"]
 output_dir = input_dict["output_folder"]
@@ -50,7 +51,8 @@ config_dict = {"input_dir": None,
 			#matrix_info[0]:dirs and files dict, matrix_info[1]: function list
 			"matrix_data": None, #matrix filled
 			"matrix_filled": None, #matrix filled for internal operations (fill and clean)
-			"num_dus": None} 
+			"num_dus": None,
+			"labels":None} 
 
 config_dict["input_dir"] = input_dir
 config_dict["output_dir"] = output_dir
@@ -61,17 +63,16 @@ config_dict["con"] = con
 
 #matrix = graph_analyzer.graph_builder(config_dict)
 config_dict["matrix_data"] = graph_analyzer.graph_builder(config_dict)
+#print_matrix(config_dict["matrix_data"])
 matrix = config_dict["matrix_data"]
+#print_matrix(matrix)
+print("============================",config_dict["labels"])
 
-#du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
-#du_list = splitter.split_program(con,matrix,2,input_dir,output_dir)
-
-du_list = splitter.split_program(config_dict) #con,matrix,2,input_dir,output_dir)
-
-
+du_list = splitter.split_program(config_dict)
 
 #Creation of du_dict with du info
-du_dict={}
+#Comentado para probar el parser nuevo
+'''du_dict={}
 for i in range(len(du_list)):
 	#function_list=final_matrix[0][i]
 	#cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
@@ -84,6 +85,6 @@ print(du_dict)
 json_str = json.dumps(du_dict)
 fo = open("./du_list.json", 'w')
 fo.write(json_str)
-fo.close()
+fo.close()'''
 
 showTables(con)

@@ -20,7 +20,6 @@ def choose_functions_to_collapse (matrix):
 			# self-invocation is not relevant
 			if (i!=j) and (matrix[i][j] >= max_invocations):
 				if (matrix[i][j] == max_invocations):
-					# the operator > could be >=, but this criteria has the same validity
 					if (len(matrix[0][j])>len_collapsable):
 						continue
 

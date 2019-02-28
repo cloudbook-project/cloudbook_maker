@@ -1,29 +1,34 @@
 import os
 import logging
 import file_scanner
-import cloudbook_parser as parser
+import cloudbook_parser2 as parser
 
 function_names = []
 
 def function_scanner(index):
 	pass
 
-def get_functions(files_dict):
+def get_functions(files_dict,config_dict):
 	print (">>>ENTER in get_functions()...")
+	input_folder = str(config_dict["input_dir"])
 	#print files_dict
 
 	func_list=[]
+	labels_dict = {}
 	for dir, files in files_dict.items():
 		for f in files: 
 			print ("fichero "+f)
 			dir2=dir.replace("./","")
-			filename="../example_program_001/input/"+dir+"/"+f
+			#filename="../example_program_003/input/"+dir+"/"+f
+			filename=input_folder+dir+"/"+f
 			tokens = parser.tokenize(filename)
-			print("me da tokens: "+ str(tokens))
-			parser.function_scanner(tokens,dir2,f,function_names)
-			print(function_names)
+			#print("me da tokens: "+ str(tokens))
+			parser.function_scanner(tokens,dir2,f,function_names,labels_dict)
+			#parser.invocation_names(tokens,dir2,f,function_names)#only if necessary, to get the complete names on invocations
 
 	print(function_names)
+	print(labels_dict)
+	config_dict["labels"]=labels_dict
 	return function_names
 
 	print (">>>EXIT from get_functions()...")

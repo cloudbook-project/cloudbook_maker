@@ -27,14 +27,12 @@ def build_matrix(config_dict):
 				'./dir2':['file3.py']
 				}
 
-	files_dict=file_scanner.file_scanner2() # NOT FAKE!!!!
+	files_dict=file_scanner.file_scanner3(config_dict) # NOT FAKE!!!!
 	print ("el escaneo de files es :")
-	print files_dict
+	print (files_dict)
 	#List of functions
-	#function_list = ['file_main.main','dir1.file1.fa','dir1.file1.fb','dir1.file2.fc','dir2.file3.fd','dir2.file3.fe']
-	function_list = ['file_main.main','dir1.file1.fa','dir1.file2.fb','dir2.file3.fc','dir2.file3.fd','dir2.file3.fe']
 
-	function_list=function_scanner.get_functions(files_dict)
+	function_list=function_scanner.get_functions(files_dict,config_dict)
 
 
 	#Tables, created in function_list builder, created here for testing purposes

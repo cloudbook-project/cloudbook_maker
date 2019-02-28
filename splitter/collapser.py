@@ -1,8 +1,10 @@
 
 # This module collapse the matrix using the selected 2 functions 
+from __future__ import print_function
 import json
 
 def collapse(matrix, f1_row,f2_row,con):
+	print (">>>ENTER in collapse()...")
 	f1_col=f1_row
 	f2_col=f2_row
 	#collapse functions matrix[0][f1_col] and matrix[0][f1_row]
@@ -18,6 +20,7 @@ def collapse(matrix, f1_row,f2_row,con):
 			if (matrix[i][j]==None) :
 				matrix[i][j]=0
 			matrix_new[i][j]=matrix[i][j]
+			#print("El elemento ", matrix_new[i][j], " es de tipo: ", type(matrix_new[i][j]))
 	
 
 	#update DU identifier
@@ -86,13 +89,16 @@ def collapse(matrix, f1_row,f2_row,con):
 
 
 def update_DU(con, f2_list, f1_list):
+	print (">>>ENTER in update_DU()...")
+	print("Entradas:")
+	print(f1_list)
+	print(f2_list)
 	
 	#lets proceed with functions table
 	#----------------------------------
+	'''
 	list2=[[]]
 	list1=[[]]
-
-	
 
 	if isinstance(f2_list, str):
 		list2[0]=f2_list
@@ -100,15 +106,40 @@ def update_DU(con, f2_list, f1_list):
 		list2=f2_list
 	if isinstance(f1_list, str):
 		list1[0]=f1_list
+		print("F1_LIST ES UN STRING Y USARE: ", list1[0])
 	else:
 		list1=f1_list
-	
+		print("F1_LIST NO ES UN STRING Y USARE: ", list1[0])
+	'''
+	list1=[[]]
+	list2=[[]]
+
+	while isinstance(f1_list, str) == False:
+		#En este caso f1_list es una lista, extraemos el primer elemento
+		#hasta que sea un string
+		list1[0] = f1_list[0]
+		f1_list = list1[0]
+	list1[0] = f1_list
+	while isinstance(f2_list, str) == False:
+		#En este caso f2_list es una lista, extraemos el primer elemento
+		#hasta que sea un string
+		list2[0] = f2_list[0]
+		f2_list = list2[0]
+	list2[0] = f2_list
+
+	print("F1_LIST: ", f1_list)
+	print("F2_LIST: ",f2_list)
+	print("LIST1: ", list1)
+	print("LIST2: ", list2)
+	print("La Peticion es:","SELECT DU from FUNCTIONS where ORIG_NAME='"+str(list1[0])+"'")
+
 	cursor = con.cursor()
 	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME='"+list1[0]+"'")
 
 	#for row in cursor:
 	#	du=row[0]
 	du=cursor.fetchone()[0]
+	print("La du es: ", du)
 
 	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME='"+list2[0]+"'")
 	du_old=cursor.fetchone()[0]
@@ -128,5 +159,5 @@ def update_DU(con, f2_list, f1_list):
 		cursor2=con.cursor()
 		#print "UPDATE MODULES SET FINAL_IMPORTS ='"+ imports_list+ "' WHERE ORIG_NAME='"+row[0]+"'"
 		cursor2.execute("UPDATE MODULES SET FINAL_IMPORTS ='"+ imports_list+ "' WHERE ORIG_NAME='"+row[0]+"'")
-		
+	print(">>Saliendo de update_du")	
 

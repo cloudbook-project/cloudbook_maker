@@ -1,27 +1,32 @@
 #create the deployable units
 import ast #for translating unicode strings
+import re
 
-#def create_dus(con,matrix,input_path,output_path):
 def create_dus(config_dict):
-
 	con=config_dict["con"]
 	matrix=config_dict["matrix_filled"]
 	input_path=config_dict["input_dir"]
 	output_path=config_dict["output_dir"]
-	
+
 	print "dus: ",range(1,len(matrix[0]))
 	du_list =[]
 	for i in range(1,len(matrix[0])):
-		du_list.append(create_du(con,matrix[0][i],input_path,output_path))
+		du_list.append(create_du(con,matrix[0][i],input_path,output_path, config_dict))
 	return du_list
 
 
-def create_du(con,function_list,input_path,output_path):
+def create_du(con,function_list,input_path,output_path, config_dict):
 	print "\t============== create du ==============="
 	#look in functions table for the first funtion name that matches with function_list[0]
 	#this row UD will be the name of this deployable unit and it will contains all function from function_list
 	print "\tFunction list:", function_list
+	#en las du de una sola funcion, no viene en forma de lista la function list, si no como un string con la funcion
 	cursor = con.cursor()
+	if type(function_list)!=list: 
+		aux_funlist = []
+		aux_funlist.append(function_list)
+		function_list = aux_funlist
+
 	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
 	du_name = "du_"+str(cursor.fetchone()[0])
 	print "\tVa a ser la du: ", du_name
@@ -57,6 +62,8 @@ def create_du(con,function_list,input_path,output_path):
 			final_imports_aux.append(elem)
 
 	final_imports = final_imports_aux
+	if "import threading" not in final_imports:#PARALLEL: Para poder hacer threads si hay funciones parallel
+		final_imports.append("import threading")
 	print "\t\tFinal Imports: ", final_imports, "\n"		
 
 
@@ -79,6 +86,7 @@ def create_du(con,function_list,input_path,output_path):
 	fo.write("invoker=None\n\n")
 
 	for i in function_list:
+		print "\tPara la funcion "+i
 		aux_ind = i.rfind('.')
 		module = i[:i.rfind('.')]
 		name = i[i.rfind('.'):len(i)]
@@ -88,14 +96,20 @@ def create_du(con,function_list,input_path,output_path):
 		#print "\tmodule, name: ",module, name
 		#print "\tinput path: ",input_path
 		input_file = input_path+"/"+module.replace('.','/')+".py"
+		print "\tAbrimos el fichero: "+ input_file
 		fi = open(input_file,'r')
 		isfun=False
 		for i,line in enumerate(fi,1):
+			print "\t\tMiramos la linea "+ line
 			translated_fun = False
 			tabs = 0
 			tabs += line.count('\t')
 			linea = line.split()
-			fun_name = "def " + name
+			#Adaptamos o incorporamos a nombre funcion, a def loquesea o declaracion de variable global
+			if "_VAR_" in name:
+				fun_name = name.replace("_VAR_","")
+			else:
+				fun_name = "def " + name
 			###Translate prints
 			newprint = ""
 			newvar = ""
@@ -123,10 +137,46 @@ def create_du(con,function_list,input_path,output_path):
 			###Three kinds of fun in file
 			if (fun_name in line) and (tabs==0):
 				print "\t\tHemos encontrado la funcion: ", name, " que sera ", final_name
-				fo.write(line.replace(name, final_name))
+				if "_VAR_" in name:
+					#fo.write(line.replace(fun_name,final_name+" con el valor"))#CODIGO DE FUNCION DE VARIABLE GLOBAL
+					#Valor de la variable global
+					gl_value = line.split("=")[1]
+					#t.value = re.sub(r'\s*',"",t.value)
+					gl_value = re.sub(r'\s*',"",gl_value)
+					line3 = writeGlobalDef(fun_name, final_name, gl_value, fo, con)
+					continue
+				else:
+					#Si es Parallel escribo nombre y codigo de hilos, y nuevo nombre,
+					#a continuacion sigo escribiendo igual
+					if module+"."+name in config_dict["labels"]:
+						if config_dict["labels"][module+"."+name] == 'PARALLEL':
+							funvariables = line[line.find("("):len(line)-2]#el -2 para quitar el ":" final y el \n
+							print funvariables
+							fo.write(line.replace(name, final_name))#original fun name
+							#write thread code 
+							'''print("Esto es una prueba NONBLOCKING soy el fichero B")
+							hilo1 = threading.Thread(target=blockingB, daemon = False)
+							hilo1.start()
+							return "Ya he llamado"'''
+							fo.write('''	thread'''+final_name+''' = threading.Thread(target= parallel_'''+final_name+''', daemon = False, args = '''+funvariables+''')
+	thread'''+final_name+'''.start()
+	return json.dumps("thread launched")
+
+''')
+							final_name = "parallel_"+final_name						
+
+					fo.write(line.replace(name, final_name))
 				isfun = True
 			if (fun_name not in line) and (isfun):
 				print "\t\tMiramos dentro de la funcion"
+				if "global" in line:
+					line2 = "#"+ line + "#Aqui va el chorrazo de codigo"
+					globalName = line.split(" ")[1]
+					globalName = globalName.replace("\n","")
+					line3 = writeGlobalCode(fun_name, fo, globalName,module, con)
+					#print line3
+					fo.write(line2.replace("\n","")+"\n")
+					continue
 				#Hay que ver si dentro de la funcion, se llama a alguna otra funcion de la tabla functions
 				#hago una query de los orignames y los guardo en una lista
 				cursor.execute("SELECT ORIG_NAME from FUNCTIONS")
@@ -136,13 +186,15 @@ def create_du(con,function_list,input_path,output_path):
 					orig_fun_name = j[0]
 					trunc = orig_fun_name.rfind(".")+1
 					orig_fun_name = orig_fun_name[trunc:len(orig_fun_name)]
-					orig_list.append((j[0].encode('ascii'),orig_fun_name.encode('ascii')))#tuplas(nombreorig,solofun)
+					if "_VAR_" in orig_fun_name.encode('ascii'):#Casi distinto en global vars functions
+						orig_list.append((j[0].encode('ascii'),orig_fun_name.encode('ascii').replace("_VAR_","")))#tuplas(nombreorig,solofun)
+					else:
+						orig_list.append((j[0].encode('ascii'),orig_fun_name.encode('ascii')))#tuplas(nombreorig,solofun)
 				print "\t\t\tBuscamos estas: ", orig_list
 				#miro si la fun (segunda parte de la tupla) esta en line
 				for j in orig_list:
 					if j[1] in line:#nombre solo fun
 						print "\t\t\tEncuentro esta: ", j[1], " aqui", i, ": ", line
-						#supongo q la linea es solo la invocacion
 						#reconocer la invocacion en la linea
 						aux_line = line
 						invocation_index = 0#to do, usarlo para escribir bien la linea, solo traducir la invocacion
@@ -154,15 +206,37 @@ def create_du(con,function_list,input_path,output_path):
 								invocation_index = i
 
 						invocation_fun = aux_line
-						invocation_fun = invocation_fun[:invocation_fun.rfind("(")]
+						print "INVOCATION FUN========================================"+invocation_fun
+						if "_VAR_" in j[0]:#Es una variable global solo tocamos modificaciones, con parentesis
+							if invocation_fun.find("(")!=-1:
+								invocation_fun = "_VAR_"+invocation_fun[:invocation_fun.rfind("(")]
+								if invocation_fun.find(".")!=-1:
+									invocation_fun = invocation_fun.split(".")[0]
+							elif ("=" in line) and (invocation_index==0): #TODO es una asignacion y hay que traducirla
+							#Tiene que estar antes del igual
+								invocation_fun = "_VAR_"+invocation_fun
+							else:
+								continue
+							#else:# No tiene parentesis
+							#	invocation_fun = "_VAR_"+invocation_fun
+							#if invocation_fun.find(".")!=-1:
+								#invocation_fun = invocation_fun.split(".")[0]
+							#if invocation_fun.find(":")!=-1:#Hacer esto para todos los elementos raros
+							#	invocation_fun = invocation_fun.replace(":","")
+						else:
+							invocation_fun = invocation_fun[:invocation_fun.rfind("(")]
 						print "\t\t\tLa invocacion que buscamos es", invocation_fun, " y en FUNCTIONS es ", j[0]
 						if j[0] == invocation_fun:
 							print "\t\t\tEsta bien escrita"
 							complete_name = invocation_fun
 						else:
-							complete_name = module[:module.rfind('.')+1]+invocation_fun
+							#Esto es solo si el modulo tiene un punto, si no, peta
+							if module.rfind('.')!=-1:							
+								complete_name = module[:module.rfind('.')+1]+invocation_fun
+							else:
+								complete_name = module+'.'+invocation_fun
 							print "\t\t\tCompletamos nombre y queda: ", complete_name
-						new_line = translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs)
+						new_line = translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,config_dict)
 						#escribimos la newline dentro de su linea probar poniendo una linea completa
 						aux_line2 = line.split()
 						aux_line2[invocation_index] = new_line
@@ -185,15 +259,20 @@ def create_du(con,function_list,input_path,output_path):
 						fo.write(new_line)
 						fo.write("\n")
 						translated_fun = True
+				if "return" in line:
+					print "AQUI RETURN"
+					aux_ret = line.split()[-1]
+					line = line.replace(aux_ret,"json.dumps("+aux_ret+")")
 				if translated_fun==False:
 						fo.write(line)
+
+
 			if (fun_name not in line) and (tabs==0):
 				#Hara falta traducir aqui
 				isfun = False
-		
-		
+
 				
-		fo.write("\n\treturn 'cloudbook: done' \n\n")					
+		fo.write("\n\treturn json.dumps('cloudbook: done') \n\n")					
 
 	fi.close()
 	if (du_name == "du_0"):
@@ -215,27 +294,176 @@ def create_du(con,function_list,input_path,output_path):
 	return du_name
 
 
-def translate_invocation(con,orig_module,orig_function_name,invoked_function,function_list,file_descriptor,du_name,line,tabs):
+def translate_invocation(con,orig_module,orig_function_name,invoked_function,function_list,file_descriptor,du_name,line,tabs,config_dict):
 	#El proceso de traduccion consiste en:
 			#si la funcion esta en la misma du(estara en la function list) se invoca sin nombre de modulo
 			#else invoke("du_xx.f(...)"), la du_xx la sacamos de la tabla de funciones
 	c = con.cursor()
 	newline = ""
-
+	#nombrefuncompleto es como esta en la base de datos,con _VAR_ si es vble global
+	old_function = invoked_function #modulo.nombrefuncompleto
+	aux_function = old_function #modulo.nombrefuncomplet
+	old_function = old_function.split(".")[-1] #solo nombrefuncompleto
+	parallel_fun = False #Marcador que sirve para tratar bien las variables en las invocaciones a funcion parallel
 	#c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME like '%"+invoked_function+"%'")
 	c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+invoked_function+"'")
 	row = c.fetchone()
 	invoked_du = row[0]
 	invoked_function = row[1]
-	if str(invoked_du) in du_name:
+	#Aqui si old_function esta en dict labels, la invoked du sera 10000
+	print("aux_function: ", aux_function, " y invocation_function: ", invoked_function)
+	if aux_function in config_dict["labels"]:
+		if config_dict["labels"][aux_function] == "PARALLEL":
+			invoked_du=10000
+			parallel_fun = True
+	if str(invoked_du) in du_name:#La invocacion es local
+	##TODOO hay q ciomprobar si es parallel, en cuyo caso se invoca como remota, con du_10000
 		#invoked_function = invoked_function[invoked_function.rfind(".")+1:len(invoked_function)]
-		newline = invoked_function+"()"
-	else:
+		#newline = invoked_function+"()"
+		if "_VAR_" in old_function: #si es global var
+			old_function = old_function.replace("_VAR_","")
+			#newline = line.replace(old_function,invoked_function+"."+old_function)
+			#newline = re.sub(r'\s*',"",newline)
+			variables = line
+			variables = re.sub(r'\s*',"",variables)
+			if old_function in variables:
+				variables = variables.replace(old_function,invoked_function+"."+old_function)
+			newline = invoked_function+"('"+variables+"')"
+			#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
+		else: #es una fun normal
+			newline = line.replace(old_function,invoked_function)
+			newline = re.sub(r'\s*',"",newline)
+			if line.find("(")!=-1: #si no tiene parentesis en global var
+				variables = line.split("(")[1]
+			else:
+				variables=""
+			newline = invoked_function + "("+ variables		
+	else:#La invocacion es externa
 		#invoked_function = invoked_function[invoked_function.rfind("."):len(invoked_function)]
 		#newline = "invoke('du_"+str(invoked_du)+"' , '"+invoked_function+"()')"
-		newline = "invoker('du_"+str(invoked_du)+"."+invoked_function+"()')"
-	#for i in range(tabs):
-		#newline = "\t"+newline
-	#file_descriptor.write(newline)
-	#file_descriptor.write("\n")
+		#newline = "invoker('du_"+str(invoked_du)+"."+invoked_function+"()')"
+		#invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+fun_name+'''.ver_'''+globalName+'''))
+		variables = ""
+		if "_VAR_" not in old_function and parallel_fun==False:#Si no es global var
+			#
+			variables = line
+			variables = re.sub(r'\s*',"",variables)
+			if variables.find("(")!=-1:
+				variables = variables.split("(")[-1]
+				variables = variables.replace(")","")
+				#tostring every var
+				variables_aux = ""
+				for i in variables.split(","):
+					if variables_aux == "":
+						variables_aux = variables_aux+"str("+i+")"
+					else:
+						variables_aux = variables_aux+"+','+ str("+i+")"
+			newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
+		if "_VAR_" in old_function and parallel_fun==False:#Si es una variable global hay que sacar los parametros de la llamada.
+		#si es una llamada a una funcion, hay que sacar la linea y lo que hay entre parentesis TODO
+		#si es una asignacion, hay que copiar la linea como la variable entera
+			old_function = old_function.replace("_VAR_","")
+			variables = line
+			variables = re.sub(r'\s*',"",variables)
+			#Aqui miro las variables y las trato segun lo que haya: por ahora '=' o '.' y '()'
+			variables_aux=""
+			variable_aux = ""
+			if "=" in variables:
+				variables_aux = variables.split("=")
+				variable_aux = variables.split("=")[-1]
+				variables = variables.replace(variable_aux,"")
+				variables = variables.replace("="," %3d ")
+				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"'+str("+variable_aux+"))[0]"
+			else:
+				if "(" in variables:
+					#bla bla bla
+					#variables_aux = variables.split("(")
+					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
+					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
+					variables = variables.replace(variable_aux,"")
+					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"('+str"+variable_aux+")[0]"
+				else:
+					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
+					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
+		#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
+		if parallel_fun == True:
+			#TODO tratar el _VAR_ aqui tambien, por si se hace una global var parallel por algun casual
+			variables = line
+			variables = re.sub(r'\s*',"",variables)
+			parallel_fun = False
+			if variables.find("(")!=-1:
+				variables = variables.split("(")[-1]
+				variables = variables.replace(")","")
+				#tostring every var
+				variables_aux = ""
+				for i in variables.split(","):
+					if variables_aux == "":
+						variables_aux = variables_aux+"str("+i+")"
+					else:
+						variables_aux = variables_aux+"+','+ str("+i+")"
+			newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
+			#podria omitir el campo 0 aqui
+			#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
+		#Si es funcion normal:
+		#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
+		
+
 	return newline
+
+def writeGlobalCode(fun_name,fo, globalName,module ,con):
+	'''Escribimos el codigo de invocacion para las variables globales. 
+	fun_name: la funcion en la q estamos
+	global_name: la variable global
+	global_fun_name: el nombre de la funcion global tal como esta en la tabla final name'''
+	#Get final name from original global fun name, sera necesario _VAR_+globalName
+	#Tambien me hace falta la du, porque las llamadas seran invoker
+	fun_name = fun_name.split(" ")[1]
+	cursor = con.cursor()
+	print "SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'"
+	cursor.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'")
+	row = cursor.fetchone()
+	global_fun_du = row[0]
+	global_fun_name = row[1]
+	print "\t\t Empezamos a escribir el codigo de la variable global"
+	fo.write("#Automated code for global var:\n #fun_name: "+ fun_name+" globalName: "+ globalName+ " destiny du: "+ str(global_fun_du)+" global_fun_name: "+ global_fun_name+"\n")
+
+	fo.write('''#============================global vars automatic code=========================
+	#'''+globalName+'''
+	if not hasattr('''+fun_name+''', "'''+globalName+'''"):
+		'''+fun_name+'''.'''+globalName+''' = None
+
+	if not hasattr('''+fun_name+''', "ver_'''+globalName+'''"):
+		'''+fun_name+'''.ver_'''+globalName+''' = 0
+        
+	aux_'''+globalName+''',aux_ver = invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+fun_name+'''.ver_'''+globalName+'''))
+	if aux_'''+globalName+''' != "None":
+		'''+fun_name+'''.'''+globalName+''' = json.loads(aux_'''+globalName+''')
+	'''+globalName+"="+fun_name+"."+globalName+'''
+		''')
+
+	return "hola"
+
+def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
+	'''Aqui va el codigo de la definicion de las variables globales'''
+
+	fo.write('''def '''+final_name+'''(op, old_ver):
+	if not hasattr('''+final_name+''', "'''+fun_name+'''"):
+		'''+final_name+'''.'''+fun_name+'''='''+str(gl_value)+'''
+	if not hasattr('''+final_name+''', "ver_'''+fun_name+'''"):
+		'''+final_name+'''.ver_'''+fun_name+'''=0
+	if not hasattr('''+final_name+''', "lock_'''+fun_name+'''"):
+		'''+final_name+'''.lock_'''+fun_name+''' = threading.Lock()
+	if op == "None":
+		if old_ver == '''+final_name+'''.ver_'''+fun_name+''':
+			return json.dumps(("None", old_ver))
+		else:
+			return json.dumps(('''+final_name+'''.'''+fun_name+''','''+final_name+'''.ver_'''+fun_name+'''))
+	else:
+		try:
+			'''+final_name+'''.ver_'''+fun_name+'''+=1
+			return (eval(op),'''+final_name+'''.ver_'''+fun_name+''')
+		except:
+			with lock_'''+fun_name+''':
+				exec(op)
+				'''+final_name+'''.ver_'''+fun_name+'''+=1
+				return ("done",'''+final_name+'''.ver_'''+fun_name+''')''')

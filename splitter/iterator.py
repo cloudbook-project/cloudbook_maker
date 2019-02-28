@@ -18,7 +18,6 @@ def iterate_fake(con,matrix,num_deployable_units):
 	return matrix2
 
 
-#def iterate(con,matrix,desired_num_du):
 def iterate(config_dict):
 	print (">>>ENTER in iterate()...")
 	''' this function receives the matrix as input and the number of desired DUs.
@@ -38,11 +37,12 @@ def iterate(config_dict):
 	matrix=config_dict["matrix_data"]
 	desired_num_du=config_dict["num_dus"]
 
-
 	num_du= len(matrix[0])-1
 
 	len_collapsable=2 #initially nothing is collapsed. At this point 2 funcs are collapsable
 	while(num_du>desired_num_du):
+	#while(num_du>4):
+
 		
 		
 		collapser_function=collapser_selector.get_collapser(0);
@@ -60,6 +60,7 @@ def iterate(config_dict):
 		matrix=collapser.collapse(matrix,f1_row,f2_row, con)
 
 		num_du= len(matrix)-1
+		print("=========Num dus actuales "+ str(num_du)+ " frente a " + str(desired_num_du))
 
 		#print "matrix:"
 		#print_matrix(matrix_new2)

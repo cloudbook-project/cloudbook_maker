@@ -11,6 +11,7 @@ def fill_matrix(config_dict):
 	matrix_info = config_dict["matrix_info"]
 	input_path = config_dict["input_dir"]
 	flatter.flatten_program(config_dict)
+	##Solo hago hasta el flatter
 	config_dict["matrix_filled"] = parser.function_parser(config_dict)
 	config_dict["matrix_filled"] = matrix_cleaner.clean_matrix(config_dict)
 	return config_dict["matrix_filled"]

@@ -335,7 +335,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
 					variables = variables.replace(variable_aux,"")
 					variables = variables + "('+str"+variable_aux+"')"
-			newline = invoked_function+"('"+variables+"')"
+			newline = invoked_function+"('"+variables+"',"+"ver_"+old_function+")"
 			#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 		else: #es una fun normal
 			newline = line.replace(old_function,invoked_function)
@@ -388,7 +388,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
 					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
 					variables = variables.replace(variable_aux,"")
-					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"('+str"+variable_aux+")[0]"
+					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"('+str"+variable_aux+"+')'+)[0]"
 				else:
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
@@ -446,6 +446,7 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con):
 	if aux_'''+globalName+''' != "None":
 		'''+fun_name+'''.'''+globalName+''' = json.loads(aux_'''+globalName+''')
 	'''+globalName+"="+fun_name+"."+globalName+'''
+	'''+"ver_"+globalName+"="+fun_name+'''.ver_'''+globalName+'''
 		''')
 
 	return "hola"

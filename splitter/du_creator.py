@@ -328,6 +328,13 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			variables = re.sub(r'\s*',"",variables)
 			if old_function in variables:
 				variables = variables.replace(old_function,invoked_function+"."+old_function)
+				if "(" in variables:#Hay un parametro que tengo que conservar como el original y stringuearlo
+					variables_aux=""
+					variable_aux = ""
+					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
+					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
+					variables = variables.replace(variable_aux,"")
+					variables = variables + "('+str"+variable_aux+"')"
 			newline = invoked_function+"('"+variables+"')"
 			#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 		else: #es una fun normal

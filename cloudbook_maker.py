@@ -78,8 +78,8 @@ for i in range(len(du_list)):
 	#cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
 	du_name = du_list[i]
 	du_dict[du_name]={}
-	du_dict[du_name]["cost"]=randint(1,100)
-	du_dict[du_name]["size"]=randint(1,100)
+	du_dict[du_name]["cost"]=100
+	du_dict[du_name]["size"]=100
 print(du_dict)
 
 json_str = json.dumps(du_dict)

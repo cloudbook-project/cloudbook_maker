@@ -72,7 +72,7 @@ du_list = splitter.split_program(config_dict)
 
 #Creation of du_dict with du info
 #Comentado para probar el parser nuevo
-'''du_dict={}
+du_dict={}
 for i in range(len(du_list)):
 	#function_list=final_matrix[0][i]
 	#cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
@@ -85,6 +85,6 @@ print(du_dict)
 json_str = json.dumps(du_dict)
 fo = open("./du_list.json", 'w')
 fo.write(json_str)
-fo.close()'''
+fo.close()
 
 showTables(con)

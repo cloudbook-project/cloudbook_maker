@@ -173,7 +173,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 					line2 = "#"+ line + "#Aqui va el chorrazo de codigo"
 					globalName = line.split(" ")[1]
 					globalName = globalName.replace("\n","")
-					line3 = writeGlobalCode(fun_name, fo, globalName,module, con)
+					line3 = writeGlobalCode(fun_name, fo, globalName,module, con, config_dict)
 					#print line3
 					fo.write(line2.replace("\n","")+"\n")
 					continue
@@ -213,6 +213,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 								if invocation_fun.find(".")!=-1:
 									invocation_fun = invocation_fun.split(".")[0]
 							elif ("=" in line) and (invocation_index==0): #TODO es una asignacion y hay que traducirla
+							#elif ("=" in line):#TODO_ACT estudiar y hacer que se haga bien esto
 							#Tiene que estar antes del igual
 								invocation_fun = "_VAR_"+invocation_fun
 							else:
@@ -277,7 +278,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	fi.close()
 	if (du_name == "du_0"):
 		fo.write('''def cloudbook_print(element):
-	print element
+	print (element)
 	return "cloudbook: done"
 	
 ''')
@@ -334,8 +335,10 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
 					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
 					variables = variables.replace(variable_aux,"")
-					variables = variables + "('+str"+variable_aux+"')"
-			newline = invoked_function+"('"+variables+"',"+"ver_"+old_function+")"
+					#variables = variables + "('+str"+variable_aux+"')" #Antes de la depuracion de nbody4
+					variables = variables + "('+str"+variable_aux+"+')"
+			#newline = invoked_function+"('"+variables+"',"+"ver_"+old_function+")" #Antes de la depuracion de nbody4
+			newline = invoked_function+"('"+variables+",'+ ver_"+old_function+")#"
 			#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 		else: #es una fun normal
 			newline = line.replace(old_function,invoked_function)
@@ -379,8 +382,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables_aux = variables.split("=")
 				variable_aux = variables.split("=")[-1]
 				variables = variables.replace(variable_aux,"")
-				variables = variables.replace("="," %3d ")
-				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"'+str("+variable_aux+")"+"' , '"+"ver_"+old_function+")[0]"
+				#variables = variables.replace("="," %3d ")
+				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' , '+"+"ver_"+old_function+")[0]"
 			else:
 				if "(" in variables:
 					#bla bla bla
@@ -388,7 +391,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
 					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
 					variables = variables.replace(variable_aux,"")
-					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"('+str"+variable_aux+"+')'+"+"' , '"+"ver_"+old_function+")[0]"
+					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"('+str"+variable_aux+"+')'+"+"+' , '+"+"ver_"+old_function+")[0]"
 				else:
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
@@ -417,13 +420,15 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 
 	return newline
 
-def writeGlobalCode(fun_name,fo, globalName,module ,con):
+def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict):
 	'''Escribimos el codigo de invocacion para las variables globales. 
 	fun_name: la funcion en la q estamos
 	global_name: la variable global
 	global_fun_name: el nombre de la funcion global tal como esta en la tabla final name'''
 	#Get final name from original global fun name, sera necesario _VAR_+globalName
 	#Tambien me hace falta la du, porque las llamadas seran invoker
+	#Hay que coger tambien el final name de fun_name, porque ese va a ser el que denomine a los atributos de la funcion: f0.body_list
+	# 	tener en cuenta si la funcion es paralela, porque habra que escribir parallel_final_fun_name
 	fun_name = fun_name.split(" ")[1]
 	cursor = con.cursor()
 	print "SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'"
@@ -431,22 +436,30 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con):
 	row = cursor.fetchone()
 	global_fun_du = row[0]
 	global_fun_name = row[1]
-	print "\t\t Empezamos a escribir el codigo de la variable global"
-	fo.write("#Automated code for global var:\n #fun_name: "+ fun_name+" globalName: "+ globalName+ " destiny du: "+ str(global_fun_du)+" global_fun_name: "+ global_fun_name+"\n")
+	#pillo el final name para que los atributos se llamen de forma correcta
+	cursor.execute("SELECT FINAL_NAME from functions where ORIG_NAME = '"+module+"."+fun_name+"'")
+	row = cursor.fetchone()
+	final_fun_name = row[0]
+	if (module+"."+fun_name) in config_dict["labels"]:#Aniado parallel si es el codigo de la funcion parallel
+		if config_dict["labels"][module+"."+fun_name] == 'PARALLEL':
+			final_fun_name = "parallel_"+final_fun_name
+	#print "\t\t Empezamos a escribir el codigo de la variable global"
+	fo.write("#Automated code for global var:\n #fun_name: "+ fun_name+" final fun name: "+final_fun_name+" globalName: "+ globalName+ " destiny du: "+ str(global_fun_du)+" global_fun_name: "+ global_fun_name+"\n")
+	#fo.write("#Automated code for global var:\n #fun_name: "+ fun_name+" globalName: "+ globalName+ " destiny du: "+ str(global_fun_du)+" global_fun_name: "+ global_fun_name+"\n")
 
 	fo.write('''#============================global vars automatic code=========================
 	#'''+globalName+'''
-	if not hasattr('''+fun_name+''', "'''+globalName+'''"):
-		'''+fun_name+'''.'''+globalName+''' = None
+	if not hasattr('''+final_fun_name+''', "'''+globalName+'''"):
+		'''+final_fun_name+'''.'''+globalName+''' = None
 
-	if not hasattr('''+fun_name+''', "ver_'''+globalName+'''"):
-		'''+fun_name+'''.ver_'''+globalName+''' = 0
+	if not hasattr('''+final_fun_name+''', "ver_'''+globalName+'''"):
+		'''+final_fun_name+'''.ver_'''+globalName+''' = 0
         
-	aux_'''+globalName+''',aux_ver = invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+fun_name+'''.ver_'''+globalName+'''))
+	aux_'''+globalName+''',aux_ver = invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+final_fun_name+'''.ver_'''+globalName+'''))
 	if aux_'''+globalName+''' != "None":
-		'''+fun_name+'''.'''+globalName+''' = json.loads(aux_'''+globalName+''')
-	'''+globalName+"="+fun_name+"."+globalName+'''
-	'''+"ver_"+globalName+"="+fun_name+'''.ver_'''+globalName+'''
+		'''+final_fun_name+'''.'''+globalName+''' = json.loads(aux_'''+globalName+''')
+	'''+globalName+"="+final_fun_name+"."+globalName+'''
+	'''+"ver_"+globalName+"="+final_fun_name+'''.ver_'''+globalName+'''
 		''')
 
 	return "hola"

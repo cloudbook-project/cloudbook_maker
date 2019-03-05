@@ -459,7 +459,8 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict):
 	if aux_'''+globalName+''' != "None":
 		'''+final_fun_name+'''.'''+globalName+''' = aux_'''+globalName+'''
 	'''+globalName+"="+final_fun_name+"."+globalName+'''
-	'''+"ver_"+globalName+"="+final_fun_name+'''.ver_'''+globalName+'''
+	'''+final_fun_name+'''.ver_'''+globalName+"= aux_ver"'''
+	'''+"ver_"+globalName+"= "+final_fun_name+'''.ver_'''+globalName+'''
 		''')
 
 	return "hola"

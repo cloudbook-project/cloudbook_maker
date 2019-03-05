@@ -471,7 +471,7 @@ def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
 	if not hasattr('''+final_name+''', "'''+fun_name+'''"):
 		'''+final_name+'''.'''+fun_name+'''='''+str(gl_value)+'''
 	if not hasattr('''+final_name+''', "ver_'''+fun_name+'''"):
-		'''+final_name+'''.ver_'''+fun_name+'''=0
+		'''+final_name+'''.ver_'''+fun_name+'''= 1
 	if not hasattr('''+final_name+''', "lock_'''+fun_name+'''"):
 		'''+final_name+'''.lock_'''+fun_name+''' = threading.Lock()
 	if op == "None":

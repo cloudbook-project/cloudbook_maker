@@ -457,7 +457,7 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict):
         
 	aux_'''+globalName+''',aux_ver = invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+final_fun_name+'''.ver_'''+globalName+'''))
 	if aux_'''+globalName+''' != "None":
-		'''+final_fun_name+'''.'''+globalName+''' = json.loads(aux_'''+globalName+''')
+		'''+final_fun_name+'''.'''+globalName+''' = aux_'''+globalName+'''
 	'''+globalName+"="+final_fun_name+"."+globalName+'''
 	'''+"ver_"+globalName+"="+final_fun_name+'''.ver_'''+globalName+'''
 		''')

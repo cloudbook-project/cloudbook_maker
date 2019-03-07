@@ -383,8 +383,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables_aux = variables.split("=")
 				variable_aux = variables.split("=")[-1]
 				variables = variables.replace(variable_aux,"")
-				#variables = variables.replace("="," %3d ")
-				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' , '+"+"ver_"+old_function+")[0]"
+				variables = variables.replace("=","%3d")
+				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
 			else:
 				if "(" in variables:
 					#bla bla bla
@@ -486,7 +486,7 @@ def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
 			'''+final_name+'''.ver_'''+fun_name+'''+=1
 			return json.dumps((eval(op),'''+final_name+'''.ver_'''+fun_name+'''))
 		except:
-			with lock_'''+fun_name+''':
-				exec(op)
-				'''+final_name+'''.ver_'''+fun_name+'''+=1
-				return json.dumps(("done",'''+final_name+'''.ver_'''+fun_name+'''))''')
+			#with lock_'''+fun_name+''':
+			exec(op)
+			'''+final_name+'''.ver_'''+fun_name+'''+=1
+			return json.dumps(("done",'''+final_name+'''.ver_'''+fun_name+'''))''')

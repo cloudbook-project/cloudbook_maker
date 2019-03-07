@@ -347,7 +347,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables = line.split("(")[1]
 			else:
 				variables=""
-			newline = invoked_function + "("+ variables		
+			newline = "json.loads("+invoked_function + "("+ variables + ")"
+			newline = re.sub(r'\s*',"",newline)
 	else:#La invocacion es externa
 		#invoked_function = invoked_function[invoked_function.rfind("."):len(invoked_function)]
 		#newline = "invoke('du_"+str(invoked_du)+"' , '"+invoked_function+"()')"

@@ -338,7 +338,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					#variables = variables + "('+str"+variable_aux+"')" #Antes de la depuracion de nbody4
 					variables = variables + "('+str"+variable_aux+"+')"
 			#newline = invoked_function+"('"+variables+"',"+"ver_"+old_function+")" #Antes de la depuracion de nbody4
-			newline = invoked_function+"('"+variables+",'+ ver_"+old_function+")#"
+			newline = invoked_function+"('"+variables+"', str(ver_"+old_function+"))#"
 			#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 		else: #es una fun normal
 			newline = line.replace(old_function,invoked_function)
@@ -391,7 +391,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
 					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
 					variables = variables.replace(variable_aux,"")
-					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"('+str"+variable_aux+"+')'"+"+' , '+"+"str(ver_"+old_function+"))[0]"
+					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(ver_"+old_function+"))"
 				else:
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
@@ -483,9 +483,9 @@ def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
 	else:
 		try:
 			'''+final_name+'''.ver_'''+fun_name+'''+=1
-			return (eval(op),'''+final_name+'''.ver_'''+fun_name+''')
+			return json.dumps((eval(op),'''+final_name+'''.ver_'''+fun_name+'''))
 		except:
 			with lock_'''+fun_name+''':
 				exec(op)
 				'''+final_name+'''.ver_'''+fun_name+'''+=1
-				return ("done",'''+final_name+'''.ver_'''+fun_name+''')''')
+				return json.dumps(("done",'''+final_name+'''.ver_'''+fun_name+'''))''')

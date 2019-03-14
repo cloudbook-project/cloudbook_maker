@@ -173,9 +173,18 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 					line2 = "#"+ line + "#Aqui va el chorrazo de codigo"
 					globalName = line.split(" ")[1]
 					globalName = globalName.replace("\n","")
-					line3 = writeGlobalCode(fun_name, fo, globalName,module, con, config_dict)
+					line3 = writeGlobalCode(fun_name, fo, globalName,module, con, config_dict, tabs)
 					#print line3
 					fo.write(line2.replace("\n","")+"\n")
+					continue
+				if "#SYNC" in line:
+					#Escribo el while
+					'''while json.loads(cloudbook_th_counter("")) > 0:
+			sleep(0.01)'''
+					line = line.replace("#SYNC",'''while json.loads(cloudbook_th_counter("")) > 0: #This was sync
+			sleep(0.01)
+			''')
+					fo.write(line)
 					continue
 				#Hay que ver si dentro de la funcion, se llama a alguna otra funcion de la tabla functions
 				#hago una query de los orignames y los guardo en una lista
@@ -272,7 +281,10 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 				#Hara falta traducir aqui
 				isfun = False
 
-				
+		if "parallel_" in final_name:#Before return, sychronize thread
+			#pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'--'")
+			#''' 
+			fo.write("\n\tinvoker(['du_0'], 'cloudbook_th_counter',\"'--'\")\n")
 		fo.write("\n\treturn json.dumps('cloudbook: done') \n\n")					
 
 	fi.close()
@@ -281,6 +293,16 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	print (element)
 	return "cloudbook: done"
 	
+''')
+		fo.write('''def cloudbook_th_counter(value):
+	if not hasattr(cloudbook_th_counter, "val"):
+		val = 0
+	if value == "++":
+		val += 1
+	if value == "++":
+		val -= 1
+	return json.dumps(val)
+
 ''')
 		fo.write('''def main():
 	f0()
@@ -412,7 +434,10 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 						variables_aux = variables_aux+"str("+i+")"
 					else:
 						variables_aux = variables_aux+"+','+ str("+i+")"
-			newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
+			#invoker(['du_0'], 'cloudbook_th_counter',"'++'")#Para hacer el sync
+			pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'++'")
+			'''
+			newline = pre_line+"invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
 			#podria omitir el campo 0 aqui
 			#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
 		#Si es funcion normal:
@@ -421,7 +446,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 
 	return newline
 
-def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict):
+def writeGlobalCode_old(fun_name,fo, globalName,module ,con, config_dict, tabs):
 	'''Escribimos el codigo de invocacion para las variables globales. 
 	fun_name: la funcion en la q estamos
 	global_name: la variable global
@@ -430,6 +455,10 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict):
 	#Tambien me hace falta la du, porque las llamadas seran invoker
 	#Hay que coger tambien el final name de fun_name, porque ese va a ser el que denomine a los atributos de la funcion: f0.body_list
 	# 	tener en cuenta si la funcion es paralela, porque habra que escribir parallel_final_fun_name
+	tabulations = ""#tabulations vacio, porque ya meto yo una tabulacion siempre
+	if tabs > 1:
+		for i in tabs:
+			tabulations+="\t"
 	fun_name = fun_name.split(" ")[1]
 	cursor = con.cursor()
 	print "SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'"
@@ -462,6 +491,55 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict):
 	'''+globalName+"="+final_fun_name+"."+globalName+'''
 	'''+final_fun_name+'''.ver_'''+globalName+"= aux_ver"'''
 	'''+"ver_"+globalName+"= "+final_fun_name+'''.ver_'''+globalName+'''
+		''')
+
+	return "hola"
+
+def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict, tabs):
+	'''Escribimos el codigo de invocacion para las variables globales. 
+	fun_name: la funcion en la q estamos
+	global_name: la variable global
+	global_fun_name: el nombre de la funcion global tal como esta en la tabla final name'''
+	#Get final name from original global fun name, sera necesario _VAR_+globalName
+	#Tambien me hace falta la du, porque las llamadas seran invoker
+	#Hay que coger tambien el final name de fun_name, porque ese va a ser el que denomine a los atributos de la funcion: f0.body_list
+	# 	tener en cuenta si la funcion es paralela, porque habra que escribir parallel_final_fun_name
+	tabulations = ""#tabulations vacio, porque ya meto yo una tabulacion siempre
+	if tabs > 1:
+		for i in range(tabs-1):
+			tabulations+="\t"
+	fun_name = fun_name.split(" ")[1]
+	cursor = con.cursor()
+	print "SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'"
+	cursor.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'")
+	row = cursor.fetchone()
+	global_fun_du = row[0]
+	global_fun_name = row[1]
+	#pillo el final name para que los atributos se llamen de forma correcta
+	cursor.execute("SELECT FINAL_NAME from functions where ORIG_NAME = '"+module+"."+fun_name+"'")
+	row = cursor.fetchone()
+	final_fun_name = row[0]
+	if (module+"."+fun_name) in config_dict["labels"]:#Aniado parallel si es el codigo de la funcion parallel
+		if config_dict["labels"][module+"."+fun_name] == 'PARALLEL':
+			final_fun_name = "parallel_"+final_fun_name
+	#print "\t\t Empezamos a escribir el codigo de la variable global"
+	fo.write("#Automated code for global var:\n #fun_name: "+ fun_name+" final fun name: "+final_fun_name+" globalName: "+ globalName+ " destiny du: "+ str(global_fun_du)+" global_fun_name: "+ global_fun_name+"\n")
+	#fo.write("#Automated code for global var:\n #fun_name: "+ fun_name+" globalName: "+ globalName+ " destiny du: "+ str(global_fun_du)+" global_fun_name: "+ global_fun_name+"\n")
+
+	fo.write('''#============================global vars automatic code=========================
+	#'''+globalName+'''
+	'''+tabulations+'''if not hasattr('''+final_fun_name+''', "'''+globalName+'''"):
+		'''+tabulations+final_fun_name+'''.'''+globalName+''' = None
+
+	'''+tabulations+'''if not hasattr('''+final_fun_name+''', "ver_'''+globalName+'''"):
+		'''+tabulations+final_fun_name+'''.ver_'''+globalName+''' = 0
+        
+	'''+tabulations+'''aux_'''+globalName+''',aux_ver = invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+final_fun_name+'''.ver_'''+globalName+'''))
+	'''+tabulations+'''if aux_'''+globalName+''' != "None":
+		'''+tabulations+final_fun_name+'''.'''+globalName+''' = aux_'''+globalName+'''
+	'''+tabulations+globalName+"="+final_fun_name+"."+globalName+'''
+	'''+tabulations+final_fun_name+'''.ver_'''+globalName+"= aux_ver"'''
+	'''+tabulations+''''''+"ver_"+globalName+"= "+final_fun_name+'''.ver_'''+globalName+'''
 		''')
 
 	return "hola"

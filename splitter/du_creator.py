@@ -169,6 +169,9 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 				isfun = True
 			if (fun_name not in line) and (isfun):
 				print "\t\tMiramos dentro de la funcion"
+				if "print" in line:
+					fo.write(line)
+					continue
 				if "global" in line:
 					line2 = "#"+ line + "#Aqui va el chorrazo de codigo"
 					globalName = line.split(" ")[1]
@@ -305,8 +308,9 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 
 ''')
 		fo.write('''def main():
-	f0()
-	return "cloudbook: done"
+	#f0()
+	#return "cloudbook: done"
+	return f0()
 
 ''')
 

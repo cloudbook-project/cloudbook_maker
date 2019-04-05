@@ -302,7 +302,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		val = 0
 	if value == "++":
 		val += 1
-	if value == "++":
+	if value == "--":
 		val -= 1
 	return json.dumps(val)
 

@@ -83,7 +83,7 @@ for i in range(len(du_list)):
 print(du_dict)
 
 json_str = json.dumps(du_dict)
-fo = open("./du_list.json", 'w')
+fo = open("../cloudbook_agent0/FSL/du_list.json", 'w')
 fo.write(json_str)
 fo.close()
 

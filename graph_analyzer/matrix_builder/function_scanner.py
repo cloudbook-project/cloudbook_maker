@@ -20,7 +20,7 @@ def get_functions(files_dict,config_dict):
 			print ("fichero "+f)
 			dir2=dir.replace("./","")
 			#filename="../example_program_003/input/"+dir+"/"+f
-			filename=input_folder+dir+os.sep+f
+			filename=input_folder+dir2+os.sep+f
 			print("=========================================================")
 			print(filename)
 			tokens = parser.tokenize(filename)

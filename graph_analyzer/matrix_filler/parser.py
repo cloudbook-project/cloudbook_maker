@@ -1,5 +1,6 @@
 #gets in every function and get functions calls.
 import cloudbook_parser2 as cloudbook_parser
+import os
 
 def create_matrix(function_list):
 	num_cols = len(function_list)+1
@@ -31,7 +32,8 @@ def function_parser(config_dict):
 	for i in function_list:
 		function_name = i[i.rfind('.')+1:]
 		module = i[:i.rfind('.')]
-		function_path = input_path+"/"+module.replace('.','/')+".py"
+		#function_path = input_path+"/"+module.replace('.','/')+".py"
+		function_path = input_path+os.sep+module.replace('.',os.sep)+".py"
 		print("funcion: "+function_name+" modulo: "+module+ " path: "+function_path)
 		if function_path not in function_path_list:
 			function_path_list.append(function_path)

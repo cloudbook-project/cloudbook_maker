@@ -27,7 +27,7 @@ def build_matrix(config_dict):
 				'./dir2':['file3.py']
 				}
 
-	files_dict=file_scanner.file_scanner3(config_dict) # NOT FAKE!!!!
+	files_dict=file_scanner.file_scanner4(config_dict) # NOT FAKE!!!!
 	print ("el escaneo de files es :")
 	print (files_dict)
 	#List of functions

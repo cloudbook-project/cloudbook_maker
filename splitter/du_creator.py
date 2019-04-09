@@ -1,6 +1,7 @@
 #create the deployable units
 import ast #for translating unicode strings
 import re
+import os
 
 def create_dus(config_dict):
 	con=config_dict["con"]
@@ -77,7 +78,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 			#ver translate_invocation()
 		#after translation of invocations of function text, include it into the du file
 	cursor = con.cursor()
-	output_file = output_path+"/"+du_name+".py"
+	output_file = output_path+os.sep+du_name+".py"
 	fo = open(output_file, 'w')
 	for i in final_imports:
 		fo.write(i)
@@ -95,7 +96,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		final_name = cursor.fetchone()[0]
 		#print "\tmodule, name: ",module, name
 		#print "\tinput path: ",input_path
-		input_file = input_path+"/"+module.replace('.','/')+".py"
+		input_file = input_path+os.sep+module.replace('.',os.sep)+".py"
 		print "\tAbrimos el fichero: "+ input_file
 		fi = open(input_file,'r')
 		isfun=False
@@ -175,7 +176,8 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 				if "global" in line:
 					line2 = "#"+ line + "#Aqui va el chorrazo de codigo"
 					globalName = line.split(" ")[1]
-					globalName = globalName.replace("\n","")
+					#globalName = globalName.replace("\n","")
+					globalName = re.sub(r'\s*',"",globalName)
 					line3 = writeGlobalCode(fun_name, fo, globalName,module, con, config_dict, tabs)
 					#print line3
 					fo.write(line2.replace("\n","")+"\n")

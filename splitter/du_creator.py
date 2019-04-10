@@ -159,6 +159,8 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 							hilo1 = threading.Thread(target=blockingB, daemon = False)
 							hilo1.start()
 							return "Ya he llamado"'''
+							funvariables=funvariables.replace("(","[")
+							funvariables=funvariables.replace(")","]")
 							fo.write('''	thread'''+final_name+''' = threading.Thread(target= parallel_'''+final_name+''', daemon = False, args = '''+funvariables+''')
 	thread'''+final_name+'''.start()
 	return json.dumps("thread launched")
@@ -442,7 +444,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 						variables_aux = variables_aux+"+','+ str("+i+")"
 			#invoker(['du_0'], 'cloudbook_th_counter',"'++'")#Para hacer el sync
 			pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'++'")
-			'''
+'''
 			newline = pre_line+"invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
 			#podria omitir el campo 0 aqui
 			#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo

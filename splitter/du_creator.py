@@ -445,7 +445,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			#invoker(['du_0'], 'cloudbook_th_counter',"'++'")#Para hacer el sync
 			pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'++'")
 '''
-			newline = pre_line+"invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
+			newline = pre_line+"\t"*tabs+"invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
 			#podria omitir el campo 0 aqui
 			#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
 		#Si es funcion normal:

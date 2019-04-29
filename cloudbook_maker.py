@@ -6,8 +6,8 @@ import logging
 import json
 from random import randint
 
-logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
-logging.info('\nThis is the logfile for the cloudbook maker\n')
+#logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
+#logging.info('\nThis is the logfile for the cloudbook maker\n')
 
 
 def showTables(con):

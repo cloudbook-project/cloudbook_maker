@@ -1,5 +1,5 @@
 import iterator
-import du_creator2 as du_creator
+import du_creator as du_creator
 
 def split_program(config_dict):
 	#con=config_dict["con"]

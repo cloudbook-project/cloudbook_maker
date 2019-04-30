@@ -22,6 +22,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	#this row UD will be the name of this deployable unit and it will contains all function from function_list
 	print "\tFunction list:", function_list
 	#en las du de una sola funcion, no viene en forma de lista la function list, si no como un string con la funcion
+	pragmas = ["__CLOUDBOOK:PARALLEL__"]
 	#ud guide: 1
 	cursor = con.cursor()
 	if type(function_list)!=list: 
@@ -109,11 +110,16 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		isfun=False
 		for i,line in enumerate(fi,1):
 			#ud guide: 3.2.2.1
-			print "\t\tMiramos la linea "+ line
+			#print "\t\tMiramos la linea "+ line
 			translated_fun = False
 			tabs = 0
 			tabs += line.count('\t')
 			linea = line.split()
+			#Ignoramos comentarios
+			#si linea es comentario, la ignoro si no es un pragma
+			if "#" in line and line not in pragmas:
+				fo.write(line)
+				continue
 			#Adaptamos o incorporamos a nombre funcion, a def loquesea o declaracion de variable global
 			#ud guide: 3.2.2.2
 			if "_VAR_" in name:
@@ -354,6 +360,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	row = c.fetchone()
 	invoked_du = row[0]
 	invoked_function = row[1]
+	print("PREfuncion, du invocada:",invoked_function,invoked_du)
 	#Aqui si old_function esta en dict labels, la invoked du sera 10000
 	print("aux_function: ", aux_function, " y invocation_function: ", invoked_function)
 	if aux_function in config_dict["labels"]:
@@ -464,7 +471,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 		#Si es funcion normal:
 		#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
 		
-
+	print("POST:funcion, du invocada:",invoked_function,invoked_du)
 	return newline
 
 def writeGlobalCode_old(fun_name,fo, globalName,module ,con, config_dict, tabs):

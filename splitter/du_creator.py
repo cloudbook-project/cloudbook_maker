@@ -118,7 +118,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 			#Ignoramos comentarios
 			#si linea es comentario, la ignoro si no es un pragma
 			if "#" in line and line not in pragmas:
-				fo.write(line)
+				#fo.write(line)
 				continue
 			#Adaptamos o incorporamos a nombre funcion, a def loquesea o declaracion de variable global
 			#ud guide: 3.2.2.2

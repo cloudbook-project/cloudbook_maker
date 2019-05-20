@@ -5,6 +5,7 @@ import sqlite3
 import logging
 import json
 from random import randint
+import os
 
 #logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
 #logging.info('\nThis is the logfile for the cloudbook maker\n')
@@ -40,6 +41,7 @@ def load_dictionary(filename):
 	return aux
 
 input_dict = load_dictionary("./config_maker.json")
+distributed_fs = input_dict["circle_info"]["DISTRIBUTED_FS"]
 input_dir = input_dict["input_folder"]
 output_dir = input_dict["output_folder"]
 desired_num_dus = input_dict["circle_info"]["NUM_ATTACHED_AGENTS"]
@@ -47,6 +49,7 @@ desired_num_dus = input_dict["circle_info"]["NUM_ATTACHED_AGENTS"]
 config_dict = {"input_dir": None,
 			"output_dir": None,
 			"con":None,
+			"distributed_fs": None,
 			"matrix_info": None,#matrix information at every step, all matrix elements can be resumed in one
 			#matrix_info[0]:dirs and files dict, matrix_info[1]: function list
 			"matrix_data": None, #matrix filled
@@ -54,8 +57,9 @@ config_dict = {"input_dir": None,
 			"num_dus": None,
 			"labels":None} 
 
-config_dict["input_dir"] = input_dir
-config_dict["output_dir"] = output_dir
+config_dict["distributed_fs"] = distributed_fs
+config_dict["input_dir"] = distributed_fs + os.sep + "original"
+config_dict["output_dir"] = distributed_fs + os.sep + "distributed" + os.sep + "du_files"
 config_dict["num_dus"] = desired_num_dus
 
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 
@@ -83,8 +87,9 @@ for i in range(len(du_list)):
 print(du_dict)
 
 json_str = json.dumps(du_dict)
-#fo = open("../cloudbook_agent0/FSL/du_list.json", 'w')
-fo = open("./du_list.json", 'w')
+#fo = open("./du_list.json", 'w')
+du_list_route = distributed_fs + os.sep + "distributed"+os.sep+"du_list.json"
+fo = open(du_list_route, 'w')
 fo.write(json_str)
 fo.close()
 

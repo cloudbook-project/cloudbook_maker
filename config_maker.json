@@ -1,12 +1,13 @@
 {
-	"input_folder":"../example_program_003/input2",
-	"output_folder":"../example_program_003/output",
+	"input_folder":"../example_program_004/input2",
+	"output_folder":"../example_program_004/output",
 	"circle_info":{
 		"NAME":"local",
 		"CIRCLE_ID": "local_id",
 		"DESCRIPTION": "to run examples",
 		"NUM_ATTACHED_AGENTS": 4,
-		"DISTRIBUTED_FS": "drive.google.com/drive/folders/...",
-		"STATUS": "IDLE"
+		"DISTRIBUTED_FS": "C:/Users/jramosdi.NSN-INTRA/cloudbook",
+		"STATUS": "IDLE",
+		"MAX_THREADS": 4
 	}
 }

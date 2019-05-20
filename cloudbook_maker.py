@@ -60,6 +60,9 @@ config_dict = {"input_dir": None,
 config_dict["distributed_fs"] = distributed_fs
 config_dict["input_dir"] = distributed_fs + os.sep + "original"
 config_dict["output_dir"] = distributed_fs + os.sep + "distributed" + os.sep + "du_files"
+#For testing purposes
+#config_dict["input_dir"] = input_dir
+#config_dict["output_dir"] = output_dir
 config_dict["num_dus"] = desired_num_dus
 
 con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete the databases 

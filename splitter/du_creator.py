@@ -68,6 +68,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	final_imports = final_imports_aux
 	if "import threading" not in final_imports:#PARALLEL: Para poder hacer threads si hay funciones parallel
 		final_imports.append("import threading")
+		final_imports.append("from threading import Lock")
 	print "\t\tFinal Imports: ", final_imports, "\n"		
 
 
@@ -321,11 +322,15 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 ''')
 		fo.write('''def cloudbook_th_counter(value):
 	if not hasattr(cloudbook_th_counter, "val"):
-		val = 0
+		cloudbook_th_counter.val = 0
+	if not hasattr(cloudbook_th_counter, "cerrojo"):
+		cloudbook_th_counter.cerrojo = Lock()
 	if value == "++":
-		val += 1
+		with cloudbook_th_counter.cerrojo:
+			cloudbook_th_counter.val += 1
 	if value == "--":
-		val -= 1
+		with cloudbook_th_counter.cerrojo:
+			cloudbook_th_counter.val -= 1
 	return json.dumps(val)
 
 ''')
@@ -591,7 +596,7 @@ def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
 			'''+final_name+'''.ver_'''+fun_name+'''+=1
 			return json.dumps((eval(op),'''+final_name+'''.ver_'''+fun_name+'''))
 		except:
-			#with lock_'''+fun_name+''':
-			exec(op)
-			'''+final_name+'''.ver_'''+fun_name+'''+=1
+			with lock_'''+final_name+"."+fun_name+''':
+				exec(op)
+				'''+final_name+'''.ver_'''+fun_name+'''+=1
 			return json.dumps(("done",'''+final_name+'''.ver_'''+fun_name+'''))''')

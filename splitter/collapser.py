@@ -127,10 +127,10 @@ def update_DU(con, f2_list, f1_list):
 		f2_list = list2[0]
 	list2[0] = f2_list
 
-	print("F1_LIST: ", f1_list)
-	print("F2_LIST: ",f2_list)
-	print("LIST1: ", list1)
-	print("LIST2: ", list2)
+	print("F1_LIST: ", f1_list, "tipo", type(f1_list))
+	print("F2_LIST: ",f2_list, "tipo", type(f2_list))
+	print("LIST1: ", list1, "tipo", type(list1))
+	print("LIST2: ", list2, "tipo", type(list2))
 	print("La Peticion es:","SELECT DU from FUNCTIONS where ORIG_NAME='"+str(list1[0])+"'")
 
 	cursor = con.cursor()
@@ -145,6 +145,7 @@ def update_DU(con, f2_list, f1_list):
 	du_old=cursor.fetchone()[0]
 
 	for i in list2:
+		print("Actualizo la du de la funcion:", i)
 		cursor.execute("UPDATE FUNCTIONS set DU="+str(du)+" where ORIG_NAME='"+i+"'")
 	
 	#now proceed with modules table

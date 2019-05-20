@@ -22,7 +22,6 @@ def split_program(config_dict):
 	print ("\nTHE COLLAPSED FINAL MATRIX WITH PARALLEL IS:")
 	print_matrix(config_dict["matrix_filled"])
 	du_list=[]
-	#du_list = du_creator.create_dus(con,matrix,input_path,output_path)
 	du_list = du_creator.create_dus(config_dict)
 
 	print (">>>EXIT from split_program...")

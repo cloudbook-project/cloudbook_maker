@@ -6,6 +6,7 @@ import logging
 import json
 from random import randint
 import os
+import platform
 
 #logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
 #logging.info('\nThis is the logfile for the cloudbook maker\n')
@@ -40,8 +41,17 @@ def load_dictionary(filename):
 		aux = json.load(file)
 	return aux
 
+if(platform.system()=="Windows"):
+    path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/"
+    if not os.path.exists(path):
+        os.makedirs(path)
+else:
+    path = "/etc/cloudbook/"
+    if not os.path.exists(path):
+        os.makedirs(path)
+
 input_dict = load_dictionary("./config_maker.json")
-distributed_fs = input_dict["circle_info"]["DISTRIBUTED_FS"]
+distributed_fs = path#input_dict["circle_info"]["DISTRIBUTED_FS"]
 input_dir = input_dict["input_folder"]
 output_dir = input_dict["output_folder"]
 desired_num_dus = input_dict["circle_info"]["NUM_ATTACHED_AGENTS"]

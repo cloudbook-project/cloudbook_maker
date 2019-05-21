@@ -69,6 +69,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	if "import threading" not in final_imports:#PARALLEL: Para poder hacer threads si hay funciones parallel
 		final_imports.append("import threading")
 		final_imports.append("from threading import Lock")
+	final_imports.append("import sys")#TODO comprobar que no este repetido
 	print "\t\tFinal Imports: ", final_imports, "\n"		
 
 
@@ -203,12 +204,27 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 					fo.write(line2.replace("\n","")+"\n")
 					continue
 				if "#SYNC" in line:
-					#Escribo el while
-					'''while json.loads(cloudbook_th_counter("")) > 0:
-			sleep(0.01)'''
-					line = line.replace("#SYNC",'''while json.loads(cloudbook_th_counter("")) > 0: #This was sync
+					if line.find(":") != -1:
+						time = line.split(":")[1]
+						time = time.replace(":","")
+						time = int(time)/10
+						time = str(time)
+					#line = line.replace("#SYNC",'''while json.loads(cloudbook_th_counter("")) > 0: #This was sync
+			#sleep(0.01)
+			#''')
+					#todo: Los tabs bien
+						line = "\t"*tabs+'''temp = 0
+		while json.loads(cloudbook_th_counter("")) > 0: #This was sync
+			if temp > '''+time+''':
+				print("threading failure")
+				sys.exit()
 			sleep(0.01)
-			''')
+			temp+=1
+'''
+					else:
+						line = "\t"*tabs+'''while json.loads(cloudbook_th_counter("")) > 0: #This was sync
+			sleep(0.01)
+'''
 					fo.write(line)
 					continue
 				#Hay que ver si dentro de la funcion, se llama a alguna otra funcion de la tabla functions

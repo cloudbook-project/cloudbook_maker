@@ -41,16 +41,20 @@ def load_dictionary(filename):
 		aux = json.load(file)
 	return aux
 
-if(platform.system()=="Windows"):
-    path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/"
-    if not os.path.exists(path):
-        os.makedirs(path)
-else:
-    path = "/etc/cloudbook/"
-    if not os.path.exists(path):
-        os.makedirs(path)
-
 input_dict = load_dictionary("./config_maker.json")
+
+if input_dict["circle_info"]["DISTRIBUTED_FS"] == "":
+	if(platform.system()=="Windows"):
+	    path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/"
+	    if not os.path.exists(path):
+	        os.makedirs(path)
+	else:
+	    path = "/etc/cloudbook/"
+	    if not os.path.exists(path):
+	        os.makedirs(path)
+else:
+	path = input_dict["circle_info"]["DISTRIBUTED_FS"] 
+
 distributed_fs = path#input_dict["circle_info"]["DISTRIBUTED_FS"]
 input_dir = input_dict["input_folder"]
 output_dir = input_dict["output_folder"]

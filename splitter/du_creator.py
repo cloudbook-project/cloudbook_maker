@@ -347,7 +347,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	if value == "--":
 		with cloudbook_th_counter.cerrojo:
 			cloudbook_th_counter.val -= 1
-	return json.dumps(val)
+	return json.dumps(cloudbook_th_counter.val)
 
 ''')
 		fo.write('''def main():

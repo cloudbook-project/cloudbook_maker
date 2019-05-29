@@ -218,7 +218,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 			if temp > '''+time+''':
 				print("threading failure")
 				sys.exit()
-			sleep(0.01)
+			time.sleep(0.01)
 			temp+=1
 '''
 					else:
@@ -612,7 +612,7 @@ def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
 			'''+final_name+'''.ver_'''+fun_name+'''+=1
 			return json.dumps((eval(op),'''+final_name+'''.ver_'''+fun_name+'''))
 		except:
-			with lock_'''+final_name+"."+fun_name+''':
+			with '''+final_name+".lock_"+fun_name+''':
 				exec(op)
 				'''+final_name+'''.ver_'''+fun_name+'''+=1
 			return json.dumps(("done",'''+final_name+'''.ver_'''+fun_name+'''))''')

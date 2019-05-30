@@ -64,7 +64,7 @@ else:
     if not os.path.exists(path):
         os.makedirs(path)
 
-input_dict = load_dictionary(path+os.sep+"config"os.sep+"config_maker.json")   
+input_dict = load_dictionary(path+os.sep+"config"+os.sep+"config_maker.json")   
 
 distributed_fs = path#input_dict["circle_info"]["DISTRIBUTED_FS"]
 input_dir = input_dict["input_folder"]

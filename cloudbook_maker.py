@@ -67,8 +67,8 @@ else:
 input_dict = load_dictionary(path+os.sep+"config"+os.sep+"config.json")   
 
 distributed_fs = path#input_dict["circle_info"]["DISTRIBUTED_FS"]
-input_dir = input_dict["input_folder"]
-output_dir = input_dict["output_folder"]
+#input_dir = input_dict["input_folder"]
+#output_dir = input_dict["output_folder"]
 desired_num_dus = input_dict["circle_info"]["NUM_ATTACHED_AGENTS"]
 
 config_dict = {"input_dir": None,

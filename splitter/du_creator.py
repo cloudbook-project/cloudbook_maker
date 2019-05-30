@@ -69,6 +69,8 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	if "import threading" not in final_imports:#PARALLEL: Para poder hacer threads si hay funciones parallel
 		final_imports.append("import threading")
 		final_imports.append("from threading import Lock")
+	if "import json" not in final_imports:
+		final_imports.append("import json")
 	final_imports.append("import sys")#TODO comprobar que no este repetido
 	print "\t\tFinal Imports: ", final_imports, "\n"		
 
@@ -131,7 +133,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 			#ud guide: 3.2.2.3
 			newprint = ""
 			newvar = ""
-			if "print " + '"@' in line:
+			if "print " + '("@' in line:
 				print "AQUI PRINT"
 				line_aux = line.split("@",1)
 				print line_aux[1]

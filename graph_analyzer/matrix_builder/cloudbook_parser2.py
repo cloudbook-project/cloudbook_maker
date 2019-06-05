@@ -13,7 +13,7 @@ import math
 #file = "nbody_orig.py"
 
 tokens = ['TEST','IMPORT','FUN_DEF','COMMENT','LOOP_FOR','LOOP_WHILE','IF','ELSE','TRY','EXCEPT','PRINTV2', 'PRINTV3','FUN_INVOCATION','PYTHON_INVOCATION',
-'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL']
+'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE']
 
 fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*'
 funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*|[a-zA-Z_][a-zA-Z_0-9]*'
@@ -30,6 +30,11 @@ global_var = r'^[a-zA-Z_][a-zA-Z_0-9]*|[g][l][o][b][a][l][\s]+[a-zA-Z_][a-zA-Z_0
 def t_PARALLEL(t):
 	r'[#][_][_][C][L][O][U][D][B][O][O][K][:][P][A][R][A][L][L][E][L][_][_]'
 	t.type='PARALLEL'
+	return t
+
+def t_RECURSIVE(t):
+	r'[#][_][_][C][L][O][U][D][B][O][O][K][:][R][E][C][U][R][S][I][V][E][_][_]'
+	t.type='RECURSIVE'
 	return t
 
 def t_COMMENT(t):
@@ -387,6 +392,17 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 					function_names.append(file+"."+i.value)
 					i.value = file+"."+i.value
 		if i.type == 'PARALLEL':
+			i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
+			#labels_dict[i.value]=i.type
+			if dir!="":
+				i.value = dir+"."+file+"."+i.value.split("(")[0]
+			else:
+				if i.value.split("(")[0] == 'main':
+					i.value = file+"."+i.value.split("(")[0]
+				else:
+					i.value = file+"."+i.value.split("(")[0]
+			labels_dict[i.value]=i.type
+		if i.type == 'RECURSIVE':
 			i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
 			#labels_dict[i.value]=i.type
 			if dir!="":

@@ -22,7 +22,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	#this row UD will be the name of this deployable unit and it will contains all function from function_list
 	print "\tFunction list:", function_list
 	#en las du de una sola funcion, no viene en forma de lista la function list, si no como un string con la funcion
-	pragmas = ["__CLOUDBOOK:PARALLEL__","SYNC"]
+	pragmas = ["__CLOUDBOOK:PARALLEL__","SYNC","__CLOUDBOOK:RECURSIVE__"]
 	#ud guide: 1
 	cursor = con.cursor()
 	if type(function_list)!=list: 
@@ -186,7 +186,9 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	return json.dumps("thread launched")
 
 ''')
-							final_name = "parallel_"+final_name						
+							final_name = "parallel_"+final_name	
+						if config_dict["labels"][module+"."+name] == 'RECURSIVE':	
+							final_name = "recursive_"+final_name					
 
 					fo.write(line.replace(name, final_name))
 				isfun = True
@@ -225,7 +227,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 '''
 					else:
 						line = "\t"*tabs+'''while json.loads(cloudbook_th_counter("")) > 0: #This was sync
-			sleep(0.01)
+			time.sleep(0.01)
 '''
 					fo.write(line)
 					continue
@@ -377,6 +379,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	aux_function = old_function #modulo.nombrefuncomplet
 	old_function = old_function.split(".")[-1] #solo nombrefuncompleto
 	parallel_fun = False #Marcador que sirve para tratar bien las variables en las invocaciones a funcion parallel
+	recursive_fun = False
 	#c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME like '%"+invoked_function+"%'")
 	c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+invoked_function+"'")
 	row = c.fetchone()
@@ -389,6 +392,9 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 		if config_dict["labels"][aux_function] == "PARALLEL":
 			invoked_du=10000
 			parallel_fun = True
+		if config_dict["labels"][aux_function] == "RECURSIVE":
+			invoked_du=5000
+			recursive_fun = True
 	if str(invoked_du) in du_name:#La invocacion es local
 	##TODOO hay q ciomprobar si es parallel, en cuyo caso se invoca como remota, con du_10000
 		#invoked_function = invoked_function[invoked_function.rfind(".")+1:len(invoked_function)]

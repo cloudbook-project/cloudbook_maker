@@ -394,6 +394,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			parallel_fun = True
 		if config_dict["labels"][aux_function] == "RECURSIVE":
 			invoked_du=5000
+			invoked_function = "recursive_"+invoked_function
 			recursive_fun = True
 	if str(invoked_du) in du_name:#La invocacion es local
 	##TODOO hay q ciomprobar si es parallel, en cuyo caso se invoca como remota, con du_10000

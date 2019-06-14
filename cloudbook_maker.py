@@ -7,6 +7,7 @@ import json
 from random import randint
 import os
 import platform
+from radon.visitors import ComplexityVisitor
 
 #logging.basicConfig(filename='cloudbook_maker.log',level=logging.DEBUG)
 #logging.info('\nThis is the logfile for the cloudbook maker\n')
@@ -105,13 +106,37 @@ du_list = splitter.split_program(config_dict)
 #Creation of du_dict with du info
 #Comentado para probar el parser nuevo
 du_dict={}
-for i in range(len(du_list)):
+'''for i in range(len(du_list)):
 	#function_list=final_matrix[0][i]
 	#cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'")
 	du_name = du_list[i]
 	du_dict[du_name]={}
 	du_dict[du_name]["cost"]=100
 	du_dict[du_name]["size"]=100
+print(du_dict)'''
+
+#file = open("nbody_orig32.py","r")
+out_route = config_dict["output_dir"] 
+for i in range(len(du_list)):
+	du_name = du_list[i]
+	out_route = config_dict["output_dir"]+os.sep+du_name+".py"
+	print (out_route)
+	cadena = ""
+	file = open(out_route,"r")
+	for i in file:
+	    cadena = cadena + i	    
+	v = ComplexityVisitor.from_code(cadena)
+	#print(v.functions)
+	temp_complex = 0
+	temp_size = 0
+	for i in v.functions:
+	    #print(i.fullname,i.complexity,i.endline-i.lineno)
+	    temp_complex += i.complexity
+	    temp_size += i.endline-i.lineno
+	du_dict[du_name]={}
+	du_dict[du_name]["cost"]=temp_complex
+	du_dict[du_name]["size"]=temp_size
+	#para el size resto lineas y punto'''
 print(du_dict)
 
 json_str = json.dumps(du_dict)

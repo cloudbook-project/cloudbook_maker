@@ -22,7 +22,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	#this row UD will be the name of this deployable unit and it will contains all function from function_list
 	print "\tFunction list:", function_list
 	#en las du de una sola funcion, no viene en forma de lista la function list, si no como un string con la funcion
-	pragmas = ["__CLOUDBOOK:PARALLEL__","SYNC","__CLOUDBOOK:RECURSIVE__"]
+	pragmas = ["__CLOUDBOOK:PARALLEL__","SYNC","__CLOUDBOOK:RECURSIVE__","__CLOUDBOOK:LOCAL__"]
 	#ud guide: 1
 	cursor = con.cursor()
 	if type(function_list)!=list: 
@@ -316,8 +316,12 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 						translated_fun = True
 				if "return" in line:
 					print "AQUI RETURN"
-					aux_ret = line.split()[-1]
-					line = line.replace(aux_ret,"json.dumps("+aux_ret+")")
+					if module+"."+name in config_dict["labels"]:
+						if config_dict["labels"][module+"."+name] == 'LOCAL':
+							pass
+					else:	
+						aux_ret = line.split()[-1]
+						line = line.replace(aux_ret,"json.dumps("+aux_ret+")")
 				if translated_fun==False:
 						fo.write(line)
 
@@ -380,6 +384,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	old_function = old_function.split(".")[-1] #solo nombrefuncompleto
 	parallel_fun = False #Marcador que sirve para tratar bien las variables en las invocaciones a funcion parallel
 	recursive_fun = False
+	local_fun = False
 	#c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME like '%"+invoked_function+"%'")
 	c.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+invoked_function+"'")
 	row = c.fetchone()
@@ -396,6 +401,10 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			invoked_du=5000
 			invoked_function = "recursive_"+invoked_function
 			recursive_fun = True
+		if config_dict["labels"][aux_function] == "LOCAL":
+			print("===========================================================LOCAALLLLLLLLLLLL")
+			invoked_du = du_name
+			local_fun = True
 	if str(invoked_du) in du_name:#La invocacion es local
 	##TODOO hay q ciomprobar si es parallel, en cuyo caso se invoca como remota, con du_10000
 		#invoked_function = invoked_function[invoked_function.rfind(".")+1:len(invoked_function)]
@@ -420,13 +429,19 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			newline = invoked_function+"('"+variables+"', str(ver_"+old_function+"))#"
 			#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 		else: #es una fun normal
+			print("LOCAAALLLLL", invoked_function, old_function)
+
 			newline = line.replace(old_function,invoked_function)
 			newline = re.sub(r'\s*',"",newline)
 			if line.find("(")!=-1: #si no tiene parentesis en global var
 				variables = line.split("(")[1]
 			else:
 				variables=""
-			newline = "json.loads("+invoked_function + "("+ variables + ")"
+			if local_fun == True:
+				newline = invoked_function + "("+ variables
+				local_fun = False
+			else:
+				newline = "json.loads("+invoked_function + "("+ variables + ")"
 			newline = re.sub(r'\s*',"",newline)
 	else:#La invocacion es externa
 		#invoked_function = invoked_function[invoked_function.rfind("."):len(invoked_function)]

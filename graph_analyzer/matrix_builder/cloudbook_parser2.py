@@ -13,7 +13,7 @@ import math
 #file = "nbody_orig.py"
 
 tokens = ['TEST','IMPORT','FUN_DEF','COMMENT','LOOP_FOR','LOOP_WHILE','IF','ELSE','TRY','EXCEPT','PRINTV2', 'PRINTV3','FUN_INVOCATION','PYTHON_INVOCATION',
-'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE']
+'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL']
 
 fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*'
 funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*|[a-zA-Z_][a-zA-Z_0-9]*'
@@ -35,6 +35,11 @@ def t_PARALLEL(t):
 def t_RECURSIVE(t):
 	r'[#][_][_][C][L][O][U][D][B][O][O][K][:][R][E][C][U][R][S][I][V][E][_][_]'
 	t.type='RECURSIVE'
+	return t
+
+def t_LOCAL(t):
+	r'[#][_][_][C][L][O][U][D][B][O][O][K][:][L][O][C][A][L][_][_]'
+	t.type='LOCAL'
 	return t
 
 def t_COMMENT(t):
@@ -403,6 +408,17 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 					i.value = file+"."+i.value.split("(")[0]
 			labels_dict[i.value]=i.type
 		if i.type == 'RECURSIVE':
+			i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
+			#labels_dict[i.value]=i.type
+			if dir!="":
+				i.value = dir+"."+file+"."+i.value.split("(")[0]
+			else:
+				if i.value.split("(")[0] == 'main':
+					i.value = file+"."+i.value.split("(")[0]
+				else:
+					i.value = file+"."+i.value.split("(")[0]
+			labels_dict[i.value]=i.type
+		if i.type == 'LOCAL':
 			i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
 			#labels_dict[i.value]=i.type
 			if dir!="":

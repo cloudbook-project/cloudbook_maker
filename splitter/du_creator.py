@@ -156,6 +156,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 					line = newvar+ "\n" + newprint+"\n"
 			###Three kinds of fun in file
 			#ud guide: 3.2.2.4
+			lock_parallel = False
 			if (fun_name in line) and (tabs==0):
 				print "\t\tHemos encontrado la funcion: ", name, " que sera ", final_name
 				if "_VAR_" in name:
@@ -187,25 +188,54 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 
 ''')
 							final_name = "parallel_"+final_name	
+							'''if not hasattr(f1, "lock_body_list"):
+		f1.lock_body_list = threading.Lock()
+							'''
+							lock_parallel_line = '''	if not hasattr('''+final_name+''', "lock"):
+		'''+final_name+'''.lock = threading.Lock()
+	with '''+final_name+'''.lock:
+	'''
 						if config_dict["labels"][module+"."+name] == 'RECURSIVE':	
 							final_name = "recursive_"+final_name					
 
 					fo.write(line.replace(name, final_name))
+					if "parallel_" in final_name:
+						fo.write(lock_parallel_line)
 				isfun = True
 			#ud guide: 3.2.2.5
+			lock_parallel = False
 			if (fun_name not in line) and (isfun):
-				print "\t\tMiramos dentro de la funcion"
+				print "\t\tMiramos dentro de la funcion"+fun_name+" "+module+"."+name
+				if module+"."+name in config_dict["labels"]:
+					if config_dict["labels"][module+"."+name] == 'PARALLEL':
+						print("activo el lock parallel")
+						lock_parallel = True
 				if "print" in line:
-					fo.write(line)
+					#fo.write(line)
+					if lock_parallel == True:
+						line = '\t'+line
+						fo.write(line)
+						
+					else:
+						fo.write(line)
 					continue
 				if "global" in line:
 					line2 = "#"+ line + "#Aqui va el chorrazo de codigo"
 					globalName = line.split(" ")[1]
 					#globalName = globalName.replace("\n","")
 					globalName = re.sub(r'\s*',"",globalName)
-					line3 = writeGlobalCode(fun_name, fo, globalName,module, con, config_dict, tabs)
+					if lock_parallel == True:
+						line3 = writeGlobalCode(fun_name, fo, globalName,module, con, config_dict, tabs+1)
+						
+					else:
+						line3 = writeGlobalCode(fun_name, fo, globalName,module, con, config_dict, tabs)
 					#print line3
-					fo.write(line2.replace("\n","")+"\n")
+					if lock_parallel == True:
+						line2 = "\t"+line2
+						fo.write(line2.replace("\n","")+"\n")
+						
+					else:
+						fo.write(line2.replace("\n","")+"\n")
 					continue
 				if "#SYNC" in line:
 					if line.find(":") != -1:
@@ -309,6 +339,9 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 						#		new_line = elem + " " + new_line
 						#	if k > invocation_index:
 						#		new_line = new_line + " " + elem
+						if lock_parallel == True:
+							tabs +=1
+							
 						for i in range(tabs):
 							new_line = "\t"+new_line
 						fo.write(new_line)
@@ -321,10 +354,20 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 							pass
 					else:	
 						aux_ret = line.split()[-1]
-						line = line.replace(aux_ret,"json.dumps("+aux_ret+")")
+						if lock_parallel == True:
+							line = line.replace(aux_ret,"json.dumps("+aux_ret+")")
+							line = "\t"+line
+							
+						else:
+							line = line.replace(aux_ret,"json.dumps("+aux_ret+")")
 				if translated_fun==False:
-						fo.write(line)
-
+						if lock_parallel == True:
+							line = "\t"+line
+							fo.write(line)
+							
+						else:
+							fo.write(line)
+				lock_parallel = False
 			#ud guide: 3.2.2.6
 			if (fun_name not in line) and (tabs==0):
 				#Hara falta traducir aqui
@@ -333,9 +376,12 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		if "parallel_" in final_name:#Before return, sychronize thread
 			#pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'--'")
 			#''' 
-			fo.write("\n\tinvoker(['du_0'], 'cloudbook_th_counter',\"'--'\")\n")
+			fo.write("\n\t\tinvoker(['du_0'], 'cloudbook_th_counter',\"'--'\")\n")
+			fo.write("\n\t\treturn json.dumps('cloudbook: done') \n\n")
 		#ud guide: 3.2.4
-		fo.write("\n\treturn json.dumps('cloudbook: done') \n\n")					
+		if "parallel_" not in final_name:
+			fo.write("\n\treturn json.dumps('cloudbook: done') \n\n")
+
 	#ud guide: 3.3
 	fi.close()
 	if (du_name == "du_0"):

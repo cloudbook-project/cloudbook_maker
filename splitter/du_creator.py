@@ -471,9 +471,9 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					variables = variables.replace(variable_aux,"")
 					#variables = variables + "('+str"+variable_aux+"')" #Antes de la depuracion de nbody4
 					variables = variables + "('+str"+variable_aux+"+')"
-			#newline = invoked_function+"('"+variables+"',"+"ver_"+old_function+")" #Antes de la depuracion de nbody4
-			newline = invoked_function+"('"+variables+"', str(ver_"+old_function+"))#"
-			#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
+			#newline = invoked_function+"('"+variables+"', str(ver_"+old_function+"))#"
+			newline = invoked_function+"('"+variables+"', str(0))#"
+			
 		else: #es una fun normal
 			print("LOCAAALLLLL", invoked_function, old_function)
 
@@ -532,7 +532,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
 					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
 					variables = variables.replace(variable_aux,"")
-					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(ver_"+old_function+"))"
+					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(ver_"+old_function+"))"
+					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(0))"
 				else:
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"

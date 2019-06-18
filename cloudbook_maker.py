@@ -61,7 +61,7 @@ if(platform.system()=="Windows"):
     if not os.path.exists(path):
         os.makedirs(path)
 else:
-    path = "/etc/cloudbook/"
+    path = "/etc/cloudbook"
     if not os.path.exists(path):
         os.makedirs(path)
 

@@ -39,7 +39,7 @@ def add_labeled_functions(config_dict):
 	#num_rows=len(matrix[0])
 	for i in range(1,num_cols):
 		for j in config_dict["labels"]:
-			if (config_dict["labels"][j] == 'PARALLEL') or (config_dict["labels"][j] == 'RECURSIVE') or (config_dict["labels"][j] == 'LOCAL'):
+			if (config_dict["labels"][j] == 'PARALLEL') or (config_dict["labels"][j] == 'RECURSIVE') or (config_dict["labels"][j] == 'LOCAL'):# or (config_dict["labels"][j] == 'CLASS_DEF'):
 				print("PARALLEL", j)
 				if type(matrix[0][i])==list:
 					if j not in matrix[0][i]:

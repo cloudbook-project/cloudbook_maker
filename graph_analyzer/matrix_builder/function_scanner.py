@@ -24,12 +24,14 @@ def get_functions(files_dict,config_dict):
 			print("=========================================================")
 			print(filename)
 			tokens = parser.tokenize(filename)
-			#print("me da tokens: "+ str(tokens))
+			print("me da tokens: ")
+			for tok in tokens:
+				print(str(tok))
 			parser.function_scanner(tokens,dir2,f,function_names,labels_dict)
 			#parser.invocation_names(tokens,dir2,f,function_names)#only if necessary, to get the complete names on invocations
 
-	print(function_names)
-	print(labels_dict)
+	print("functions", function_names)
+	print("labels:", labels_dict)
 	config_dict["labels"]=labels_dict
 	return function_names
 

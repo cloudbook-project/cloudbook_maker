@@ -112,6 +112,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		print "\tAbrimos el fichero: "+ input_file
 		fi = open(input_file,'r')
 		isfun=False
+		isClass = False
 		for i,line in enumerate(fi,1):
 			#ud guide: 3.2.2.1
 			#print "\t\tMiramos la linea "+ line
@@ -125,6 +126,11 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 				#continue
 			#Adaptamos o incorporamos a nombre funcion, a def loquesea o declaracion de variable global
 			#ud guide: 3.2.2.2
+			if tabs == 0:
+				isClass = False
+			if "class" in line or isClass == True:
+				isClass = True
+				fo.write(line)
 			if "_VAR_" in name:
 				fun_name = name.replace("_VAR_","")
 			else:

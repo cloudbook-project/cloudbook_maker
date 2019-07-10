@@ -117,6 +117,7 @@ print(du_dict)'''
 
 #file = open("nbody_orig32.py","r")
 out_route = config_dict["output_dir"] 
+
 for i in range(len(du_list)):
 	du_name = du_list[i]
 	out_route = config_dict["output_dir"]+os.sep+du_name+".py"
@@ -136,7 +137,7 @@ for i in range(len(du_list)):
 	du_dict[du_name]={}
 	du_dict[du_name]["cost"]=temp_complex
 	du_dict[du_name]["size"]=temp_size
-	#para el size resto lineas y punto'''
+	#para el size resto lineas y punto
 print(du_dict)
 
 json_str = json.dumps(du_dict)
@@ -146,4 +147,4 @@ fo = open(du_list_route, 'w')
 fo.write(json_str)
 fo.close()
 
-showTables(con)
+##showTables(con)

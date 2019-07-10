@@ -236,7 +236,7 @@ def function_parser(token_list,function_names):
 		print i
 		for tok in token_list[i]:
 	
-			if tok.type == 'FUN_DEF':#not for classes only procedimental programs
+			if tok.type == 'FUN_DEF' and tok.value in function_names:#not for classes only procedimental programs
 				level = tok.lexpos
 				if tok.value.find("(")!=-1:
 					invocator = tok.value.split("(")[0]
@@ -248,7 +248,7 @@ def function_parser(token_list,function_names):
 					values[tok.lexpos] = n
 				except:
 					values.insert(tok.lexpos,n)
-				print(tok.value  +" values: "+ str(values))
+				print("fun definition: ",tok.value  +" values: "+ str(values))
 				continue
 			#if tok.lexpos > levels[-1]:#ignore indent 0
 			if tok.lexpos > 0:#ignore indent 0

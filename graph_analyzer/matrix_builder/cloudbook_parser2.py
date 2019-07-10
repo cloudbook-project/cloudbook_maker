@@ -13,12 +13,12 @@ import math
 #file = "nbody_orig.py"
 
 tokens = ['TEST','IMPORT','FUN_DEF','COMMENT','LOOP_FOR','LOOP_WHILE','IF','ELSE','TRY','EXCEPT','PRINTV2', 'PRINTV3','FUN_INVOCATION','PYTHON_INVOCATION',
-'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL']
+'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF']
 
 fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*'
 funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*|[a-zA-Z_][a-zA-Z_0-9]*'
 t_ignore = " \n"
-iden = r'[a-zA-Z_][a-zA-Z_0-9]*'
+#iden = r'[a-zA-Z_][a-zA-Z_0-9]*'
 
 from_token = r'[f][r][o][m][\s]+[a-zA-Z_][a-zA-Z_0-9]*'
 import_token = r'[i][m][p][o][r][t][\s]+[a-zA-Z_][a-zA-Z_0-9]*'
@@ -26,6 +26,8 @@ importation = from_token + r'[\s]+' + import_token + r'|' + import_token
 iden = r'[a-zA-Z_][.a-zA-Z_0-9]*'
 assignation = r'[\s]*[=][\s]*'
 global_var = r'^[a-zA-Z_][a-zA-Z_0-9]*|[g][l][o][b][a][l][\s]+[a-zA-Z_][a-zA-Z_0-9]*'
+
+class_token = r'^[c][l][a][s][s][\s]*' + iden + r'[\s]*[:][\s]+'
 
 def t_PARALLEL(t):
 	r'[#][_][_][C][L][O][U][D][B][O][O][K][:][P][A][R][A][L][L][E][L][_][_]'
@@ -65,6 +67,12 @@ def t_PRINTV2(t):#TODO Probarlo mas.
 	r'[a-zA-Z_.][a-zA-Z_0-9]*'
 	t.type= 'COMPLEX_IDEN'
 	return t'''
+
+@TOKEN(class_token)
+def t_CLASS_DEF(t):#decorators not observed
+	t.type = 'CLASS_DEF'
+	t.value = re.sub(r'([c][l][a][s][s]|[:]|[\s]*)',"",t.value)
+	return t
 
 @TOKEN(fundefintion)
 #@TOKEN(funorglobal)
@@ -377,6 +385,8 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 	file = file.replace(".py","")
 	for j,i in enumerate(tokens,1):#numero, token
 		if i.type == 'FUN_DEF':
+			if i.lexpos != 0:
+				continue #avoid translate inner functions of classes or meta functions
 			if dir!="":
 				function_names.append(dir+"."+file+"."+i.value.split("(")[0])#cutre
 				i.value = dir+"."+file+"."+i.value.split("(")[0]
@@ -420,6 +430,17 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 			labels_dict[i.value]=i.type
 		if i.type == 'LOCAL':
 			i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
+			#labels_dict[i.value]=i.type
+			if dir!="":
+				i.value = dir+"."+file+"."+i.value.split("(")[0]
+			else:
+				if i.value.split("(")[0] == 'main':
+					i.value = file+"."+i.value.split("(")[0]
+				else:
+					i.value = file+"."+i.value.split("(")[0]
+			labels_dict[i.value]=i.type
+		if i.type == 'CLASS_DEF':
+			#i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
 			#labels_dict[i.value]=i.type
 			if dir!="":
 				i.value = dir+"."+file+"."+i.value.split("(")[0]

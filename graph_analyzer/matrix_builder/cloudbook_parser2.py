@@ -439,7 +439,7 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 				else:
 					i.value = file+"."+i.value.split("(")[0]
 			labels_dict[i.value]=i.type
-		if i.type == 'CLASS_DEF':
+		'''if i.type == 'CLASS_DEF':
 			#i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
 			#labels_dict[i.value]=i.type
 			if dir!="":
@@ -449,4 +449,4 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 					i.value = file+"."+i.value.split("(")[0]
 				else:
 					i.value = file+"."+i.value.split("(")[0]
-			labels_dict[i.value]=i.type
+			labels_dict[i.value]=i.type'''

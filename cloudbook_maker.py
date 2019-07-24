@@ -147,4 +147,4 @@ fo = open(du_list_route, 'w')
 fo.write(json_str)
 fo.close()
 
-##showTables(con)
+showTables(con)

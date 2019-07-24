@@ -683,7 +683,10 @@ def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
 		if old_ver == '''+final_name+'''.ver_'''+fun_name+''':
 			return json.dumps(("None", old_ver))
 		else:
-			return json.dumps(('''+final_name+'''.'''+fun_name+''','''+final_name+'''.ver_'''+fun_name+'''))
+			try:
+				return json.dumps(('''+final_name+'''.'''+fun_name+''','''+final_name+'''.ver_'''+fun_name+''')) 
+			except:
+				return json.dumps(('''+'''str('''+final_name+'''.'''+fun_name+'''),'''+final_name+'''.ver_'''+fun_name+'''))
 	else:
 		try:
 			'''+final_name+'''.ver_'''+fun_name+'''+=1

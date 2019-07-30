@@ -94,7 +94,9 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		fo.write("\n")
 	fo.write("\n")
 	fo.write("invoker=None\n\n")
-
+	
+	#Aqui debemos escribir las clases
+	
 	#ud guide: 3.2
 	for i in function_list:
 		#ud guide: 3.2.1

@@ -3,21 +3,6 @@ import collapser
 import collapser_selector
 import json
 
-
-def iterate_fake(con,matrix,num_deployable_units):
-	num_cols=6
-	num_rows=6
-	matrix2 = [[None] * num_cols for i in range(num_rows)]
-	matrix2[0] = ['Matrix', 'file_main.main', ['dir1.file1.f1', 'dir1.file1.f2'], 'dir1.file2.f3', 'dir2.file3.f4', 'dir2.file3.f5']
-	matrix2[1] = ['file_main.main', 0, 0, 0, 0, 0]
-	matrix2[2] = [['dir1.file1.f1', 'dir1.file1.f2'],1,0,0,0,0]
-	matrix2[3] = ['dir1.file2.f3',1,0,0,0,0]
-	matrix2[4] = ['dir2.file3.f4',0,0,0,0,0]
-	matrix2[5] = ['dir2.file3.f5',0,0,0,0,0]
-
-	return matrix2
-
-
 def iterate(config_dict):
 	print (">>>ENTER in iterate()...")
 	''' this function receives the matrix as input and the number of desired DUs.
@@ -40,10 +25,7 @@ def iterate(config_dict):
 	num_du= len(matrix[0])-1
 
 	len_collapsable=2 #initially nothing is collapsed. At this point 2 funcs are collapsable
-	while(num_du>desired_num_du):
-	#while(num_du>4):
-
-		
+	while(num_du>desired_num_du):		
 		
 		collapser_function=collapser_selector.get_collapser(0);
 

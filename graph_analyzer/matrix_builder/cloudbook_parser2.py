@@ -450,3 +450,42 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 				else:
 					i.value = file+"."+i.value.split("(")[0]
 			labels_dict[i.value]=i.type'''
+
+def getClasses(filename):
+	token_list = []
+	lexer = lex.lex()
+	class_dict = {}
+
+	with open(filename,'r') as fi:
+	    
+	    for i,line in enumerate(fi,start=1):
+	        lexer.input(line)
+	        #indent level: only if tabs before text, not counted else
+	        indent_level = line.count('\t')
+
+	        cont = True
+	        while cont:
+	            tok = lexer.token()
+	            if not tok:
+	                #cont = False
+	                break
+	            tok.lineno = i
+	            if tok.type == 'CLASS_DEF':
+	            	class_dict[tok.value]= ""
+	            	token_list.append(tok)
+
+	for i in token_list:
+		print("PARA EL TOKEN",i)
+		fi = open(filename,'r')
+		for j,line in enumerate(fi,1):
+			if j >= i.lineno:
+				#class_dict[i.value] += line
+				if line.count('\t') == 0:
+					print("Termino de escribir")
+					break
+				if line.count('\t') != 0:
+					class_dict[i.value] += line
+				
+			continue
+
+	return class_dict

@@ -93,6 +93,8 @@ def update_DU(con, f2_list, f1_list):
 	print("Entradas:")
 	print(f1_list)
 	print(f2_list)
+	aux_list2 = f2_list
+	aux_list1 = f1_list
 	
 	#lets proceed with functions table
 	#----------------------------------
@@ -138,16 +140,45 @@ def update_DU(con, f2_list, f1_list):
 
 	#for row in cursor:
 	#	du=row[0]
-	du=cursor.fetchone()[0]
+	du_list1=cursor.fetchone()[0]
+	#Comprobamos si en la segunda lista es la du_0, de ser asi es la que se va a quedar
+	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME='"+list2[0]+"'")
+	du_list2=cursor.fetchone()[0]
+	if du_list2 == 0:
+		du = du_list2
+		selected = 2
+	else:
+		du = du_list1
+		selected = 1
 	print("La du es: ", du)
 
 	cursor.execute("SELECT DU from FUNCTIONS where ORIG_NAME='"+list2[0]+"'")
 	du_old=cursor.fetchone()[0]
 
-	for i in list2:
-		print("Actualizo la du de la funcion:", i)
-		cursor.execute("UPDATE FUNCTIONS set DU="+str(du)+" where ORIG_NAME='"+i+"'")
-	
+	if selected == 1:
+		for i in list2:
+			print("Actualizo la du de la funcion:", i)
+			cursor.execute("UPDATE FUNCTIONS set DU="+str(du)+" where ORIG_NAME='"+i+"'")
+		#update all list 2 dus
+		if isinstance(aux_list2, list):
+			pass
+		else:
+			aux_list2 = aux_list2.split()
+		for i in aux_list2:
+			print("Actualizo la du de la funcion:", i)
+			cursor.execute("UPDATE FUNCTIONS set DU="+str(du)+" where ORIG_NAME='"+i+"'")
+	else:
+		for i in list1:
+			print("Actualizo la du de la funcion:", i)
+			cursor.execute("UPDATE FUNCTIONS set DU="+str(du)+" where ORIG_NAME='"+i+"'")
+		#update all list 2 dus
+		if isinstance(aux_list1, list):
+			pass
+		else:
+			aux_list1 = aux_list1.split()
+		for i in aux_list1:
+			print("Actualizo la du de la funcion:", i)
+			cursor.execute("UPDATE FUNCTIONS set DU="+str(du)+" where ORIG_NAME='"+i+"'")
 	#now proceed with modules table
 	#--------------------------------
 	cursor.execute("SELECT ORIG_NAME,FINAL_IMPORTS from MODULES")

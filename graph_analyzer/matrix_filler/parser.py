@@ -40,9 +40,9 @@ def function_parser(config_dict):
 			#get tokens of file
 			#token_list+=cloudbook_parser.tokenize(function_path)
 			token_list[module] = cloudbook_parser.tokenize(module,function_path,function_list)
-	for i in token_list:
+	'''for i in token_list:
 		for j in token_list[i]:
-			print(i,j)
+			print(i,j)'''
 	print("ficheros a buscar",function_path_list)
 	#print("tokens encontrados", token_list)
 	matrix = cloudbook_parser.function_parser(token_list,function_list)

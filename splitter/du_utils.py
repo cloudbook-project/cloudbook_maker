@@ -84,9 +84,9 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	row = c.fetchone()
 	invoked_du = row[0]
 	invoked_function = row[1]
-	print("PREfuncion, du invocada:",invoked_function,invoked_du)
+	print("\t\t\t\tPREfuncion, du invocada:",invoked_function,invoked_du)
 	#Aqui si old_function esta en dict labels, la invoked du sera 10000
-	print("aux_function: ", aux_function, " y invocation_function: ", invoked_function)
+	print("\t\t\t\taux_function: ", aux_function, " y invocation_function: ", invoked_function)
 	if aux_function in config_dict["labels"]:
 		if config_dict["labels"][aux_function] == "PARALLEL":
 			invoked_du=10000
@@ -96,7 +96,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			invoked_function = "recursive_"+invoked_function
 			recursive_fun = True
 		if config_dict["labels"][aux_function] == "LOCAL":
-			print("===========================================================LOCAALLLLLLLLLLLL")
+			print("\t\t\t\t ES LOCAALL")
 			invoked_du = du_name
 			local_fun = True
 	if str(invoked_du) in du_name:#La invocacion es local
@@ -123,7 +123,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			newline = invoked_function+"('"+variables+"', str(0))#"
 			
 		else: #es una fun normal
-			print("LOCAAALLLLL", invoked_function, old_function)
+			print("\t\t\t\tLOCAAALLLLL", invoked_function, old_function)
 
 			newline = line.replace(old_function,invoked_function)
 			newline = re.sub(r'\s*',"",newline)
@@ -210,7 +210,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 		#Si es funcion normal:
 		#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
 		
-	print("POST:funcion, du invocada:",invoked_function,invoked_du)
+	print("\t\t\t\tPOST:funcion, du invocada:",invoked_function,invoked_du)
 	return newline
 
 def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict, tabs):
@@ -228,7 +228,7 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict, tabs):
 			tabulations+="\t"
 	fun_name = fun_name.split(" ")[1]
 	cursor = con.cursor()
-	print ("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'")
+	print ("\t\t\t\tSELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'")
 	cursor.execute("SELECT DU,FINAL_NAME from functions where ORIG_NAME = '"+module+"._VAR_"+globalName+"'")
 	row = cursor.fetchone()
 	global_fun_du = row[0]

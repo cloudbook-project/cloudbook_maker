@@ -51,7 +51,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		module = i[:i.rfind('.')]
 		name = i[i.rfind('.')+1:len(i)]
 		final_name = utils.get_final_name(con, i)
-		print("Module: ", module, " Name:", name, " Final Name: ", final_name)
+		print("\t\tModule: ", module, " Name:", name, " Final Name: ", final_name)
 		#assign optional arguments, markers for class and fun
 		isfun=False
 		translated_fun = False #TODO para que sirve
@@ -126,7 +126,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 			#ud guide: 3.2.2.5
 			lock_parallel = False
 			if (fun_name not in line) and (isfun):
-				print( "\t\tMiramos dentro de la funcion"+fun_name+" "+module+"."+name)
+				print( "\n\t\tMiramos dentro de la funcion"+fun_name+" "+module+"."+name)
 				if module+"."+name in config_dict["labels"]:
 					if config_dict["labels"][module+"."+name] == 'PARALLEL':
 						print("activo el lock parallel")
@@ -184,6 +184,8 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 					continue
 				#Hay que ver si dentro de la funcion, se llama a alguna otra funcion de la tabla functions
 				#hago una query de los orignames y los guardo en una lista
+				if translated_fun == True:
+					translated_fun = False
 				cursor.execute("SELECT ORIG_NAME from FUNCTIONS")
 				row = cursor.fetchall()
 				orig_list = [] #list of orignames
@@ -208,10 +210,10 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 						for i,elem in enumerate(aux_line):
 							if j[1] in elem:
 								aux_line = aux_line[i]
-								invocation_index = i
+								invocation_index = i								
 
 						invocation_fun = aux_line
-						print( "INVOCATION FUN========================================"+invocation_fun)
+						print( "\t\t\tINVOCATION FUN========================================"+invocation_fun)
 						if "_VAR_" in j[0]:#Es una variable global solo tocamos modificaciones, con parentesis
 							if invocation_fun.find("(")!=-1:
 								invocation_fun = "_VAR_"+invocation_fun[:invocation_fun.rfind("(")]
@@ -222,7 +224,8 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 							#Tiene que estar antes del igual
 								invocation_fun = "_VAR_"+invocation_fun
 							else:
-								continue
+								print("Esta linea no la entiendo:", line)
+								continue						
 							#else:# No tiene parentesis
 							#	invocation_fun = "_VAR_"+invocation_fun
 							#if invocation_fun.find(".")!=-1:
@@ -242,6 +245,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 							else:
 								complete_name = module+'.'+invocation_fun
 							print( "\t\t\tCompletamos nombre y queda: ", complete_name)
+						print( "\t\t\tVAMOS A TRADUCIR")
 						new_line = utils.translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,config_dict)
 						#escribimos la newline dentro de su linea probar poniendo una linea completa
 						aux_line2 = line.split()
@@ -267,9 +271,10 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 							new_line = "\t"+new_line
 						fo.write(new_line)
 						fo.write("\n")
+						print("\t\t\tPongo a true TRANSLATED FUN")
 						translated_fun = True
 				if "return" in line:
-					print( "AQUI RETURN")
+					print( "\t\t\tAQUI RETURN")
 					if module+"."+name in config_dict["labels"]:
 						if config_dict["labels"][module+"."+name] == 'LOCAL':
 							pass
@@ -282,10 +287,10 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 						else:
 							line = line.replace(aux_ret,"json.dumps("+aux_ret+")")
 				if translated_fun==False:
+						print("\t\t\tES UNA LINEA NORMAL")
 						if lock_parallel == True:
 							line = "\t"+line
-							fo.write(line)
-							
+							fo.write(line)							
 						else:
 							fo.write(line)
 				lock_parallel = False

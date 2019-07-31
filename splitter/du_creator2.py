@@ -54,7 +54,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		print("\t\tModule: ", module, " Name:", name, " Final Name: ", final_name)
 		#assign optional arguments, markers for class and fun
 		isfun=False
-		translated_fun = False #TODO para que sirve
+		translated_fun = False #This marker is used in order to make external invocations without copy the local invocation too.
 		isClass = False
 
 		#ud guide 3.2.2: Get input path, and open it for reading
@@ -115,7 +115,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 							lock_parallel_line = '''	if not hasattr('''+final_name+''', "lock"):
 		'''+final_name+'''.lock = threading.Lock()
 	with '''+final_name+'''.lock:
-	'''
+'''
 						if config_dict["labels"][module+"."+name] == 'RECURSIVE':	
 							final_name = "recursive_"+final_name					
 
@@ -129,7 +129,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 				print( "\n\t\tMiramos dentro de la funcion"+fun_name+" "+module+"."+name)
 				if module+"."+name in config_dict["labels"]:
 					if config_dict["labels"][module+"."+name] == 'PARALLEL':
-						print("activo el lock parallel")
+						print("Activo el lock parallel")
 						lock_parallel = True
 				if "print" in line:
 					#fo.write(line)
@@ -213,7 +213,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 								invocation_index = i								
 
 						invocation_fun = aux_line
-						print( "\t\t\tINVOCATION FUN========================================"+invocation_fun)
+						print( "\t\t\tINVOCATION FUN=="+invocation_fun)
 						if "_VAR_" in j[0]:#Es una variable global solo tocamos modificaciones, con parentesis
 							if invocation_fun.find("(")!=-1:
 								invocation_fun = "_VAR_"+invocation_fun[:invocation_fun.rfind("(")]

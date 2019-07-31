@@ -1,4 +1,4 @@
-{'labels': None, 'matrix_data': None, 'output_dir': 'C:\\Users\\jramosdi.NSN-INTRA/cloudbook/\\distributed\\du_files', 'matrix_filled': None, 'matrix_info': None, 'input_dir': 'C:\\Users\\jramosdi.NSN-INTRA/cloudbook/\\original', 'distributed_fs': 'C:\\Users\\jramosdi.NSN-INTRA/cloudbook/', 'class': None, 'num_dus': 2, 'con': <sqlite3.Connection object at 0x024A00B0>}
+{'labels': None, 'matrix_data': None, 'output_dir': 'C:\\Users\\jramosdi.NSN-INTRA/cloudbook/\\distributed\\du_files', 'matrix_filled': None, 'matrix_info': None, 'input_dir': 'C:\\Users\\jramosdi.NSN-INTRA/cloudbook/\\original', 'distributed_fs': 'C:\\Users\\jramosdi.NSN-INTRA/cloudbook/', 'class': None, 'num_dus': 2, 'con': <sqlite3.Connection object at 0x025040B0>}
 >>>ENTER in graph_builder()...
 >>>ENTER in file_scanner()...
 >>>EXIT from file_scanner()...
@@ -894,6 +894,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -950,6 +952,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -1006,6 +1010,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -1062,6 +1068,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -1122,6 +1130,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -1178,6 +1188,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -1234,6 +1246,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -1290,6 +1304,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f3 3
 				aux_function:  tuplas_colisionesok._VAR_coins  y invocation_function:  f3
+					Es una variable global local
+						old function es coins invoked_function es f3
 				POST:funcion, du invocada: f3 3
 			Pongo a true TRANSLATED FUN
 
@@ -2217,6 +2233,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f1 0
 				aux_function:  tuplas_colisionesok._VAR_player1  y invocation_function:  f1
+					Es una variable global local
+						old function es player1 invoked_function es f1
 				POST:funcion, du invocada: f1 0
 			Pongo a true TRANSLATED FUN
 
@@ -2273,6 +2291,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f1 0
 				aux_function:  tuplas_colisionesok._VAR_player1  y invocation_function:  f1
+					Es una variable global local
+						old function es player1 invoked_function es f1
 				POST:funcion, du invocada: f1 0
 			Pongo a true TRANSLATED FUN
 
@@ -2329,6 +2349,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f1 0
 				aux_function:  tuplas_colisionesok._VAR_player1  y invocation_function:  f1
+					Es una variable global local
+						old function es player1 invoked_function es f1
 				POST:funcion, du invocada: f1 0
 			Pongo a true TRANSLATED FUN
 
@@ -2385,6 +2407,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f1 0
 				aux_function:  tuplas_colisionesok._VAR_player1  y invocation_function:  f1
+					Es una variable global local
+						old function es player1 invoked_function es f1
 				POST:funcion, du invocada: f1 0
 			Pongo a true TRANSLATED FUN
 
@@ -2445,6 +2469,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f2 0
 				aux_function:  tuplas_colisionesok._VAR_player2  y invocation_function:  f2
+					Es una variable global local
+						old function es player2 invoked_function es f2
 				POST:funcion, du invocada: f2 0
 			Pongo a true TRANSLATED FUN
 
@@ -2501,6 +2527,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f2 0
 				aux_function:  tuplas_colisionesok._VAR_player2  y invocation_function:  f2
+					Es una variable global local
+						old function es player2 invoked_function es f2
 				POST:funcion, du invocada: f2 0
 			Pongo a true TRANSLATED FUN
 
@@ -2557,6 +2585,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f2 0
 				aux_function:  tuplas_colisionesok._VAR_player2  y invocation_function:  f2
+					Es una variable global local
+						old function es player2 invoked_function es f2
 				POST:funcion, du invocada: f2 0
 			Pongo a true TRANSLATED FUN
 
@@ -2613,6 +2643,8 @@ Esta linea no la entiendo: 	coin_aux = coins
 			VAMOS A TRADUCIR
 				PREfuncion, du invocada: f2 0
 				aux_function:  tuplas_colisionesok._VAR_player2  y invocation_function:  f2
+					Es una variable global local
+						old function es player2 invoked_function es f2
 				POST:funcion, du invocada: f2 0
 			Pongo a true TRANSLATED FUN
 

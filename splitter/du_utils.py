@@ -104,14 +104,16 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 		#invoked_function = invoked_function[invoked_function.rfind(".")+1:len(invoked_function)]
 		#newline = invoked_function+"()"
 		if "_VAR_" in old_function: #si es global var
+			print("\t\t\t\t\tEs una variable global local")
 			old_function = old_function.replace("_VAR_","")
 			#newline = line.replace(old_function,invoked_function+"."+old_function)
 			#newline = re.sub(r'\s*',"",newline)
 			variables = line
 			variables = re.sub(r'\s*',"",variables)
 			if old_function in variables:
+				print("\t\t\t\t\t\told function es",old_function,"invoked_function es", invoked_function)
 				variables = variables.replace(old_function,invoked_function+"."+old_function)
-				if "(" in variables:#Hay un parametro que tengo que conservar como el original y stringuearlo
+				if "(" in variables:#Hay un parametro que tengo que conservar como el original y stringuearlo TODO: Creo que nunca caigo aqui el str fallaria porque no tengo parentesis
 					variables_aux=""
 					variable_aux = ""
 					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
@@ -119,8 +121,17 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					variables = variables.replace(variable_aux,"")
 					#variables = variables + "('+str"+variable_aux+"')" #Antes de la depuracion de nbody4
 					variables = variables + "('+str"+variable_aux+"+')"
+					newline = invoked_function+"('"+variables+"', str(0))#"
+				else:#only the actualization of global var like globalvar = globalvar_aux it has "=" and no "("
+					variables_aux = ""
+					variable_aux = ""
+					ind_aux = variables.find("=")+1
+					variable_aux = variables[ind_aux:len(variables)]#the right part of =
+					variables = variables.replace(variable_aux,"")
+					variables = variables + "'+str("+variable_aux+")"
+					newline = invoked_function+"('"+variables+", str(0))#"
 			#newline = invoked_function+"('"+variables+"', str(ver_"+old_function+"))#"
-			newline = invoked_function+"('"+variables+"', str(0))#"
+			#newline = invoked_function+"('"+variables+"', str(0))#"
 			
 		else: #es una fun normal
 			print("\t\t\t\tLOCAAALLLLL", invoked_function, old_function)

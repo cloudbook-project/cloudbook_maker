@@ -487,5 +487,8 @@ def getClasses(filename):
 					class_dict[i.value] += line
 				
 			continue
+		class_dict[i.value]+= '''	def __str__(self):
+		return str(self.__dict__)
+'''
 
 	return class_dict

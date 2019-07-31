@@ -51,6 +51,7 @@ def get_final_imports(con, function_list):
 	if "import threading" not in final_imports:
 		final_imports.append("import threading")
 		final_imports.append("from threading import Lock")
+		final_imports.append("import time")
 	if "import json" not in final_imports:
 		final_imports.append("import json")
 	if "import sys" not in final_imports:

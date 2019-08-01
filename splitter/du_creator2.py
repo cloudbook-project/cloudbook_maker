@@ -23,6 +23,9 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	#vars
 	pragmas = ["#__CLOUDBOOK:PARALLEL__","#SYNC","#__CLOUDBOOK:RECURSIVE__","#__CLOUDBOOK:LOCAL__"]
 	cursor = con.cursor()
+	#if the function list is only one function as a string, convert into list
+	if isinstance(function_list, list) == False:
+		function_list = function_list.split()
 	
 	#ud guide: 1: Name assgination of du, the du number of the first du in the list
 	du_name = utils.du_name_assignation(con, function_list)

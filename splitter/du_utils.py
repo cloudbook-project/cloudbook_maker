@@ -24,12 +24,16 @@ def get_final_imports(con, function_list):
 		extract module name
 			with module name, extract imports from sqlite'''
 	print(">>Enter in get final imports")
+	print(function_list)
+	if isinstance(function_list, list) == False:
+		function_list = function_list.split()
 	final_imports = []
 	cursor = con.cursor()
 	for i in function_list:
 		module_name = i[:i.rfind('.')] #extraer su nombre de modulo original
 		#print ("\t\tmodule_name de",i,"es",module_name)
 		query = "SELECT FINAL_IMPORTS from MODULES where ORIG_NAME=="+"'"+module_name+"'"
+		print(query)
 		cursor.execute(query)
 		#translate unicode to list of strings
 		for n in cursor.fetchone():

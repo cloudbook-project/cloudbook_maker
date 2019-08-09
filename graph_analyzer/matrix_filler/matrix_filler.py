@@ -33,4 +33,15 @@ def fill_matrix(config_dict):
 	config_dict["matrix_filled"] = parser.function_parser(config_dict)
 	config_dict["matrix_filled"] = matrix_cleaner.clean_matrix(config_dict)
 	#showTables(config_dict["con"])
+
+	output_dir= config_dict["distributed_fs"]+os.sep+"distributed"+os.sep+"matrix"
+	
+	#write output file in json format
+	#---------------------------------
+	json_str = json.dumps(config_dict["matrix_filled"])
+	fo = open("dd", 'w')
+	fo = open(output_dir+"/matrix.json", 'w')
+	fo.write(json_str)
+	fo.close()
+	
 	return config_dict["matrix_filled"]

@@ -4,6 +4,25 @@ import re
 import os
 import du_utils as utils
 
+import json
+
+
+function_mapping={}
+
+def save_function_mapping(config_dict):
+	print ("------ function mapping ------")
+	print (function_mapping)
+	
+	output_dir= config_dict["distributed_fs"]+os.sep+"distributed"+os.sep+"matrix"
+	
+	#write output file in json format
+	#---------------------------------
+	json_str = json.dumps(function_mapping)
+	fo = open("dd", 'w')
+	fo = open(output_dir+"/function_mapping.json", 'w')
+	fo.write(json_str)
+	fo.close()
+
 def create_dus(config_dict):
 	con=config_dict["con"]
 	matrix=config_dict["matrix_filled"]
@@ -14,6 +33,8 @@ def create_dus(config_dict):
 	du_list =[]
 	for i in range(1,len(matrix[0])):
 		du_list.append(create_du(con,matrix[0][i],input_path,output_path, config_dict))
+	
+	save_function_mapping(config_dict)
 	return du_list
 
 
@@ -55,6 +76,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		name = i[i.rfind('.')+1:len(i)]
 		final_name = utils.get_final_name(con, i)
 		print("\t\tModule: ", module, " Name:", name, " Final Name: ", final_name)
+		function_mapping[module+"."+name]=final_name
 		#assign optional arguments, markers for class and fun
 		isfun=False
 		translated_fun = False #This marker is used in order to make external invocations without copy the local invocation too.

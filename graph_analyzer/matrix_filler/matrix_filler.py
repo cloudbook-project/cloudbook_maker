@@ -6,6 +6,9 @@ import flatter
 import parser
 import matrix_cleaner
 
+import sys,os
+import json
+
 def showTables(con):
 	'''This function is used for get information of the sqlite tables involved'''
 	cursor = con.cursor()
@@ -43,5 +46,5 @@ def fill_matrix(config_dict):
 	fo = open(output_dir+"/matrix.json", 'w')
 	fo.write(json_str)
 	fo.close()
-	
+
 	return config_dict["matrix_filled"]

@@ -5,7 +5,7 @@ import sqlite3
 import logging
 import json
 from random import randint
-import os
+import os,sys
 import platform
 from radon.visitors import ComplexityVisitor
 
@@ -56,6 +56,33 @@ def load_dictionary(filename):
 else:
 	path = input_dict["circle_info"]["DISTRIBUTED_FS"] '''
 
+
+################################# MAIN ########################################
+print (" ")
+print (" ")
+print ("Welcome to cloudbook maker ")
+print ("=====================================")
+print ("")
+print ("usage")
+print ("python cloudbook_maker.py [-matrix <filematrix.json>]")
+print ("    ")
+print ("    where:")
+print ("      -matrix filematrix.json is an optional parameter used for ")
+print ("                              remaking a program using new matrix values")
+print ("   ")
+
+# gather invocation parameters
+# -----------------------------
+filematrix=None
+num_param=len(sys.argv)
+for i in range(1,len(sys.argv)):
+	if sys.argv[i]=="-matrix":
+		filematrix=sys.argv[i+1]
+		i=i+1
+#-----------------------------
+
+
+
 if(platform.system()=="Windows"):
     path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/"
     if not os.path.exists(path):
@@ -96,7 +123,16 @@ con = sqlite3.connect(':memory:') #if it is in memory there is no need to delete
 config_dict["con"] = con
 
 #matrix = graph_analyzer.graph_builder(config_dict)
+
+# in case of remake, we call to graph analyzer but later we overwrite matrix
+# it is important call to graph builder in order to update certain config_dict info
 config_dict["matrix_data"] = graph_analyzer.graph_builder(config_dict)
+
+if (filematrix !=None):
+	print (" USING EXISTING MATRIX: ", filematrix)
+	with open(path+"distributed/matrix/"+filematrix, 'r') as file:
+		config_dict["matrix_data"] = json.load(file)
+
 #print_matrix(config_dict["matrix_data"])
 matrix = config_dict["matrix_data"]
 #print_matrix(matrix)

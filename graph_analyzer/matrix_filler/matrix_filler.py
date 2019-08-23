@@ -8,6 +8,7 @@ import matrix_cleaner
 
 import sys,os
 import json
+import platform
 
 def showTables(con):
 	'''This function is used for get information of the sqlite tables involved'''
@@ -42,7 +43,16 @@ def fill_matrix(config_dict):
 	#write output file in json format
 	#---------------------------------
 	json_str = json.dumps(config_dict["matrix_filled"])
-	fo = open("dd", 'w')
+	#fo = open("dd", 'w')
+	#Create matrix folder
+	if(platform.system()=="Windows"):
+	    path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/distributed/matrix"
+	    if not os.path.exists(path):
+	        os.makedirs(path)
+	else:
+	    path = "/etc/cloudbook/distributed/matrix"
+	    if not os.path.exists(path):
+	        os.makedirs(path)
 	fo = open(output_dir+"/matrix.json", 'w')
 	fo.write(json_str)
 	fo.close()

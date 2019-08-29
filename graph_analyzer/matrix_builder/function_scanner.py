@@ -26,9 +26,9 @@ def get_functions(files_dict,config_dict):
 			tokens = parser.tokenize(filename)
 			config_dict["class"] = parser.getClasses(filename)
 			print("clases:", config_dict["class"])
-			'''print("me da tokens: ")
-			for tok in tokens:
-				print(str(tok))'''
+			#print("me da tokens: ")
+			#for tok in tokens:
+			#	print(str(tok))
 			parser.function_scanner(tokens,dir2,f,function_names,labels_dict)
 			#parser.invocation_names(tokens,dir2,f,function_names)#only if necessary, to get the complete names on invocations
 

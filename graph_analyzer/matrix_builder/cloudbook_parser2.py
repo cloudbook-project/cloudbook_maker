@@ -408,6 +408,7 @@ def function_scanner(tokens,dir,file,function_names,labels_dict):
 					i.value = file+"."+i.value
 		if i.type == 'PARALLEL':
 			i.value = tokens[j].value #Metemos como valor en el token parallel, la funcion parallel
+			#es el token en j, porque j empieza por 1 y la lista de tokens por 0, asi se coge el siguiente token
 			#labels_dict[i.value]=i.type
 			if dir!="":
 				i.value = dir+"."+file+"."+i.value.split("(")[0]

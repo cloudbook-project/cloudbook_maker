@@ -62,6 +62,10 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		fo.write(i)
 		fo.write("\n")
 	fo.write("\n")
+	#write consts
+	for i in config_dict["constants"]:
+		fo.write(i)
+		fo.write("\n")
 	fo.write("invoker=None\n\n")
 	#write classes
 	for i in config_dict["class"]:
@@ -273,18 +277,6 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 							print( "\t\t\tCompletamos nombre y queda: ", complete_name)
 						print( "\t\t\tVAMOS A TRADUCIR")
 						new_line = utils.translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,name,config_dict)
-						#add the invocator name in function call
-						'''if complete_name in config_dict["labels"]:
-							if config_dict["labels"][complete_name] != "LOCAL":
-								invoker_name = name
-								new_line_aux = new_line.rsplit(")",1)
-								new_line = new_line_aux[0] + ",'"+invoker_name+"')"+new_line_aux[1].replace(")","")
-							else:
-								new_line = new_line
-						else:
-							invoker_name = name
-							new_line_aux = new_line.rsplit(")",1)
-							new_line = new_line_aux[0] + ",'"+invoker_name+"')"+new_line_aux[1].replace(")","")'''
 						print("===Acabamos de traducir la linea",line,"por",new_line)
 						print("============La invocadora es:",name)
 						#escribimos la newline dentro de su linea probar poniendo una linea completa

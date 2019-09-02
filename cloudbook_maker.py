@@ -104,6 +104,7 @@ config_dict = {"input_dir": None,
 			"con":None,
 			"distributed_fs": None,
 			"class":None,
+			"constants":None,
 			"matrix_info": None,#matrix information at every step, all matrix elements can be resumed in one
 			#matrix_info[0]:dirs and files dict, matrix_info[1]: function list
 			"matrix_data": None, #matrix filled

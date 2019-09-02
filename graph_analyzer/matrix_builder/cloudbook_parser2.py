@@ -13,7 +13,7 @@ import math
 #file = "nbody_orig.py"
 
 tokens = ['TEST','IMPORT','FUN_DEF','COMMENT','LOOP_FOR','LOOP_WHILE','IF','ELSE','TRY','EXCEPT','PRINTV2', 'PRINTV3','FUN_INVOCATION','PYTHON_INVOCATION',
-'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF']
+'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF','CONST']
 
 fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*'
 funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*|[a-zA-Z_][a-zA-Z_0-9]*'
@@ -156,6 +156,11 @@ def t_ASSIGNATION(t):
 	t.type = 'ASSIGNATION'
 	#t.value removing tabs
 	t.value = re.sub(r'\s*',"",t.value)
+	return t
+
+def t_CONST(t):
+	r'^[C][O][N][S][T].*'
+	t.type = 'CONST'
 	return t
 
 @TOKEN(global_var)
@@ -493,3 +498,10 @@ def getClasses(filename):
 '''
 
 	return class_dict
+
+def getConstants(token_list):
+	const_list = []
+	for i in token_list:
+		if i.type=='CONST':
+			const_list.append(i.value)
+	return const_list

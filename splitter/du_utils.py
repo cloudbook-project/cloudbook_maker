@@ -196,6 +196,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables = variables.replace(variable_aux,"")
 				variables = variables.replace("=","%3d")
 				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
+				#add invoker in call
 				newline_aux = newline.rsplit(")",1)
 				newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 			else:
@@ -207,11 +208,13 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					variables = variables.replace(variable_aux,"")
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(ver_"+old_function+"))"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(0))"
+					#add invoker in call
 					newline_aux = newline.rsplit(")",1)
 					newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 				else:
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
+					#add invoker in call
 					newline_aux = newline.rsplit(")",1)
 					newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 		#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
@@ -234,6 +237,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'++'")
 '''
 			newline = pre_line+"\t"*tabs+"invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
+			#add invoker in call
 			newline_aux = newline.rsplit(")",1)
 			newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 			#podria omitir el campo 0 aqui

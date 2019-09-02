@@ -25,7 +25,9 @@ def get_functions(files_dict,config_dict):
 			print(filename)
 			tokens = parser.tokenize(filename)
 			config_dict["class"] = parser.getClasses(filename)
+			config_dict["constants"] = parser.getConstants(tokens)
 			print("clases:", config_dict["class"])
+			print("constantes", config_dict["constants"])
 			#print("me da tokens: ")
 			#for tok in tokens:
 			#	print(str(tok))

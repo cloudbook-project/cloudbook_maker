@@ -71,7 +71,7 @@ def get_final_name(con, orig_name):
 	final_name = cursor.fetchone()[0]
 	return final_name
 
-def translate_invocation(con,orig_module,orig_function_name,invoked_function,function_list,file_descriptor,du_name,line,tabs,config_dict):
+def translate_invocation(con,orig_module,orig_function_name,invoked_function,function_list,file_descriptor,du_name,line,tabs,invoker_name,config_dict):
 	#El proceso de traduccion consiste en:
 			#si la funcion esta en la misma du(estara en la function list) se invoca sin nombre de modulo
 			#else invoke("du_xx.f(...)"), la du_xx la sacamos de la tabla de funciones
@@ -90,8 +90,13 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	invoked_du = row[0]
 	invoked_function = row[1]
 	print("\t\t\t\tPREfuncion, du invocada:",invoked_function,invoked_du)
+	#get final name of invoker
+	c.execute("SELECT FINAL_NAME from functions where ORIG_NAME = '"+orig_module+"."+invoker_name+"'")
+	row = c.fetchone()
+	invoker_name = row[0]
 	#Aqui si old_function esta en dict labels, la invoked du sera 10000
 	print("\t\t\t\taux_function: ", aux_function, " y invocation_function: ", invoked_function)
+	print("\t\t\t\torig_function_name: ", orig_function_name)
 	if aux_function in config_dict["labels"]:
 		if config_dict["labels"][aux_function] == "PARALLEL":
 			invoked_du=10000
@@ -174,6 +179,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					else:
 						variables_aux = variables_aux+"+','+ str("+i+")"
 			newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
+			newline_aux = newline.rsplit(")",1)
+			newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 		if "_VAR_" in old_function and parallel_fun==False:#Si es una variable global hay que sacar los parametros de la llamada.
 		#si es una llamada a una funcion, hay que sacar la linea y lo que hay entre parentesis TODO
 		#si es una asignacion, hay que copiar la linea como la variable entera
@@ -189,6 +196,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables = variables.replace(variable_aux,"")
 				variables = variables.replace("=","%3d")
 				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
+				newline_aux = newline.rsplit(")",1)
+				newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 			else:
 				if "(" in variables:
 					#bla bla bla
@@ -198,9 +207,13 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					variables = variables.replace(variable_aux,"")
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(ver_"+old_function+"))"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"('+str"+variable_aux+"+')\"'"+"+' , '+"+"str(0))"
+					newline_aux = newline.rsplit(")",1)
+					newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 				else:
 					#newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"."+old_function+"','"+invoked_function+"."+variables+"')[0]"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+invoked_function+"."+variables+"')[0]"
+					newline_aux = newline.rsplit(")",1)
+					newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 		#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
 		if parallel_fun == True:
 			#TODO tratar el _VAR_ aqui tambien, por si se hace una global var parallel por algun casual
@@ -221,6 +234,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'++'")
 '''
 			newline = pre_line+"\t"*tabs+"invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
+			newline_aux = newline.rsplit(")",1)
+			newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
 			#podria omitir el campo 0 aqui
 			#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
 		#Si es funcion normal:
@@ -253,6 +268,10 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict, tabs):
 	cursor.execute("SELECT FINAL_NAME from functions where ORIG_NAME = '"+module+"."+fun_name+"'")
 	row = cursor.fetchone()
 	final_fun_name = row[0]
+	#get invoker_name
+	cursor.execute("SELECT FINAL_NAME from functions where ORIG_NAME = '"+module+"."+fun_name+"'")
+	row = cursor.fetchone()
+	fun_name = row[0]
 	if (module+"."+fun_name) in config_dict["labels"]:#Aniado parallel si es el codigo de la funcion parallel
 		if config_dict["labels"][module+"."+fun_name] == 'PARALLEL':
 			final_fun_name = "parallel_"+final_fun_name
@@ -268,7 +287,7 @@ def writeGlobalCode(fun_name,fo, globalName,module ,con, config_dict, tabs):
 	'''+tabulations+'''if not hasattr('''+final_fun_name+''', "ver_'''+globalName+'''"):
 		'''+tabulations+final_fun_name+'''.ver_'''+globalName+''' = 0
         
-	'''+tabulations+'''aux_'''+globalName+''',aux_ver = invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+final_fun_name+'''.ver_'''+globalName+'''))
+	'''+tabulations+'''aux_'''+globalName+''',aux_ver = invoker(['''+"'du_"+str(global_fun_du)+"'"+'''],'''+"'"+global_fun_name+"'"+''',"'None',"+str('''+final_fun_name+'''.ver_'''+globalName+''')'''+",'"+fun_name+"'"+''')
 	'''+tabulations+'''if aux_'''+globalName+''' != "None":
 		'''+tabulations+final_fun_name+'''.'''+globalName+''' = aux_'''+globalName+'''
 	'''+tabulations+globalName+"="+final_fun_name+"."+globalName+'''

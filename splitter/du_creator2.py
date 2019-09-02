@@ -272,7 +272,21 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 								complete_name = module+'.'+invocation_fun
 							print( "\t\t\tCompletamos nombre y queda: ", complete_name)
 						print( "\t\t\tVAMOS A TRADUCIR")
-						new_line = utils.translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,config_dict)
+						new_line = utils.translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,name,config_dict)
+						#add the invocator name in function call
+						'''if complete_name in config_dict["labels"]:
+							if config_dict["labels"][complete_name] != "LOCAL":
+								invoker_name = name
+								new_line_aux = new_line.rsplit(")",1)
+								new_line = new_line_aux[0] + ",'"+invoker_name+"')"+new_line_aux[1].replace(")","")
+							else:
+								new_line = new_line
+						else:
+							invoker_name = name
+							new_line_aux = new_line.rsplit(")",1)
+							new_line = new_line_aux[0] + ",'"+invoker_name+"')"+new_line_aux[1].replace(")","")'''
+						print("===Acabamos de traducir la linea",line,"por",new_line)
+						print("============La invocadora es:",name)
 						#escribimos la newline dentro de su linea probar poniendo una linea completa
 						aux_line2 = line.split()
 						aux_line2[invocation_index] = new_line

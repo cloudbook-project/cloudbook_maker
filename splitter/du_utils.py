@@ -129,17 +129,21 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					ind_aux = variables.find("(") # indice, porque puede haber varios parentesis (si usas una tupla por ejemplo)
 					variable_aux = variables[ind_aux:len(variables)]#"("+variables.split("(")[-1]
 					variables = variables.replace(variable_aux,"")
-					#variables = variables + "('+str"+variable_aux+"')" #Antes de la depuracion de nbody4
-					variables = variables + "('+str"+variable_aux+"+')"
-					newline = invoked_function+"('"+variables+"', str(0))#"
+					#variables = variables + "('+str"+variable_aux+"')" #Antes de la depuracion de nbody4, y poner siempre la version 0
+					#variables = variables + "('+str"+variable_aux+"+')" #En caso de invocacion local sin llamar a "invoker"
+					variables = '"'+variables + "('+str"+variable_aux+"+')"+'"' #preparado para meterlo dentro de un "invoker"
+					##newline = invoked_function+"('"+variables+"', str(0))#" #En caso de invocacion local sin llamar a "invoker"
+					newline = "invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"','"+variables+",'+str(0),'"+invoker_name+"')#" #preparado para meterlo dentro de un "invoker"
 				else:#only the actualization of global var like globalvar = globalvar_aux it has "=" and no "("
 					variables_aux = ""
 					variable_aux = ""
 					ind_aux = variables.find("=")+1
 					variable_aux = variables[ind_aux:len(variables)]#the right part of =
 					variables = variables.replace(variable_aux,"")
-					variables = variables + "'+str("+variable_aux+")"
-					newline = invoked_function+"('"+variables+", str(0))#"
+					##variables = variables + "'+str("+variable_aux+")" #En caso de invocacion local sin llamar a "invoker"
+					variables = '"'+variables + "('+str"+variable_aux+"+')"+'"' #preparado para meterlo dentro de un "invoker"
+					##newline = invoked_function+"('"+variables+", str(0))#" #En caso de invocacion local sin llamar a "invoker"
+					newline = "invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"','"+variables+",'+str(0),'"+invoker_name+"')#" #preparado para meterlo dentro de un "invoker"
 			#newline = invoked_function+"('"+variables+"', str(ver_"+old_function+"))#"
 			#newline = invoked_function+"('"+variables+"', str(0))#"
 			
@@ -152,11 +156,32 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables = line.split("(")[1]
 			else:
 				variables=""
+			##Translate vars SOLO SI TRADUCIMO POR INVOKER TODO: Que pasa si variables aux 2 es ""
+			variables2 = line
+			variables2 = re.sub(r'\s*',"",variables2)
+			if variables2.find("(")!=-1:
+				variables2 = variables2.split("(")[-1]
+				variables2 = variables2.replace(")","")
+				#tostring every var
+				variables2_aux = ""
+				for i in variables2.split(","):
+					if variables2_aux == "":
+						variables2_aux = variables2_aux+"str("+i+")"
+					else:
+						variables2_aux = variables2_aux+"+','+ str("+i+")"
+			##Transalted vars
 			if local_fun == True:
-				newline = invoked_function + "("+ variables
+				##newline = invoked_function + "("+ variables  #Para invocacion normal sin "invoker"
+				#variables2 = '"'+variables2 + "('+str"+variables2_aux+"+')"+'"' #preparado para meterlo dentro de un "invoker"
+				if invoked_du.find("du_") != -1:
+					invoked_du = invoked_du.replace("du_","")
+				newline = "invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"',"+variables2_aux+",'"+invoker_name+"')#" #preparado para meterlo dentro de un "invoker"
 				local_fun = False
 			else:
-				newline = "json.loads("+invoked_function + "("+ variables + ")"
+				##newline = "json.loads("+invoked_function + "("+ variables + ")"#PAra invocacion local normal
+				if invoked_du.find("du_") != -1:
+					invoked_du = invoked_du.replace("du_","")
+				newline = "json.loads(invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"',"+variables2_aux+",'"+invoker_name+"'))#" #preparado para meterlo dentro de un "invoker"
 			newline = re.sub(r'\s*',"",newline)
 	else:#La invocacion es externa
 		#invoked_function = invoked_function[invoked_function.rfind("."):len(invoked_function)]

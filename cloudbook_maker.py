@@ -81,8 +81,6 @@ for i in range(1,len(sys.argv)):
 		i=i+1
 #-----------------------------
 
-
-
 if(platform.system()=="Windows"):
     path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/"
     if not os.path.exists(path):

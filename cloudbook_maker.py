@@ -99,7 +99,21 @@ else:
 
 path = path+os.sep+project_folder
 #Creation of needed subfolders
+#inside path we need: distributed, and subfolder, we assume that config and original exists
+#stats, du_files, matrix, agents_grant
+if not os.path.exists(path+os.sep+"distributed"):
+	os.makedirs(path+os.sep+"distributed")
 
+if not os.path.exists(path+os.sep+"distributed"+os.sep+"stats"):
+	os.makedirs(path+os.sep+"distributed"+os.sep+"stats")
+if not os.path.exists(path+os.sep+"distributed"+os.sep+"du_files"):
+	os.makedirs(path+os.sep+"distributed"+os.sep+"du_files")
+if not os.path.exists(path+os.sep+"distributed"+os.sep+"matrix"):
+	os.makedirs(path+os.sep+"distributed"+os.sep+"matrix")
+if not os.path.exists(path+os.sep+"distributed"+os.sep+"agents_grant"):
+	os.makedirs(path+os.sep+"distributed"+os.sep+"agents_grant")
+
+#read config.json and assign variables
 input_dict = load_dictionary(path+os.sep+"config"+os.sep+"config.json")   
 
 distributed_fs = path#input_dict["circle_info"]["DISTRIBUTED_FS"]

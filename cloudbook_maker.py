@@ -64,7 +64,7 @@ print ("Welcome to cloudbook maker ")
 print ("=====================================")
 print ("")
 print ("usage")
-print ("python cloudbook_maker.py [-matrix <filematrix.json>]")
+print ("python cloudbook_maker.py -project_folder <project_folder> [-matrix <filematrix.json>]")
 print ("    ")
 print ("    where:")
 print ("      -matrix filematrix.json is an optional parameter used for ")
@@ -73,13 +73,20 @@ print ("   ")
 
 # gather invocation parameters
 # -----------------------------
+project_folder = ""
 filematrix=None
 num_param=len(sys.argv)
 for i in range(1,len(sys.argv)):
 	if sys.argv[i]=="-matrix":
 		filematrix=sys.argv[i+1]
 		i=i+1
+	if sys.argv[i]=="-project_folder":
+		project_folder=	sys.argv[i+1]
+		i=i+1
 #-----------------------------
+if (project_folder==""):
+	print ("option -project_folder missing")
+	sys.exit(0)
 
 if(platform.system()=="Windows"):
     path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/"
@@ -90,12 +97,15 @@ else:
     if not os.path.exists(path):
         os.makedirs(path)
 
+path = path+os.sep+project_folder
+#Creation of needed subfolders
+
 input_dict = load_dictionary(path+os.sep+"config"+os.sep+"config.json")   
 
 distributed_fs = path#input_dict["circle_info"]["DISTRIBUTED_FS"]
 #input_dir = input_dict["input_folder"]
 #output_dir = input_dict["output_folder"]
-desired_num_dus = input_dict["circle_info"]["NUM_ATTACHED_AGENTS"]
+desired_num_dus = input_dict["NUM_DESIRED_AGENTS"]
 
 config_dict = {"input_dir": None,
 			"output_dir": None,

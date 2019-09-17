@@ -71,7 +71,7 @@ def get_final_name(con, orig_name):
 	final_name = cursor.fetchone()[0]
 	return final_name
 
-def translate_invocation(con,orig_module,orig_function_name,invoked_function,function_list,file_descriptor,du_name,line,tabs,invoker_name,config_dict):
+def translate_invocation(con,orig_module,orig_function_name,invoked_function,function_list,file_descriptor,du_name,line,tabs,invoker_name,nonblocking_invocation,config_dict):
 	#El proceso de traduccion consiste en:
 			#si la funcion esta en la misma du(estara en la function list) se invoca sin nombre de modulo
 			#else invoke("du_xx.f(...)"), la du_xx la sacamos de la tabla de funciones
@@ -166,7 +166,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables = line.split("(")[1]
 			else:
 				variables=""
-			##Translate vars SOLO SI TRADUCIMO POR INVOKER TODO: Que pasa si variables aux 2 es ""
+			##Translate vars SOLO SI TRADUCIMOS POR INVOKER TODO: Que pasa si variables aux 2 es ""
 			variables2 = line
 			variables2 = re.sub(r'\s*',"",variables2)
 			if variables2.find("(")!=-1:
@@ -187,6 +187,8 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					invoked_du = invoked_du.replace("du_","")
 				newline = "invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"',"+variables2_aux+",'"+invoker_name+"')#" #preparado para meterlo dentro de un "invoker"
 				local_fun = False
+				if nonblocking_invocation:
+					newline = newline.replace(invoked_function,"nonblocking"+invoked_function)
 			else:
 				##newline = "json.loads("+invoked_function + "("+ variables + ")"#PAra invocacion local normal
 				if invoked_du.find("du_") != -1:
@@ -363,3 +365,25 @@ def writeGlobalDef(fun_name, final_name, gl_value, fo, con):
 				exec(op)
 				'''+final_name+'''.ver_'''+fun_name+'''+=1
 			return json.dumps(("done",'''+final_name+'''.ver_'''+fun_name+'''))''')
+
+def write_nonblocking_invocation((complete_name,line),fo,con):
+	function_orig_name = complete_name[complete_name.rfind(".")+1:]
+	#clean line
+	line = re.sub(r'\s*',"",line)
+	#get final_name
+	c = con.cursor()
+	c.execute("SELECT FINAL_NAME from functions where ORIG_NAME = '"+complete_name+"'")
+	row = c.fetchone()
+	function_final_name = row[0]
+	#get params in appropiate format for creating a python thread
+	params = line.split(function_orig_name)[-1]
+	orig_params = params
+	params = params[1:-1]
+	params = "["+params+"]"
+	#write threading code
+	fo.write("def nonblocking"+function_final_name+orig_params+":\n")
+	fo.write('''	thread'''+function_final_name+''' = threading.Thread(target='''+function_final_name+''', daemon = False, args = '''+params+''')
+	thread'''+function_final_name+'''.start()
+	return json.dumps("thread launched")
+
+''')

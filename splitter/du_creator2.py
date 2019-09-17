@@ -44,6 +44,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	print( "\tFunction list:", function_list)
 	#vars
 	pragmas = ["#__CLOUDBOOK:PARALLEL__","#SYNC","#__CLOUDBOOK:RECURSIVE__","#__CLOUDBOOK:LOCAL__"]
+	invocation_pragmas = ["#__CLOUDBOOK:NONBLOCKING__"]
 	cursor = con.cursor()
 	#if the function list is only one function as a string, convert into list
 	if isinstance(function_list, list) == False:
@@ -71,6 +72,9 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 	for i in config_dict["class"]:
 		fo.write(config_dict["class"][i])
 		fo.write("\n")
+
+	#List of nonblocking invocations, in order to make the code on the fly
+	nonblocking_functions=[]
 	
 	#ud guide 3.2: Main loop, for every function in the du get name info, and write in fo if belongs to the actual du
 	for i in function_list:
@@ -86,17 +90,20 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		isfun=False
 		translated_fun = False #This marker is used in order to make external invocations without copy the local invocation too.
 		isClass = False
-
+		##These variables are used to save the actual and the previows line in order to apply the invocation pragmas.
+		actual_line = ""
+		last_line = ""
 		#ud guide 3.2.2: Get input path, and open it for reading
 		input_file = input_path+os.sep+module.replace('.',os.sep)+".py"
 		print( "\tOpen the file: "+ input_file)
-		fi = open(input_file,'r')		
+		fi = open(input_file,'r')
 		for i,line in enumerate(fi,1):
 			#ud guide: 3.2.2.1
 			tabs = line.count('\t')
 			#ignore comments
 			clean_line = re.sub(r'\s*',"",line)
-			if "#" in clean_line and clean_line not in pragmas:
+			actual_line = clean_line
+			if ("#" in clean_line) and (clean_line not in pragmas) and (clean_line not in invocation_pragmas):
 				continue
 			#Adaptamos o incorporamos a nombre funcion, a def loquesea o declaracion de variable global
 			if "_VAR_" in name:
@@ -276,9 +283,16 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 								complete_name = module+'.'+invocation_fun
 							print( "\t\t\tCompletamos nombre y queda: ", complete_name)
 						print( "\t\t\tVAMOS A TRADUCIR")
-						new_line = utils.translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,name,config_dict)
+						nonblocking_invocation = False
+						if last_line in invocation_pragmas:
+							if last_line == "#__CLOUDBOOK:NONBLOCKING__":
+								nonblocking_invocation = True
+								print("====================================NONBLOCKING:", complete_name)
+								nonblocking_functions.append((complete_name, line))
+						new_line = utils.translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,name,nonblocking_invocation,config_dict)
+						nonblocking_invocation = False
+						#new_line = utils.translate_invocation(con,module,fun_name,complete_name,function_list,fo,du_name,line,tabs,name,config_dict)
 						print("===Acabamos de traducir la linea",line,"por",new_line)
-						print("============La invocadora es:",name)
 						#escribimos la newline dentro de su linea probar poniendo una linea completa
 						aux_line2 = line.split()
 						aux_line2[invocation_index] = new_line
@@ -330,6 +344,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 			if (fun_name not in line) and (tabs==0):
 				#Hara falta traducir aqui
 				isfun = False
+			last_line = actual_line
 		#ud guide: 3.2.3
 		if "parallel_" in final_name:#Before return, sychronize thread
 			#pre_line = '''invoker(['du_0'], 'cloudbook_th_counter',"'--'")
@@ -372,5 +387,15 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		fo.write('''if __name__ == '__main__':
 	f0()
 			''')
+	if len(nonblocking_functions)!=0:
+		fo.write("\n")
+		funvariables="[]"
+		#fo.write(str(len(nonblocking_functions)) + str(nonblocking_functions))
+		marked_nonblocking_functions = []
+		for i in nonblocking_functions:
+			if i[0] in marked_nonblocking_functions: #not copy repeated functions
+				continue
+			marked_nonblocking_functions.append(i[0])
+			utils.write_nonblocking_invocation(i,fo,con)
 	fo.close()
 	return du_name

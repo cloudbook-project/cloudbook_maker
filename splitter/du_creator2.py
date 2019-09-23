@@ -169,6 +169,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 						print("Activo el lock parallel")
 						lock_parallel = True
 				if "print" in line:
+					print("OJOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO PRINTTTTT",line)
 					#fo.write(line)
 					if lock_parallel == True:
 						line = '\t'+line

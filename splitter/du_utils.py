@@ -191,8 +191,12 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					newline = newline.replace(invoked_function,"nonblocking"+invoked_function)
 			else:
 				##newline = "json.loads("+invoked_function + "("+ variables + ")"#PAra invocacion local normal
-				if invoked_du.find("du_") != -1:
-					invoked_du = invoked_du.replace("du_","")
+				print("Traceando",invoked_du)
+				try:
+					if invoked_du.find("du_") != -1:
+						invoked_du = invoked_du.replace("du_","")
+				except:
+					invoked_du=invoked_du
 				newline = "json.loads(invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"',"+variables2_aux+",'"+invoker_name+"'))#" #preparado para meterlo dentro de un "invoker"
 			newline = re.sub(r'\s*',"",newline)
 	else:#La invocacion es externa

@@ -21,7 +21,7 @@ def split_program(config_dict):
 	add_labeled_functions(config_dict)
 	print ("\nTHE COLLAPSED FINAL MATRIX WITH PARALLEL IS:")
 	print_matrix(config_dict["matrix_filled"])
-	if config_dict["du0_dependable"] == True:
+	if config_dict["non-reliable_agent_mode"] == True:
 		make_du0_dependable(config_dict)
 		print ("\nTHE COLLAPSED FINAL MATRIX WITH du_0 du0_dependable IS:")
 		print_matrix(config_dict["matrix_filled"])

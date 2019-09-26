@@ -133,10 +133,13 @@ config_dict = {"input_dir": None,
 			"matrix_filled": None, #matrix filled for internal operations (fill and clean)
 			"num_dus": None,
 			"labels":None,
-			"du0_dependable": None} 
+			"non-reliable_agent_mode": None} 
 
-config_dict["du0_dependable"] = False
-
+if input_dict["NON-RELIABLE_AGENT_MODE"] == "true":
+	config_dict["non-reliable_agent_mode"] = True
+else:
+	config_dict["non-reliable_agent_mode"] = False
+	
 config_dict["distributed_fs"] = distributed_fs
 config_dict["input_dir"] = distributed_fs + os.sep + "original"
 config_dict["output_dir"] = distributed_fs + os.sep + "distributed" + os.sep + "du_files"

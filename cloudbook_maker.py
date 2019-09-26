@@ -114,7 +114,7 @@ if not os.path.exists(path+os.sep+"distributed"+os.sep+"agents_grant"):
 	os.makedirs(path+os.sep+"distributed"+os.sep+"agents_grant")
 
 #read config.json and assign variables
-input_dict = load_dictionary(path+os.sep+"config"+os.sep+"config.json")   
+input_dict = load_dictionary(path+os.sep+"distributed"+os.sep+"config.json")   
 
 distributed_fs = path#input_dict["circle_info"]["DISTRIBUTED_FS"]
 #input_dir = input_dict["input_folder"]

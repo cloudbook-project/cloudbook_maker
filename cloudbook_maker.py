@@ -132,7 +132,10 @@ config_dict = {"input_dir": None,
 			"matrix_data": None, #matrix filled
 			"matrix_filled": None, #matrix filled for internal operations (fill and clean)
 			"num_dus": None,
-			"labels":None} 
+			"labels":None,
+			"du0_dependable": None} 
+
+config_dict["du0_dependable"] = False
 
 config_dict["distributed_fs"] = distributed_fs
 config_dict["input_dir"] = distributed_fs + os.sep + "original"
@@ -162,7 +165,7 @@ matrix = config_dict["matrix_data"]
 print("============================",config_dict["labels"])
 
 du_list = splitter.split_program(config_dict)
-
+print("du_list:", du_list)
 #Creation of du_dict with du info
 #Comentado para probar el parser nuevo
 du_dict={}

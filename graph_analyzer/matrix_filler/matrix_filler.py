@@ -45,7 +45,7 @@ def fill_matrix(config_dict):
 	json_str = json.dumps(config_dict["matrix_filled"])
 	#fo = open("dd", 'w')
 	#Create matrix folder
-	if(platform.system()=="Windows"):
+	'''if(platform.system()=="Windows"):
 	    path= os.environ['HOMEDRIVE'] + os.environ['HOMEPATH']+"/cloudbook/distributed/matrix"
 	    if not os.path.exists(path):
 	        os.makedirs(path)
@@ -55,6 +55,6 @@ def fill_matrix(config_dict):
 	        os.makedirs(path)
 	fo = open(output_dir+"/matrix.json", 'w')
 	fo.write(json_str)
-	fo.close()
+	fo.close()'''
 
 	return config_dict["matrix_filled"]

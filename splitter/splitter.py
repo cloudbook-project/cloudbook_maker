@@ -21,6 +21,10 @@ def split_program(config_dict):
 	add_labeled_functions(config_dict)
 	print ("\nTHE COLLAPSED FINAL MATRIX WITH PARALLEL IS:")
 	print_matrix(config_dict["matrix_filled"])
+	if config_dict["du0_dependable"] == True:
+		make_du0_dependable(config_dict)
+		print ("\nTHE COLLAPSED FINAL MATRIX WITH du_0 du0_dependable IS:")
+		print_matrix(config_dict["matrix_filled"])
 	du_list=[]
 	du_list = du_creator.create_dus(config_dict)
 
@@ -48,3 +52,73 @@ def add_labeled_functions(config_dict):
 				else:
 					if j != matrix[0][i]:
 						matrix[0][i] = [matrix[0][i],j]
+
+def make_du0_dependable(config_dict):
+	'''this function is for centralize important functions into du_0'''
+	print(">>> ENTER IN make_du0_dependable function")
+	matrix = config_dict["matrix_filled"]
+	function_list = matrix[0][1]
+	#remove parallel, recursive and local #TODO esto se cambia tambien en el agente
+
+	#if the function list is only one function as a string, convert into list
+	if isinstance(function_list, list) == False:
+		function_list = function_list.split()
+	print("Du_0 functions",function_list)
+	print("Config labels",config_dict["labels"])
+	du0_functions = []
+	print(len(function_list))
+	for i in function_list:
+		if i in config_dict["labels"]: #remove local, recursive and parallel functions
+			if ((config_dict["labels"][i] == 'LOCAL') or (config_dict["labels"][i] == 'RECURSIVE') or (config_dict["labels"][i] == 'PARALLEL')):
+				pass
+			else:
+				du0_functions.append(i) #Other labels, not implemented yet	
+		else:
+			du0_functions.append(i)
+	print("Du_0 functions after removal",du0_functions)
+
+	#recollect global
+	num_cols=len(matrix[0])
+	for i in range(1,num_cols):
+		aux_list = matrix[0][i]
+		new_list = []
+		if isinstance(matrix[0][i], list) == False:
+			aux_list = aux_list.split()
+		for j in aux_list:
+			if "_VAR_" in j:
+				du0_functions.append(j)
+			else:
+				new_list.append(j)
+		matrix[0][i] = new_list
+	#add global functions to du_0
+	matrix[0][1] = du0_functions
+
+	#update tables
+	con = config_dict["con"]
+	cursor = con.cursor()
+	
+	#make global vars belong to ud 0
+	cursor.execute("SELECT ORIG_NAME FROM functions")
+	for i in cursor:
+		if "_VAR_" in i[0]:
+			cursor2 = con.cursor()
+			cursor2.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i[0]+"'")
+	#showTables(con)
+	print(">>> EXIT FROM make_du0_dependable function")
+
+def showTables(con):
+	'''This function is used for get information of the sqlite tables involved'''
+	cursor = con.cursor()
+	cursor.execute("SELECT * FROM functions")
+	print ('\nlets check the table FUNCTIONS\n')
+	for i in cursor:
+	    print ("ORIG_NAME =",i[0])
+	    print ("FINAL_NAME =",i[1])
+	    print ("UD =",i[2],"\n")
+	print("=============================\n")
+	cursor.execute("SELECT * FROM MODULES")
+	print ('lets check the table MODULES\n')
+	for i in cursor:
+	    print ("ORIG_NAME =",i[0])
+	    print ("IMPORTS =",i[1])
+	    print ("FINAL IMPORT =",i[2],"\n")

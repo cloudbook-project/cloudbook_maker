@@ -3,7 +3,7 @@ import ast
 import re
 import os
 
-def du_name_assignation(con, function_list):
+def du_name_assignation(con, function_list, du_list):
 	'''This function gets function list and assign the first function du name to the final du with the group of functions'''
 	print(">>Enter in du_name assignation")
 	cursor = con.cursor()
@@ -13,8 +13,12 @@ def du_name_assignation(con, function_list):
 	#du number select
 	query="SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+function_list[0]+"'"
 	cursor.execute(query)
-	du_name = "du_"+str(cursor.fetchone()[0])
+	du_number = cursor.fetchone()[0]
+	du_name = "du_"+str(du_number)#(cursor.fetchone()[0])
 	print("\tThe du_name will be: ", du_name)
+	while du_name in du_list: #check until there is no repeated number
+		du_number += 1
+		du_name = "du_"+str(du_number)
 	print(">>Exit from du_name assignation")
 	return du_name
 
@@ -127,8 +131,9 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					variables_aux = variables.split("=")
 					variable_aux = variables.split("=")[-1]
 					variables = variables.replace(variable_aux,"")
-					variables = variables.replace("=","%3d")
-					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
+					##variables = variables.replace("=","%3d")
+					##newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
+					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
 					#add invoker in call
 					newline_aux = newline.rsplit(")",1)
 					newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")

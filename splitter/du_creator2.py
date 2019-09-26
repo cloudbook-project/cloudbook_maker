@@ -33,13 +33,13 @@ def create_dus(config_dict):
 	print("dus: ",range(1,len(matrix[0])))
 	du_list =[]
 	for i in range(1,len(matrix[0])):
-		du_list.append(create_du(con,matrix[0][i],input_path,output_path, config_dict))
+		du_list.append(create_du(con,matrix[0][i],input_path,output_path, config_dict,du_list))
 	
 	save_function_mapping(config_dict)
 	return du_list
 
 
-def create_du(con,function_list,input_path,output_path, config_dict):
+def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 	print( "\t============== create du ===============")
 	print( "\tFunction list:", function_list)
 	#vars
@@ -51,7 +51,7 @@ def create_du(con,function_list,input_path,output_path, config_dict):
 		function_list = function_list.split()
 	
 	#ud guide: 1: Name assgination of du, the du number of the first du in the list
-	du_name = utils.du_name_assignation(con, function_list)
+	du_name = utils.du_name_assignation(con, function_list, du_list) #du_list is passed in order to not repeat du names
 	#ud guide 2: Unifying imports and create final imports list
 	final_imports = utils.get_final_imports(con, function_list)
 	

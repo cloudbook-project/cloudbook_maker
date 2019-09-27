@@ -135,11 +135,12 @@ config_dict = {"input_dir": None,
 			"labels":None,
 			"non-reliable_agent_mode": None} 
 
-if input_dict["NON-RELIABLE_AGENT_MODE"] == "true":
+'''if input_dict["NON-RELIABLE_AGENT_MODE"] == "true":
 	config_dict["non-reliable_agent_mode"] = True
 else:
-	config_dict["non-reliable_agent_mode"] = False
-	
+	config_dict["non-reliable_agent_mode"] = False'''
+config_dict["non-reliable_agent_mode"] = input_dict["NON-RELIABLE_AGENT_MODE"]
+
 config_dict["distributed_fs"] = distributed_fs
 config_dict["input_dir"] = distributed_fs + os.sep + "original"
 config_dict["output_dir"] = distributed_fs + os.sep + "distributed" + os.sep + "du_files"

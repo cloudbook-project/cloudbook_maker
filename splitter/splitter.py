@@ -57,9 +57,8 @@ def make_du0_dependable(config_dict):
 	'''this function is for centralize important functions into du_0'''
 	print(">>> ENTER IN make_du0_dependable function")
 	matrix = config_dict["matrix_filled"]
-	function_list = matrix[0][1]
-	#remove parallel, recursive and local #TODO esto se cambia tambien en el agente
-
+	function_list = matrix[0][1] #functions belonging to du_0
+	#remove parallel, recursive and local
 	#if the function list is only one function as a string, convert into list
 	if isinstance(function_list, list) == False:
 		function_list = function_list.split()
@@ -84,7 +83,7 @@ def make_du0_dependable(config_dict):
 		new_list = []
 		if isinstance(matrix[0][i], list) == False:
 			aux_list = aux_list.split()
-		for j in aux_list:
+		for j in aux_list: #TODO meter el resto de funciones normales que no le han caido
 			if "_VAR_" in j:
 				du0_functions.append(j)
 			else:

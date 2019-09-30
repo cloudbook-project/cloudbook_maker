@@ -184,13 +184,13 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 						variables2_aux = variables2_aux+"str("+i+")"
 					else:
 						variables2_aux = variables2_aux+"+','+ str("+i+")"
-			##Transalted vars
+			##Translated vars
 			if local_fun == True:
-				##newline = invoked_function + "("+ variables  #Para invocacion normal sin "invoker"
+				newline = invoked_function + "("+ variables  #Para invocacion normal sin "invoker"
 				#variables2 = '"'+variables2 + "('+str"+variables2_aux+"+')"+'"' #preparado para meterlo dentro de un "invoker"
-				if invoked_du.find("du_") != -1:
-					invoked_du = invoked_du.replace("du_","")
-				newline = "invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"',"+variables2_aux+",'"+invoker_name+"')#" #preparado para meterlo dentro de un "invoker"
+				##if invoked_du.find("du_") != -1:
+				##	invoked_du = invoked_du.replace("du_","")
+				##newline = "invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"',"+variables2_aux+",'"+invoker_name+"')#" #preparado para meterlo dentro de un "invoker"
 				local_fun = False
 				if nonblocking_invocation:
 					newline = newline.replace(invoked_function,"nonblocking"+invoked_function)

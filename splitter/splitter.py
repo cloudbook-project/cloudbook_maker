@@ -71,7 +71,7 @@ def make_du0_dependable(config_dict):
 			if ((config_dict["labels"][i] == 'LOCAL') or (config_dict["labels"][i] == 'RECURSIVE') or (config_dict["labels"][i] == 'PARALLEL')):
 				pass
 			else:
-				du0_functions.append(i) #Other labels, not implemented yet	
+				du0_functions.append(i) #Other labels not implemented yet	
 		else:
 			du0_functions.append(i)
 	print("Du_0 functions after removal",du0_functions)
@@ -83,11 +83,15 @@ def make_du0_dependable(config_dict):
 		new_list = []
 		if isinstance(matrix[0][i], list) == False:
 			aux_list = aux_list.split()
-		for j in aux_list: #TODO meter el resto de funciones normales que no le han caido
+		for j in aux_list: #Lo comentado con doble # es para meter las funciones normales en la du_0
+			##if its global or normal function goes to du_0, if its labelled goes to the du
 			if "_VAR_" in j:
 				du0_functions.append(j)
+			##if ((config_dict["labels"][j] == 'LOCAL') or (config_dict["labels"][j] == 'RECURSIVE') or (config_dict["labels"][j] == 'PARALLEL')):
+				##new_list.append(j)
 			else:
 				new_list.append(j)
+				##du0_functions.append(j)
 		matrix[0][i] = new_list
 	#add global functions to du_0
 	matrix[0][1] = du0_functions
@@ -102,6 +106,10 @@ def make_du0_dependable(config_dict):
 		if "_VAR_" in i[0]:
 			cursor2 = con.cursor()
 			cursor2.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i[0]+"'")
+		#Lo comentado con doble # es para meter las funciones normales en la du_0
+		##if i[0] not in config_dict["labels"]:
+			##cursor2 = con.cursor()
+			##cursor2.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i[0]+"'")
 	#showTables(con)
 	print(">>> EXIT FROM make_du0_dependable function")
 

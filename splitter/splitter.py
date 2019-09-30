@@ -85,7 +85,7 @@ def make_du0_dependable(config_dict):
 			aux_list = aux_list.split()
 		for j in aux_list: #Lo comentado con doble # es para meter las funciones normales en la du_0
 			##if its global or normal function goes to du_0, if its labelled goes to the du
-			if "_VAR_" in j:
+			if ("_VAR_" in j) or (j not in config_dict["labels"]):
 				du0_functions.append(j)
 			##if ((config_dict["labels"][j] == 'LOCAL') or (config_dict["labels"][j] == 'RECURSIVE') or (config_dict["labels"][j] == 'PARALLEL')):
 				##new_list.append(j)
@@ -93,6 +93,9 @@ def make_du0_dependable(config_dict):
 				new_list.append(j)
 				##du0_functions.append(j)
 		matrix[0][i] = new_list
+	#remove repeated elements
+	##du0_functions = list(dict.fromkeys(du0_functions))
+	du0_functions = list(set(du0_functions))
 	#add global functions to du_0
 	matrix[0][1] = du0_functions
 
@@ -103,7 +106,7 @@ def make_du0_dependable(config_dict):
 	#make global vars belong to ud 0
 	cursor.execute("SELECT ORIG_NAME FROM functions")
 	for i in cursor:
-		if "_VAR_" in i[0]:
+		if ("_VAR_" in i[0]) or (j not in config_dict["labels"]):
 			cursor2 = con.cursor()
 			cursor2.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i[0]+"'")
 		#Lo comentado con doble # es para meter las funciones normales en la du_0

@@ -16,9 +16,9 @@ def du_name_assignation(con, function_list, du_list):
 	du_number = cursor.fetchone()[0]
 	du_name = "du_"+str(du_number)#(cursor.fetchone()[0])
 	print("\tThe du_name will be: ", du_name)
-	while du_name in du_list: #check until there is no repeated number
+	'''while du_name in du_list: #check until there is no repeated number
 		du_number += 1
-		du_name = "du_"+str(du_number)
+		du_name = "du_"+str(du_number)'''
 	print(">>Exit from du_name assignation")
 	return du_name
 

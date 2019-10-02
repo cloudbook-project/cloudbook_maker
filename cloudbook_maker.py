@@ -169,6 +169,7 @@ matrix = config_dict["matrix_data"]
 print("============================",config_dict["labels"])
 
 du_list = splitter.split_program(config_dict)
+du_list = list(set(du_list))#Remove repeated elements if there are
 print("du_list:", du_list)
 #Creation of du_dict with du info
 #Comentado para probar el parser nuevo

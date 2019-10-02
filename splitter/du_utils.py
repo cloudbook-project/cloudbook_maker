@@ -3,7 +3,7 @@ import ast
 import re
 import os
 
-def du_name_assignation(con, function_list, du_list):
+def du_name_assignation(con, function_list, du_list, config_dict):
 	'''This function gets function list and assign the first function du name to the final du with the group of functions'''
 	print(">>Enter in du_name assignation")
 	cursor = con.cursor()
@@ -16,6 +16,9 @@ def du_name_assignation(con, function_list, du_list):
 	du_number = cursor.fetchone()[0]
 	du_name = "du_"+str(du_number)#(cursor.fetchone()[0])
 	print("\tThe du_name will be: ", du_name)
+	if config_dict["non-reliable_agent_mode"] == True:
+		if du_name != 'du_0':
+			du_name='du_parallel'
 	'''while du_name in du_list: #check until there is no repeated number
 		du_number += 1
 		du_name = "du_"+str(du_number)'''
@@ -103,10 +106,10 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	print("\t\t\t\torig_function_name: ", orig_function_name)
 	if aux_function in config_dict["labels"]:
 		if config_dict["labels"][aux_function] == "PARALLEL":
-			invoked_du=10000
+			invoked_du='parallel'#10000
 			parallel_fun = True
 		if config_dict["labels"][aux_function] == "RECURSIVE":
-			invoked_du=5000
+			invoked_du='parallel'#5000
 			invoked_function = "recursive_"+invoked_function
 			recursive_fun = True
 		if config_dict["labels"][aux_function] == "LOCAL":

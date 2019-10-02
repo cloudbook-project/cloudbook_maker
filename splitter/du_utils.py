@@ -18,7 +18,7 @@ def du_name_assignation(con, function_list, du_list, config_dict):
 	print("\tThe du_name will be: ", du_name)
 	if config_dict["non-reliable_agent_mode"] == True:
 		if du_name != 'du_0':
-			du_name='du_parallel'
+			du_name='du_default'
 	'''while du_name in du_list: #check until there is no repeated number
 		du_number += 1
 		du_name = "du_"+str(du_number)'''
@@ -106,10 +106,10 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 	print("\t\t\t\torig_function_name: ", orig_function_name)
 	if aux_function in config_dict["labels"]:
 		if config_dict["labels"][aux_function] == "PARALLEL":
-			invoked_du='parallel'#10000
+			invoked_du='default'#10000
 			parallel_fun = True
 		if config_dict["labels"][aux_function] == "RECURSIVE":
-			invoked_du='parallel'#5000
+			invoked_du='default'#5000
 			invoked_function = "recursive_"+invoked_function
 			recursive_fun = True
 		if config_dict["labels"][aux_function] == "LOCAL":

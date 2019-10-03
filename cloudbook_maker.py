@@ -208,11 +208,14 @@ fo.write(json_str)
 fo.close()
 
 critical_dus_route = distributed_fs + os.sep + "distributed"+os.sep+"critical_dus.json"
-critical_dus = {}
+critical_dus_dict = {}
 if len(config_dict["critical_dus"]) != 0:
 	fo = open(critical_dus_route, 'w')
-	fo.write(str(config_dict["critical_dus"]))
+	#fo.write(str(config_dict["critical_dus"]))
+	critical_dus_dict["critical_dus"] = config_dict["critical_dus"]
+	json_str = json.dumps(critical_dus_dict)
+	fo.write(json_str)
 	fo.close()
-print("critical_dus file written", config_dict["critical_dus"])
+print("critical_dus file written", critical_dus_dict)
 
 ##showTables(con)

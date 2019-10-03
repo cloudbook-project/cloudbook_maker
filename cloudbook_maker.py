@@ -133,6 +133,7 @@ config_dict = {"input_dir": None,
 			"matrix_filled": None, #matrix filled for internal operations (fill and clean)
 			"num_dus": None,
 			"labels":None,
+			"critical_dus" : [],
 			"non-reliable_agent_mode": None} 
 
 '''if input_dict["NON-RELIABLE_AGENT_MODE"] == "true":
@@ -205,5 +206,13 @@ du_list_route = distributed_fs + os.sep + "distributed"+os.sep+"du_list.json"
 fo = open(du_list_route, 'w')
 fo.write(json_str)
 fo.close()
+
+critical_dus_route = distributed_fs + os.sep + "distributed"+os.sep+"critical_dus.json"
+critical_dus = {}
+if len(config_dict["critical_dus"]) != 0:
+	fo = open(critical_dus_route, 'w')
+	fo.write(str(config_dict["critical_dus"]))
+	fo.close()
+print("critical_dus file written", config_dict["critical_dus"])
 
 ##showTables(con)

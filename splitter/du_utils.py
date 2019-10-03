@@ -22,6 +22,13 @@ def du_name_assignation(con, function_list, du_list, config_dict):
 	'''while du_name in du_list: #check until there is no repeated number
 		du_number += 1
 		du_name = "du_"+str(du_number)'''
+	#assignation of critical dus
+	global_var_found = False
+	for i in function_list:
+		if "_VAR_" in i:
+			global_var_found = True
+	if global_var_found:
+		config_dict["critical_dus"].append(du_name)
 	print(">>Exit from du_name assignation")
 	return du_name
 

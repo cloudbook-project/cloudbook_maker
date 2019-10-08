@@ -15,10 +15,14 @@ def du_name_assignation(con, function_list, du_list, config_dict):
 	cursor.execute(query)
 	du_number = cursor.fetchone()[0]
 	du_name = "du_"+str(du_number)#(cursor.fetchone()[0])
+	if function_list[0] in config_dict["labels"]:
+		if ((config_dict["labels"][function_list[0]] == 'LOCAL') or (config_dict["labels"][function_list[0]] == 'RECURSIVE') or (config_dict["labels"][function_list[0]] == 'PARALLEL')):
+			du_name = "du_default"
 	print("\tThe du_name will be: ", du_name)
-	if config_dict["non-reliable_agent_mode"] == True:
+	'''if config_dict["non-reliable_agent_mode"] == True:
 		if du_name != 'du_0':
 			du_name='du_default'
+			'''
 	'''while du_name in du_list: #check until there is no repeated number
 		du_number += 1
 		du_name = "du_"+str(du_number)'''

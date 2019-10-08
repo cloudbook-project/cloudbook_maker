@@ -18,7 +18,8 @@ def split_program(config_dict):
 	print_matrix(matrix)
 	#AnADIMOS PARALLELS
 	print(config_dict["labels"])
-	add_labeled_functions(config_dict)
+	#add_labeled_functions(config_dict)
+	separate_default_functions(config_dict)
 	print ("\nTHE COLLAPSED FINAL MATRIX WITH PARALLEL IS:")
 	print_matrix(config_dict["matrix_filled"])
 	if config_dict["non-reliable_agent_mode"] == True:
@@ -27,6 +28,7 @@ def split_program(config_dict):
 		print_matrix(config_dict["matrix_filled"])
 	du_list=[]
 	du_list = du_creator.create_dus(config_dict)
+
 
 	print (">>>EXIT from split_program...")
 	return du_list
@@ -52,6 +54,79 @@ def add_labeled_functions(config_dict):
 				else:
 					if j != matrix[0][i]:
 						matrix[0][i] = [matrix[0][i],j]
+
+def separate_default_functions(config_dict):
+	'''this function separate all parallel and recursive functions in other du_list'''
+	print(">>> ENTER IN separate_default_functions")
+	matrix = config_dict["matrix_filled"]
+	con = config_dict["con"]
+	default_list = []
+	final_list = []
+	dus = matrix[0]
+	dus.remove('Matrix')
+	du_index = 0
+	for function_list in dus:
+		#print("para las funciones", function_list)
+		if isinstance(function_list, list) == False:
+			aux_function_list = function_list.split()
+		else:
+			aux_function_list = function_list
+		for i in aux_function_list:
+			if i in config_dict["labels"]:
+				if ((config_dict["labels"][i] == 'LOCAL') or (config_dict["labels"][i] == 'RECURSIVE') or (config_dict["labels"][i] == 'PARALLEL')):
+					default_list.append(i)
+				else:
+					final_list.append(i)
+					#print("meto esta",i)
+			else:
+				final_list.append(i)
+				#print("meto esta",i)
+		function_list = final_list
+		final_list = []
+		print(du_index)
+		try:
+			matrix[0][du_index] = function_list
+		except:
+			matrix[0].append(function_list)
+		du_index +=1
+		print("function_list",function_list)
+	print("default_list",default_list)
+	#translate first row of matrix into the new dus
+	for i in matrix[0]:
+		if i == []:
+			matrix[0].remove(i)
+	matrix[0].append(default_list)
+	matrix[0].insert(0,'Matrix')
+	print("matrix 0:",matrix[0])
+	#TODO:make the database coherent to the matrix
+	ocuppied_du = []
+	cursor = con.cursor()
+	for i in matrix[0]:
+		if i == 'Matrix':
+			continue
+		print(i[0])
+		#print("Para las funciones",i)
+		query="SELECT DU from FUNCTIONS where ORIG_NAME=="+"'"+i[0]+"'"
+		cursor.execute(query)
+		du_number = cursor.fetchone()[0]
+		du_name = "du_"+str(du_number)#(cursor.fetchone()[0])
+		#print("\tThe du_name will be: ", du_name)
+		while du_number in ocuppied_du: #check until there is no repeated number
+			du_number += 1
+			du_name = "du_"+str(du_number)
+		#print("\tThe du_name will be: ", du_name)
+		ocuppied_du.append(du_number)
+		#Update ud for all functions indu
+		cursor2 = con.cursor()
+		lista_fun_aux = i
+		#print("la lista es: ", lista_fun_aux)
+		if isinstance(lista_fun_aux, list) == False:
+			lista_fun_aux = lista_fun_aux.split()
+		for j in lista_fun_aux:
+			#print("Actualizo",j, "respecto a", lista_fun_aux)
+			cursor2.execute("UPDATE functions SET DU = '"+str(du_number)+"' WHERE ORIG_NAME =='"+j+"'")
+	#showTables(con)
+
 
 def make_du0_dependable(config_dict):
 	'''this function is for centralize important functions into du_0'''
@@ -114,6 +189,18 @@ def make_du0_dependable(config_dict):
 			##cursor2 = con.cursor()
 			##cursor2.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i[0]+"'")
 	#showTables(con)
+
+	#Eliminate empty lists from matrix
+	aux_matrix = []
+	for i in matrix[0]:
+		#print("i y tipo", i, type(i))
+		if len(i) == 0:
+			continue
+			#matrix[0].remove(i)
+		aux_matrix.append(i)
+	matrix[0] = aux_matrix
+	print("matrix",matrix[0])
+
 	print(">>> EXIT FROM make_du0_dependable function")
 
 def showTables(con):

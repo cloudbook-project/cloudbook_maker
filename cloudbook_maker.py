@@ -209,6 +209,9 @@ fo.close()
 
 critical_dus_route = distributed_fs + os.sep + "distributed"+os.sep+"critical_dus.json"
 critical_dus_dict = {}
+#put du0 in critical dus
+if "du_0" not in config_dict["critical_dus"]:
+	config_dict["critical_dus"].append("du_0")
 if len(config_dict["critical_dus"]) != 0:
 	fo = open(critical_dus_route, 'w')
 	#fo.write(str(config_dict["critical_dus"]))

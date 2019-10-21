@@ -67,7 +67,8 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 	for i in config_dict["constants"]:
 		fo.write(i)
 		fo.write("\n")
-	fo.write("invoker=None\n\n")
+	fo.write("invoker=None\n")
+	fo.write("cloudbook_sync_timeout=False\n\n")  #Se puede quitar de aqui y generarla solo cuando es necesaria
 	#write classes
 	for i in config_dict["class"]:
 		fo.write(config_dict["class"][i])
@@ -211,6 +212,7 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 		while json.loads(cloudbook_th_counter("")) > 0 and timeout: #This was sync
 			if temp > '''+time+''':
 				print("threading failure")
+				globals()['cloudbook_sync_timeout']=True
 				timeout = False
 			time.sleep(0.01)
 			temp+=1

@@ -201,7 +201,7 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 					if line.find(":") != -1:
 						time = line.split(":")[1]
 						time = time.replace(":","")
-						time = int(time)#/10
+						time = int(time)*100#/10
 						time = str(time)
 					#line = line.replace("#SYNC",'''while json.loads(cloudbook_th_counter("")) > 0: #This was sync
 			#sleep(0.01)

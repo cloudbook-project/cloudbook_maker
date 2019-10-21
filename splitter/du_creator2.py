@@ -43,7 +43,7 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 	print( "\t============== create du ===============")
 	print( "\tFunction list:", function_list)
 	#vars
-	pragmas = ["#__CLOUDBOOK:PARALLEL__","#SYNC","#__CLOUDBOOK:RECURSIVE__","#__CLOUDBOOK:LOCAL__"]
+	pragmas = ["#__CLOUDBOOK:PARALLEL__","#SYNC","#__CLOUDBOOK:RECURSIVE__","#__CLOUDBOOK:LOCAL__",r'#SYNC:\d']
 	invocation_pragmas = ["#__CLOUDBOOK:NONBLOCKING__"]
 	cursor = con.cursor()
 	#if the function list is only one function as a string, convert into list
@@ -96,14 +96,14 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 		#ud guide 3.2.2: Get input path, and open it for reading
 		input_file = input_path+os.sep+module.replace('.',os.sep)+".py"
 		print( "\tOpen the file: "+ input_file)
-		fi = open(input_file,'r')
+		fi = open(input_file,'rU')
 		for i,line in enumerate(fi,1):
 			#ud guide: 3.2.2.1
 			tabs = line.count('\t')
 			#ignore comments
 			clean_line = re.sub(r'\s*',"",line)
 			actual_line = clean_line
-			if ("#" in clean_line) and (clean_line not in pragmas) and (clean_line not in invocation_pragmas):
+			if ("#" in clean_line) and (clean_line not in pragmas) and (clean_line not in invocation_pragmas) and ("#SYNC:" not in clean_line):
 				continue
 			#Adaptamos o incorporamos a nombre funcion, a def loquesea o declaracion de variable global
 			if "_VAR_" in name:
@@ -200,17 +200,18 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 					if line.find(":") != -1:
 						time = line.split(":")[1]
 						time = time.replace(":","")
-						time = int(time)/10
+						time = int(time)#/10
 						time = str(time)
 					#line = line.replace("#SYNC",'''while json.loads(cloudbook_th_counter("")) > 0: #This was sync
 			#sleep(0.01)
 			#''')
 					#todo: Los tabs bien
 						line = "\t"*tabs+'''temp = 0
-		while json.loads(cloudbook_th_counter("")) > 0: #This was sync
+		timeout = True
+		while json.loads(cloudbook_th_counter("")) > 0 and timeout: #This was sync
 			if temp > '''+time+''':
 				print("threading failure")
-				sys.exit()
+				timeout = False
 			time.sleep(0.01)
 			temp+=1
 '''

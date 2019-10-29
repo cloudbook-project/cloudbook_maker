@@ -223,7 +223,17 @@ def add_du0_functions(config_dict):
 		if i in function_list:
 			du0_candidates.remove(i)
 	#updateu su du en sqlite, y las anado a la matriz en du0
+	to_delete = ''
 	for i in du0_candidates:
+		#Las elimino de su du
+		for j in matrix[0]:
+			if i in j:
+				j.remove(i)
+				if len(j) == 0:
+					to_delete=j# Marco esa du para borrar, porque su unica funcion se ha ido y se ha quedado vacia
+		if to_delete != '':
+			matrix[0].remove(to_delete)
+			to_delete = ''
 		function_list.append(i)
 		cursor.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i+"'")
 	print(">>> EXIT FROM add_du0_functions function")

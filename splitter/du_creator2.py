@@ -286,6 +286,10 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 							else:
 								complete_name = module+'.'+invocation_fun
 							print( "\t\t\tCompletamos nombre y queda: ", complete_name)
+							if complete_name != j[0]:#OJO ESTO ES PARA EVITAR CONFUSIONES CON INVOCACIONES EN EL LADO DERECHO
+								print("No me interesa")
+								#translated_fun = False #Como me salto la traduccion lo pongo a true, para poder traducir la siguiente linea
+								continue
 						print( "\t\t\tVAMOS A TRADUCIR")
 						nonblocking_invocation = False
 						if last_line in invocation_pragmas:

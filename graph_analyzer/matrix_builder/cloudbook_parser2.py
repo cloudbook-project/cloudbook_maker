@@ -20,8 +20,8 @@ funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\
 t_ignore = " \n"
 #iden = r'[a-zA-Z_][a-zA-Z_0-9]*'
 
-from_token = r'[f][r][o][m][\s]+[a-zA-Z_][a-zA-Z_0-9]*'
-import_token = r'[i][m][p][o][r][t][\s]+[a-zA-Z_][a-zA-Z_0-9]*'
+from_token = r'[f][r][o][m][\s]+[a-zA-Z_.][a-zA-Z_0-9.]*'
+import_token = r'[i][m][p][o][r][t][\s]+[a-zA-Z_*][a-zA-Z_0-9]*'
 importation = from_token + r'[\s]+' + import_token + r'|' + import_token
 iden = r'[a-zA-Z_][.a-zA-Z_0-9]*'
 assignation = r'[\s]*[=][\s]*'

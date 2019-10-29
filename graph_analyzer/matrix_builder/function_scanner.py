@@ -29,9 +29,9 @@ def get_functions(files_dict,config_dict):
 			config_dict["constants"] = parser.getConstants(tokens)
 			print("clases:", config_dict["class"])
 			print("constantes", config_dict["constants"])
-			#print("me da tokens: ")
-			#for tok in tokens:
-			#	print(str(tok))
+			print("me da tokens: ")
+			for tok in tokens:
+				print(str(tok))
 			parser.function_scanner(tokens,dir2,f,function_names,labels_dict)
 			config_dict["du0_functions"] = parser.getDu0_functions(filename,tokens)
 			print("funciones para la du_0",config_dict["du0_functions"])

@@ -134,7 +134,8 @@ config_dict = {"input_dir": None,
 			"num_dus": None,
 			"labels":None,
 			"critical_dus" : [],
-			"non-reliable_agent_mode": None} 
+			"non-reliable_agent_mode": None,
+			"du0_functions": None} 
 
 '''if input_dict["NON-RELIABLE_AGENT_MODE"] == "true":
 	config_dict["non-reliable_agent_mode"] = True

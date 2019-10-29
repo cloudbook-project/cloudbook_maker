@@ -26,6 +26,10 @@ def split_program(config_dict):
 		make_du0_dependable(config_dict)
 		print ("\nTHE COLLAPSED FINAL MATRIX WITH du_0 du0_dependable IS:")
 		print_matrix(config_dict["matrix_filled"])
+	if len(config_dict["du0_functions"]) != 0:
+		add_du0_functions(config_dict)
+		print ("\nTHE COLLAPSED FINAL MATRIX WITH du_0 functions:")
+		print_matrix(config_dict["matrix_filled"])
 	du_list=[]
 	du_list = du_creator.create_dus(config_dict)
 
@@ -202,6 +206,25 @@ def make_du0_dependable(config_dict):
 	print("matrix",matrix[0])
 
 	print(">>> EXIT FROM make_du0_dependable function")
+
+def add_du0_functions(config_dict):
+	'''this functions adds labeled functions into du_0'''
+	print(">>> ENTER IN add_du0_functions function")
+	#miro si no estan ya en la du0
+	matrix = config_dict["matrix_filled"]
+	function_list = matrix[0][1] #functions belonging to du_0
+	con = config_dict["con"]
+	cursor = con.cursor()
+	du0_candidates = config_dict["du0_functions"]
+	#if du0 candidates already are un du0 not taken into account
+	for i in du0_candidates:
+		if i in function_list:
+			du0_candidates.remove(i)
+	#updateu su du en sqlite, y las anado a la matriz en du0
+	for i in du0_candidates:
+		function_list.append(i)
+		cursor.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i+"'")
+	print(">>> EXIT FROM add_du0_functions function")
 
 def showTables(con):
 	'''This function is used for get information of the sqlite tables involved'''

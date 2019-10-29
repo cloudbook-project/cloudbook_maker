@@ -13,7 +13,7 @@ import math
 #file = "nbody_orig.py"
 
 tokens = ['TEST','IMPORT','FUN_DEF','COMMENT','LOOP_FOR','LOOP_WHILE','IF','ELSE','TRY','EXCEPT','PRINTV2', 'PRINTV3','FUN_INVOCATION','PYTHON_INVOCATION',
-'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF','CONST']
+'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF','CONST','DU0_FUNCTION']
 
 fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*'
 funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*|[a-zA-Z_][a-zA-Z_0-9]*'
@@ -42,6 +42,11 @@ def t_RECURSIVE(t):
 def t_LOCAL(t):
 	r'[#][_][_][C][L][O][U][D][B][O][O][K][:][L][O][C][A][L][_][_]'
 	t.type='LOCAL'
+	return t
+
+def t_DU0_FUNCTION(t):
+	r'[#][_][_][C][L][O][U][D][B][O][O][K][:][D][U][0][_][_]'
+	t.type='DU0_FUNCTION'
 	return t
 
 def t_COMMENT(t):
@@ -505,3 +510,10 @@ def getConstants(token_list):
 		if i.type=='CONST':
 			const_list.append(i.value)
 	return const_list
+
+def getDu0_functions(filename, token_list):
+	du0_function_list = []
+	for i,token in enumerate(token_list):
+		if (token.type=='DU0_FUNCTION'):
+			du0_function_list.append(token_list[i+1].value)
+	return du0_function_list

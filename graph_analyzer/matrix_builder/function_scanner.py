@@ -2,6 +2,7 @@ import os
 import logging
 import file_scanner
 import cloudbook_parser2 as parser
+import time
 
 function_names = []
 
@@ -32,6 +33,8 @@ def get_functions(files_dict,config_dict):
 			#for tok in tokens:
 			#	print(str(tok))
 			parser.function_scanner(tokens,dir2,f,function_names,labels_dict)
+			config_dict["du0_functions"] = parser.getDu0_functions(filename,tokens)
+			print("funciones para la du_0",config_dict["du0_functions"])
 			#parser.invocation_names(tokens,dir2,f,function_names)#only if necessary, to get the complete names on invocations
 
 	print("functions", function_names)

@@ -62,6 +62,7 @@ def add_labeled_functions(config_dict):
 def separate_default_functions(config_dict):
 	'''this function separate all parallel and recursive functions in other du_list'''
 	print(">>> ENTER IN separate_default_functions")
+	print("labels",config_dict['labels'])
 	matrix = config_dict["matrix_filled"]
 	con = config_dict["con"]
 	default_list = []
@@ -70,7 +71,7 @@ def separate_default_functions(config_dict):
 	dus.remove('Matrix')
 	du_index = 0
 	for function_list in dus:
-		#print("para las funciones", function_list)
+		print("para las funciones", function_list)
 		if isinstance(function_list, list) == False:
 			aux_function_list = function_list.split()
 		else:
@@ -78,6 +79,7 @@ def separate_default_functions(config_dict):
 		for i in aux_function_list:
 			if i in config_dict["labels"]:
 				if ((config_dict["labels"][i] == 'LOCAL') or (config_dict["labels"][i] == 'RECURSIVE') or (config_dict["labels"][i] == 'PARALLEL')):
+					print("las meto")
 					default_list.append(i)
 				else:
 					final_list.append(i)

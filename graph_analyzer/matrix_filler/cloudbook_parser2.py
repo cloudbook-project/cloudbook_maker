@@ -201,13 +201,14 @@ def tokenize(module,file,function_list):
 					module = module[:module.rfind(".")]
 					for j in function_list:
 						if i.value in j:
-							#print("========>OJO: "+i.value+ " y " + j)
+							print("========>OJO: "+i.value+ " y " + j)
 							i.value = module + "." + i.value
 				else:
 					for j in function_list:
 						if i.value in j:
-							#print("========>OJO: "+i.value+ " y " + j)
+							print("========>OJO: "+i.value+ " y " + j)
 							i.value = module + "." + i.value
+				print("Asi queda el token invocation:", i)
 	return token_list
 
 
@@ -233,9 +234,9 @@ def function_parser(token_list,function_names):
 		values.insert(0,1)
 	#levels.append(0)
 	for i in token_list:
-		print i
+		#print ("token modulo",i)
 		for tok in token_list[i]:
-	
+			#print("token:", tok)
 			if tok.type == 'FUN_DEF' and tok.value in function_names:#not for classes only procedimental programs
 				level = tok.lexpos
 				if tok.value.find("(")!=-1:

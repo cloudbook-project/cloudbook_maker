@@ -50,7 +50,7 @@ def fill_matrix(config_dict):
 	    if not os.path.exists(path):
 	        os.makedirs(path)
 	else:
-	    path = "/etc/cloudbook/distributed/matrix"
+	    path = os.environ['HOME'] + "/cloudbook/distributed/matrix"
 	    if not os.path.exists(path):
 	        os.makedirs(path)
 	fo = open(output_dir+"/matrix.json", 'w')

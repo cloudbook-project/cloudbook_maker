@@ -50,7 +50,7 @@ def load_dictionary(filename):
 	    if not os.path.exists(path):
 	        os.makedirs(path)
 	else:
-	    path = "/etc/cloudbook/"
+	    path = os.environ['HOME'] + os.sep + "cloudbook"
 	    if not os.path.exists(path):
 	        os.makedirs(path)
 else:
@@ -93,7 +93,7 @@ if(platform.system()=="Windows"):
     if not os.path.exists(path):
         os.makedirs(path)
 else:
-    path = "/etc/cloudbook"
+    path = os.environ['HOME'] + os.sep + "cloudbook"
     if not os.path.exists(path):
         os.makedirs(path)
 

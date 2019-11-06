@@ -3,6 +3,7 @@ import ast #for translating unicode strings
 import re
 import os
 import du_utils as utils
+import time as ttime
 
 import sys
 import json
@@ -240,6 +241,8 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 						orig_list.append((j[0].encode('ascii'),orig_fun_name.encode('ascii')))#tuplas(nombreorig,solofun)
 				print( "\t\t\tBuscamos estas: ", orig_list)
 				#miro si la fun (segunda parte de la tupla) esta en line
+				#globaldict = False
+				global_asig = False
 				for j in orig_list:
 					if j[1] in line:#nombre solo fun
 						print( "\t\t\tEncuentro esta: ", j[1], " aqui", i, ": ", line)
@@ -261,9 +264,12 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 								if invocation_fun.find(".")!=-1:
 									invocation_fun = invocation_fun.split(".")[0]
 							elif ("=" in line) and (invocation_index==0): #TODO es una asignacion y hay que traducirla
-							#elif ("=" in line):#TODO_ACT estudiar y hacer que se haga bien esto
 							#Tiene que estar antes del igual
+								global_asig = True
 								invocation_fun = "_VAR_"+invocation_fun
+								if (invocation_fun.find("[")!=-1):
+									invocation_fun = invocation_fun[:invocation_fun.rfind("[")]
+									#globaldict = True
 							else:
 								print("Esta linea no la entiendo:", line)
 								continue						
@@ -288,7 +294,6 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 							print( "\t\t\tCompletamos nombre y queda: ", complete_name)
 							if complete_name != j[0]:#OJO ESTO ES PARA EVITAR CONFUSIONES CON INVOCACIONES EN EL LADO DERECHO
 								print("No me interesa")
-								#translated_fun = False #Como me salto la traduccion lo pongo a true, para poder traducir la siguiente linea
 								continue
 						print( "\t\t\tVAMOS A TRADUCIR")
 						nonblocking_invocation = False
@@ -311,20 +316,20 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 								new_line = aux_line2[k]
 							else:
 								new_line = new_line + " " + aux_line2[k]
-						#new_line = new_line.replace(" ","")
-						#print "LINEA: ",aux_line2
-						#for k,elem in enumerate(aux_line2):
-						#	if k < invocation_index:
-						#		new_line = elem + " " + new_line
-						#	if k > invocation_index:
-						#		new_line = new_line + " " + elem
+
 						if lock_parallel == True:
-							tabs +=1
-							
-						for i in range(tabs):
+							tabs +=1							
+						for t in range(tabs):
 							new_line = "\t"+new_line
 						fo.write(new_line)
 						fo.write("\n")
+						if global_asig:
+							clean_line = re.sub(r'\s*',"",line)
+							for t in range(tabs):
+								clean_line = "\t"+clean_line
+							fo.write(clean_line)#ver si las tabs van bien, mejor limpio la linea y le meto tabs
+							fo.write("\n")
+							global_asig = False						
 						print("\t\t\tPongo a true TRANSLATED FUN")
 						translated_fun = True
 				if "return" in line:

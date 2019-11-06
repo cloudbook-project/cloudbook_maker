@@ -222,4 +222,4 @@ if len(config_dict["critical_dus"]) != 0:
 	fo.close()
 print("critical_dus file written", critical_dus_dict)
 
-showTables(con)
+##showTables(con)

@@ -2,6 +2,7 @@ from __future__ import print_function
 import ast
 import re
 import os
+import time
 
 def du_name_assignation(con, function_list, du_list, config_dict):
 	'''This function gets function list and assign the first function du name to the final du with the group of functions'''
@@ -163,7 +164,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 						variables = '"'+variables + "('+str"+variable_aux+"+')"+'"' #preparado para meterlo dentro de un "invoker"
 						##newline = invoked_function+"('"+variables+"', str(0))#" #En caso de invocacion local sin llamar a "invoker"
 						newline = "invoker(['du_"+str(invoked_du)+"'],'"+invoked_function+"','"+variables+",'+str(0),'"+invoker_name+"')#" #preparado para meterlo dentro de un "invoker"
-					else:#only the actualization of global var like globalvar = globalvar_aux it has "=" and no "("
+					else:
 						variables_aux = ""
 						variable_aux = ""
 						ind_aux = variables.find("=")+1

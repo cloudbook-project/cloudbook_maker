@@ -30,6 +30,7 @@ def split_program(config_dict):
 		add_du0_functions(config_dict)
 		print ("\nTHE COLLAPSED FINAL MATRIX WITH du_0 functions:")
 		print_matrix(config_dict["matrix_filled"])
+	update_du0_functions(config_dict)
 	du_list=[]
 	du_list = du_creator.create_dus(config_dict)
 
@@ -254,3 +255,14 @@ def showTables(con):
 	    print ("ORIG_NAME =",i[0])
 	    print ("IMPORTS =",i[1])
 	    print ("FINAL IMPORT =",i[2],"\n")
+
+def update_du0_functions(config_dict):
+	'''this functions updates data base to du0'''
+	print(">>> ENTER IN update_du0_functions function")
+	matrix = config_dict["matrix_filled"]
+	function_list = matrix[0][1] #functions belonging to du_0
+	con = config_dict["con"]
+	cursor = con.cursor()
+	for i in function_list:
+		cursor.execute("UPDATE functions SET DU = 0 WHERE ORIG_NAME =='"+i+"'")
+	print(">>> EXIT FROM update_du0_functions function")

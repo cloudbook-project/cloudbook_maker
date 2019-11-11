@@ -122,6 +122,8 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 				if "_VAR_" in name:
 					#fo.write(line.replace(fun_name,final_name+" con el valor"))#CODIGO DE FUNCION DE VARIABLE GLOBAL
 					#Valor de la variable global
+					if "=" not in line:#Is not an assignation
+						continue
 					gl_value = line.split("=")[1]
 					#t.value = re.sub(r'\s*',"",t.value)
 					gl_value = re.sub(r'\s*',"",gl_value)
@@ -267,6 +269,7 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 							#Tiene que estar antes del igual
 								global_asig = True
 								invocation_fun = "_VAR_"+invocation_fun
+								print("asignacion global",line)
 								if (invocation_fun.find("[")!=-1):
 									invocation_fun = invocation_fun[:invocation_fun.rfind("[")]
 									#globaldict = True
@@ -323,7 +326,7 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 							new_line = "\t"+new_line
 						fo.write(new_line)
 						fo.write("\n")
-						if global_asig:
+						if global_asig: #copy also the local assignation
 							clean_line = re.sub(r'\s*',"",line)
 							for t in range(tabs):
 								clean_line = "\t"+clean_line

@@ -146,6 +146,13 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 					variables_aux = variables.split("=")
 					variable_aux = variables.split("=")[-1]
 					variables = variables.replace(variable_aux,"")
+					if variables.find("[") != -1:#global var is a dict
+						if variables.count("[") == 1: #solo para un campo, hacer cuando hay mas
+							r_index = variables.rfind("]")
+							l_index = variables.rfind("[")+1
+							dict_index = variables[l_index:r_index]
+							new_dict_index = "'+str("+dict_index+")+'"
+							variables = variables.replace(dict_index,new_dict_index)
 					##variables = variables.replace("=","%3d")
 					##newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
 					newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
@@ -241,7 +248,7 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 						variables_aux = variables_aux+"+','+ str("+i+")"
 			newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
 			newline_aux = newline.rsplit(")",1)
-			newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
+			newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")			
 		if "_VAR_" in old_function and parallel_fun==False:#Si es una variable global hay que sacar los parametros de la llamada.
 		#si es una llamada a una funcion, hay que sacar la linea y lo que hay entre parentesis TODO
 		#si es una asignacion, hay que copiar la linea como la variable entera
@@ -255,6 +262,13 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 				variables_aux = variables.split("=")
 				variable_aux = variables.split("=")[-1]
 				variables = variables.replace(variable_aux,"")
+				if variables.find("[") != -1:#global var is a dict
+					if variables.count("[") == 1: #solo para un campo, hacer cuando hay mas
+						r_index = variables.rfind("]")
+						l_index = variables.rfind("[")+1
+						dict_index = variables[l_index:r_index]
+						new_dict_index = "'+str("+dict_index+")+'"
+						variables = variables.replace(dict_index,new_dict_index)
 				variables = variables.replace("=","%3d")
 				newline = "invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"','"+'"'+invoked_function+"."+variables+"'+str("+variable_aux+")"+"+' \", '+"+"str(ver_"+old_function+"))#[0]"
 				#add invoker in call

@@ -99,11 +99,22 @@ def separate_default_functions(config_dict):
 		print("function_list",function_list)
 	print("default_list",default_list)
 	#translate first row of matrix into the new dus
+	to_delete = []
 	for i in matrix[0]:
 		if i == []:
+			#matrix[0].remove(i)
+			to_delete.append(i)
+		print("hola,",i)
+	print(to_delete)
+	if len(to_delete)!=0:
+		for i in to_delete:
 			matrix[0].remove(i)
-	matrix[0].append(default_list)
+	if len(default_list)!=0:
+		matrix[0].append(default_list)
 	matrix[0].insert(0,'Matrix')
+	#for i in matrix[0]:
+	#	if i == []:
+	#		matrix[0].remove(i)
 	print("matrix 0:",matrix[0])
 	#TODO:make the database coherent to the matrix
 	ocuppied_du = []

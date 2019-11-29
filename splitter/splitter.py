@@ -92,7 +92,9 @@ def separate_default_functions(config_dict):
 				final_list.append(i)
 				#print("meto esta",i)
 		function_list = final_list
-		function_list.append(local_list)
+		if len(local_list)!=0:
+			for i in local_list:
+				function_list.append(i)
 		final_list = []
 		print(du_index)
 		try:

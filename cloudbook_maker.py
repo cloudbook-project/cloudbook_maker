@@ -143,8 +143,8 @@ else:
 	config_dict["non-reliable_agent_mode"] = False'''
 config_dict["non-reliable_agent_mode"] = input_dict["NON-RELIABLE_AGENT_MODE"]
 
-config_dict["distributed_fs"] = distributed_fs
-config_dict["input_dir"] = distributed_fs + os.sep + "original"
+config_dict["distributed_fs"] = distributed_fs 
+config_dict["input_dir"] = distributed_fs + os.sep + "original" #+ os.sep
 config_dict["output_dir"] = distributed_fs + os.sep + "distributed" + os.sep + "du_files"
 #For testing purposes
 #config_dict["input_dir"] = input_dir

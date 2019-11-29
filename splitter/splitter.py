@@ -68,6 +68,7 @@ def separate_default_functions(config_dict):
 	con = config_dict["con"]
 	default_list = []
 	final_list = []
+	local_list = []
 	dus = matrix[0]
 	dus.remove('Matrix')
 	du_index = 0
@@ -82,6 +83,8 @@ def separate_default_functions(config_dict):
 				if ((config_dict["labels"][i] == 'LOCAL') or (config_dict["labels"][i] == 'RECURSIVE') or (config_dict["labels"][i] == 'PARALLEL')):
 					print("las meto")
 					default_list.append(i)
+				if (config_dict["labels"][i] == 'LOCAL'):
+					local_list.append(i)
 				else:
 					final_list.append(i)
 					#print("meto esta",i)
@@ -89,6 +92,7 @@ def separate_default_functions(config_dict):
 				final_list.append(i)
 				#print("meto esta",i)
 		function_list = final_list
+		function_list.append(local_list)
 		final_list = []
 		print(du_index)
 		try:

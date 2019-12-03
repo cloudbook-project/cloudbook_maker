@@ -13,7 +13,7 @@ import math
 #file = "nbody_orig.py"
 
 tokens = ['TEST','IMPORT','FUN_DEF','COMMENT','LOOP_FOR','LOOP_WHILE','IF','ELSE','TRY','EXCEPT','PRINTV2', 'PRINTV3','FUN_INVOCATION','PYTHON_INVOCATION',
-'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF','CONST','DU0_FUNCTION']
+'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF','CONST','DU0_FUNCTION','NONSHARED']
 
 fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*'
 funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*|[a-zA-Z_][a-zA-Z_0-9]*'
@@ -25,7 +25,7 @@ import_token = r'[i][m][p][o][r][t][\s]+[a-zA-Z_\*][a-zA-Z_0-9]*'
 importation = from_token + r'[\s]+' + import_token + r'|' + import_token
 iden = r'[a-zA-Z_][.a-zA-Z_0-9]*'
 assignation = r'[\s]*[=][\s]*'
-global_var = r'^[a-zA-Z_][a-zA-Z_0-9]*|[g][l][o][b][a][l][\s]+[a-zA-Z_][a-zA-Z_0-9]*'
+global_var = r'^[a-zA-Z_][a-zA-Z_0-9]*'#|[g][l][o][b][a][l][\s]+[a-zA-Z_][a-zA-Z_0-9]*'
 
 class_token = r'^[c][l][a][s][s][\s]*' + iden + r'[\s]*[:][\s]+'
 
@@ -166,6 +166,11 @@ def t_ASSIGNATION(t):
 def t_CONST(t):
 	r'^[C][O][N][S][T].*'
 	t.type = 'CONST'
+	return t
+
+def t_NONSHARED(t):
+	r'^[N][O][N][S][H][A][R][E][D].*'
+	t.type = 'NONSHARED'
 	return t
 
 @TOKEN(global_var)
@@ -510,6 +515,13 @@ def getConstants(token_list):
 		if i.type=='CONST':
 			const_list.append(i.value)
 	return const_list
+
+def getNonShared(token_list):
+	nonshared_list = []
+	for i in token_list:
+		if i.type=='NONSHARED':
+			nonshared_list.append(i.value)
+	return nonshared_list
 
 def getDu0_functions(filename, token_list):
 	du0_function_list = []

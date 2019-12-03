@@ -27,6 +27,7 @@ def get_functions(files_dict,config_dict):
 			tokens = parser.tokenize(filename)
 			config_dict["class"] = parser.getClasses(filename)
 			config_dict["constants"] = parser.getConstants(tokens)
+			config_dict["nonshared"] = parser.getNonShared(tokens)
 			print("clases:", config_dict["class"])
 			print("constantes", config_dict["constants"])
 			print("me da tokens: ")

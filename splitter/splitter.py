@@ -1,5 +1,6 @@
 import iterator
 import du_creator2 as du_creator
+import time
 
 def split_program(config_dict):
 	#con=config_dict["con"]
@@ -85,6 +86,7 @@ def separate_default_functions(config_dict):
 					default_list.append(i)
 				if (config_dict["labels"][i] == 'LOCAL'):
 					local_list.append(i)
+					#final_list.append(i)
 				else:
 					final_list.append(i)
 					#print("meto esta",i)
@@ -92,9 +94,11 @@ def separate_default_functions(config_dict):
 				final_list.append(i)
 				#print("meto esta",i)
 		function_list = final_list
-		if len(local_list)!=0:
+		if (len(local_list)!=0):# & (len(function_list)!=0):
 			for i in local_list:
 				function_list.append(i)
+				print("funciones:",function_list)
+				time.sleep(5)
 		final_list = []
 		print(du_index)
 		try:

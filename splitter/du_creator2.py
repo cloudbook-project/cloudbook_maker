@@ -68,6 +68,9 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 	for i in config_dict["constants"]:
 		fo.write(i)
 		fo.write("\n")
+	for i in config_dict["nonshared"]:
+		fo.write(i)
+		fo.write("\n")
 	fo.write("invoker=None\n")
 	fo.write("cloudbook_sync_timeout=False\n\n")  #Se puede quitar de aqui y generarla solo cuando es necesaria
 	#write classes
@@ -182,7 +185,29 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 					else:
 						fo.write(line)
 					continue
-				if "global" in line:
+				if "global" in line:#todo, no traducir si es nonshared
+					#comprobar si es nonshared
+					namevar = line.split("global")[1]
+					namevar = re.sub(r'\s*',"",namevar)
+					dont_translate = False
+					print("namevar",namevar)
+					for nonsharedvar in config_dict["nonshared"]:
+						nonshared = nonsharedvar.split("=")[0]
+						nonshared = re.sub(r'\s*',"",nonshared)
+						print("nonshared",nonshared)
+						print(str(nonshared == namevar))
+						if nonshared == namevar:
+							print("iguales")
+							if lock_parallel == True:
+								fo.write("\t"+line)
+							else:
+								fo.write(line)
+							print("eeeeeeeeeeeeeeeeeeeehhhhhhhhhhhhhhhhhhhhh")
+							dont_translate = True
+					if dont_translate == True:
+						dont_translate = False
+						continue
+					#si es nonshared hago continue
 					line2 = "#"+ line + "#Aqui va el chorrazo de codigo"
 					globalName = line.split(" ")[1]
 					#globalName = globalName.replace("\n","")

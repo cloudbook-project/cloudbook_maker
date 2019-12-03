@@ -98,7 +98,7 @@ def separate_default_functions(config_dict):
 			for i in local_list:
 				function_list.append(i)
 				print("funciones:",function_list)
-				time.sleep(5)
+				#time.sleep(5)
 		final_list = []
 		print(du_index)
 		try:

@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 import json
 import logging
+import time
 
 
 def file_scanner():
@@ -140,6 +141,20 @@ def file_scanner4(config_dict):
 				files2.append(fname)
 		dict_files[dirName]=files2
 	print (">>>EXIT from file_scanner()...")
+	new_dict = {}
+	files_to_delete = []
+	if os.path.isfile(input_folder+os.sep+"cbignore.txt"):
+		print("existe el fichero")
+		with open(input_folder+os.sep+"cbignore.txt","r") as delete_file:
+			for line in delete_file:
+				files_to_delete.append(line)
+		for folder in dict_files:
+			new_dict[folder] = []
+			for file in dict_files[folder]:
+				if file not in files_to_delete:
+					new_dict[folder].append(file)
+		dict_files = new_dict			
+	print(dict_files)
 	return dict_files
 
 if __name__ == "__main__":

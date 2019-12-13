@@ -147,11 +147,23 @@ def create_du(con,function_list,input_path,output_path, config_dict, du_list):
 							return "Ya he llamado"'''
 							funvariables=funvariables.replace("(","[")
 							funvariables=funvariables.replace(")","]")
-							fo.write('''	thread'''+final_name+''' = threading.Thread(target= parallel_'''+final_name+''', daemon = False, args = '''+funvariables+''')
+							if "=" in funvariables:
+								fo.write('''	thread'''+final_name+''' = threading.Thread(target= parallel_'''+final_name+''', daemon = False, kwargs = dict('''+funvariables[1:len(funvariables)-1]+'''))
 	thread'''+final_name+'''.start()
 	return json.dumps("thread launched")
 
 ''')
+							else:
+								fo.write('''	thread'''+final_name+''' = threading.Thread(target= parallel_'''+final_name+''', daemon = False, args = '''+funvariables+''')
+	thread'''+final_name+'''.start()
+	return json.dumps("thread launched")
+
+''')
+							#fo.write('''	thread'''+final_name+''' = threading.Thread(target= parallel_'''+final_name+''', daemon = False, args = '''+funvariables+''')
+#	thread'''+final_name+'''.start()
+#	return json.dumps("thread launched")
+#
+#''')
 							final_name = "parallel_"+final_name	
 							'''if not hasattr(f1, "lock_body_list"):
 		f1.lock_body_list = threading.Lock()

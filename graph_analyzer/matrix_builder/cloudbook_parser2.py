@@ -15,7 +15,7 @@ import math
 tokens = ['TEST','IMPORT','FUN_DEF','COMMENT','LOOP_FOR','LOOP_WHILE','IF','ELSE','TRY','EXCEPT','PRINTV2', 'PRINTV3','FUN_INVOCATION','PYTHON_INVOCATION',
 'INVOCATION','ASSIGNATION','RETURN','IDEN','GLOBAL','PARALLEL','RECURSIVE','LOCAL','CLASS_DEF','CONST','DU0_FUNCTION','NONSHARED']
 
-fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*'
+fundefintion =r'[d][e][f][\s]*'+r'[a-zA-Z_][a-zA-Z_0-9]*'+r'[\s]*[(][\d\D\s\S\w\W=]*[)][\s]*[:][\n]*'
 funorglobal = r'[d][e][f][\s]*[a-zA-Z_][a-zA-Z_0-9]*[\s]*[(][\d\D\s\S\w\W]*[)][\s]*[:][\n]*|[a-zA-Z_][a-zA-Z_0-9]*'
 t_ignore = " \n"
 #iden = r'[a-zA-Z_][a-zA-Z_0-9]*'

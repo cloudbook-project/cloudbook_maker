@@ -314,7 +314,11 @@ def translate_invocation(con,orig_module,orig_function_name,invoked_function,fun
 			newline = pre_line+"\t"*tabs+"invoker(['du_"+str(invoked_du)+"'], '"+invoked_function+"',"+variables_aux+")"
 			#add invoker in call
 			newline_aux = newline.rsplit(")",1)
-			newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","")
+			newline = newline_aux[0] + ",'"+invoker_name+"')"+newline_aux[1].replace(")","") + "#"
+			print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+			print("newline_aux =",newline_aux)
+			print("newline =",newline)
+			print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 			#podria omitir el campo 0 aqui
 			#Pongo el campo 0, porque en las operaciones de cambio, solo queremos el nuevo valor, la version no se pide nunca en el codigo
 		#Si es funcion normal:
